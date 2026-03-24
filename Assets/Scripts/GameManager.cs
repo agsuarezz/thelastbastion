@@ -27,6 +27,6 @@ public class GameManager : MonoBehaviour
     public void restablecerJuego()
     {
         Time.timeScale = 1.0f;
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
