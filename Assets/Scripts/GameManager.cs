@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public Image imagenTorre;
-    public GameObject boton;
     void Start()
     {
         
@@ -18,7 +17,7 @@ public class GameManager : MonoBehaviour
     {
         
     }
-    public void crearTorre()
+    public void crearTorre(GameObject boton)
     {
         boton.GetComponent<Image>().sprite = imagenTorre.sprite;
         // 1. Pillamos los RectTransform de ambos
