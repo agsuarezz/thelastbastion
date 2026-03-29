@@ -7,12 +7,13 @@ using UnityEngine.UI;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    // Imagen base para copiar el sprite y tamaño a las nuevas torres construidas.
-    [Tooltip("Imagen base de la cual se copiará el sprite para las torres.")]
-    public Image towerImage;
+    // SpriteRenderer de referencia para asignar el gráfico correcto a las nuevas torres construidas.
+    [Tooltip("SpriteRenderer base del cual se copiará el sprite para las torres.")]
+    public SpriteRenderer towerImage;
     /// <summary>
-    /// Transforma una casilla vacía (botón) en una torre. 
-    /// Le asigna el sprite correcto, ajusta su tamaño al de la imagen original y borra el texto.
+    /// Construye una torre en la casilla seleccionada por el jugador. 
+    /// Oculta la imagen del botón, busca el objeto torre asociado en la escena 
+    /// y le asigna el sprite de referencia, además de borrar el texto del botón.
     /// </summary>
     /// <param name="button">El GameObject del botón interactuado por el jugador.</param>
     public void buildTower(GameObject button)
@@ -22,11 +23,9 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("No se ha podido encontrar la imagen");
             return;
         }
-
-        button.GetComponent<Image>().sprite = towerImage.sprite;
-        RectTransform rectTorre = towerImage.GetComponent<RectTransform>();
-        RectTransform rectBoton = button.GetComponent<RectTransform>();
-        rectBoton.sizeDelta = new Vector2(rectTorre.rect.width, rectTorre.rect.height);
+        string name = button.name + "_tower";
+        button.GetComponent<Image>().enabled = false;
+        GameObject.Find(name).GetComponent<SpriteRenderer>().sprite = towerImage.sprite;
         button.GetComponentInChildren<TextMeshProUGUI>().text = "";
     }
     /// <summary>
