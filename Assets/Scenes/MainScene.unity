@@ -1798,7 +1798,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d334e442176c8964fbef9c183b502877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 6992352580767127255, guid: 60eff513f5abf03408dc1ce824a4dceb, type: 3}
+  prefab: {fileID: 3934873377327053164, guid: bb64c829220b6d642925637897228475, type: 3}
 --- !u!4 &452400197
 Transform:
   m_ObjectHideFlags: 0
@@ -8178,7 +8178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.78039217}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8304,8 +8304,8 @@ RectTransform:
   - {fileID: 335869343}
   - {fileID: 374254723}
   - {fileID: 2038326247}
-  - {fileID: 2040490412}
   - {fileID: 406818255}
+  - {fileID: 2040490412}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
