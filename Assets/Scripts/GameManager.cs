@@ -1,4 +1,6 @@
+using Mono.Cecil;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,6 +12,35 @@ public class GameManager : MonoBehaviour
     // SpriteRenderer de referencia para asignar el gráfico correcto a las nuevas torres construidas.
     [Tooltip("SpriteRenderer base del cual se copiará el sprite para las torres.")]
     public SpriteRenderer towerImage;
+    // Componente de audio compartido por todo el juego para emitir los sonidos.
+    [Tooltip("AudioSource base del cual asignar sonidos.")]
+    public static AudioSource audioSource;
+    // Efecto de sonido que se reproduce al saltar el Game Over.
+    public static AudioClip soundLostGame;
+    // Efecto de sonido que se reproduce cuando un enemigo ataca y resta vida.
+    public static AudioClip soundTakeLife;
+    /// <summary>
+    /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
+    /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
+    /// </summary>
+    public void Start()
+    {
+        audioSource = this.GetComponent<AudioSource>();
+        soundLostGame = Resources.Load<AudioClip>("soundLostGame");
+        soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
+        if (!audioSource)
+        {
+            Debug.LogWarning("No se ha encontrado audioSource");
+        }
+        if(!soundLostGame)
+        {
+            Debug.LogWarning("No se ha encontrado soundLostGame");
+        }
+        if (!soundTakeLife)
+        {
+            Debug.LogWarning("No se ha encontrado soundTakeLife");
+        }
+    }
     /// <summary>
     /// Construye una torre en la casilla seleccionada por el jugador. 
     /// Oculta la imagen del botón, busca el objeto torre asociado en la escena 
@@ -33,7 +64,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void restartGame()
     {
-        Time.timeScale = 1.0f;
+        changeTimeScale();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    /// <summary>
+    /// Cambia el time.TimeScale
+    /// Si es 0 a 1
+    /// Si es 1 a 0
+    /// </summary>
+    public static void changeTimeScale()
+    {
+        Time.timeScale = Time.timeScale == 1.0f ? 0.0f : 1.0f;
     }
 }
