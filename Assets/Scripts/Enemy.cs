@@ -17,6 +17,10 @@ public class Enemy : MonoBehaviour
 
     // Estado interno de la vida actual del enemigo
     private int currentLife;
+
+    private Transform[] pathWaypoints;
+    private int currentWaypointIndex = 0;
+
     /// <summary>
     /// Mueve al enemigo hacia la derecha de la pantalla de forma continua y fluida.
     /// </summary>
@@ -33,7 +37,28 @@ public class Enemy : MonoBehaviour
     
     private void Update()
     {
-        transform.Translate(Vector3.right * speed * Time.deltaTime);
+        MoveAlongPath();
+    }
+
+    public void SetPath(Transform[] routeWaypoints)
+    {
+        pathWaypoints = routeWaypoints;
+        currentWaypointIndex = 0;
+    }
+
+    private void MoveAlongPath()
+    {
+        if (pathWaypoints == null || currentWaypointIndex >= pathWaypoints.Length) return;
+
+        Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
+
+        Vector3 direction = targetWaypoint.position - transform.position;
+        transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+
+        if (Vector2.Distance(transform.position, targetWaypoint.position) <= 0.1f)
+        {
+            currentWaypointIndex++;
+        }
     }
 
     /// <summary>

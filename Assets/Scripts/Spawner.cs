@@ -7,6 +7,8 @@ public class Spawner : MonoBehaviour
 {
     [Tooltip("El prefab del enemigo que se va a instanciar en la escena.")]
     public GameObject prefab;
+    [Tooltip("La ruta que seguirán los enemigos generados por este Spawner.")]
+    public LevelRoute enemyRoute;
     // Tiempo en segundos que debe transcurrir entre la aparición de cada enemigo.
     private float spawnInterval = 1f;
     // Temporizador interno para llevar la cuenta regresiva hasta el próximo spawn.
@@ -31,8 +33,19 @@ public class Spawner : MonoBehaviour
     /// </summary>
     private void SpawnEnemy()
     {
+        if (enemyRoute == null || enemyRoute.waypoints.Length == 0)
+        {
+            Debug.LogWarning("El Spawner no tiene una ruta asignada.");
+            return;
+        }
         GameObject spawnedObject = Instantiate(prefab);
-        spawnedObject.transform.position = transform.position;
+        spawnedObject.transform.position = enemyRoute.waypoints[0].position;
+
+        Enemy enemyScript = spawnedObject.GetComponent<Enemy>();
+        if (enemyScript != null)
+        {
+            enemyScript.SetPath(enemyRoute.waypoints);
+        }
     }
     
 }
