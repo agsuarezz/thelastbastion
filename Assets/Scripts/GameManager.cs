@@ -56,7 +56,17 @@ public class GameManager : MonoBehaviour
         }
         string name = button.name + "_tower";
         button.GetComponent<Image>().enabled = false;
-        GameObject.Find(name).GetComponent<SpriteRenderer>().sprite = towerImage.sprite;
+        
+        // Guardamos la referencia a la torre que acabamos de encontrar
+        GameObject towerObject = GameObject.Find(name);
+        
+        // 1. Le ponemos la imagen visible
+        towerObject.GetComponent<SpriteRenderer>().sprite = towerImage.sprite;
+        
+        // 2. ¡Encendemos el script para que empiece a detectar y disparar!
+        towerObject.GetComponent<Tower>().enabled = true; 
+        
+        // 3. Limpiamos el texto del botón
         button.GetComponentInChildren<TextMeshProUGUI>().text = "";
     }
     /// <summary>
