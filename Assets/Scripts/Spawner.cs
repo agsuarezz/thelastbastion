@@ -13,6 +13,16 @@ public class Spawner : MonoBehaviour
     private float spawnInterval = 1f;
     // Temporizador interno para llevar la cuenta regresiva hasta el próximo spawn.
     private float spawnTimer;
+
+    [Header("Sistema de Oleadas")]
+    // Control global de enemigos vivos o activos en la escena.
+    public static int enemiesAlive = 0;
+
+    // Contador interno de los enemigos que YA han salido en la ronda actual.
+    int enemiesSpawned = 0;
+
+    // Cantidad límite de enemigos que el Spawner debe soltar en esta ronda.
+    int countMaxEnemy = 5;
     /// <summary>
     /// Reduce el temporizador frame a frame. Cuando llega a cero o menos, 
     /// reinicia el contador y llama a la función para crear el enemigo.
@@ -21,7 +31,7 @@ public class Spawner : MonoBehaviour
     {
         spawnTimer -= Time.deltaTime;
 
-        if (spawnTimer <= 0)
+        if (spawnTimer <= 0 && enemiesSpawned < countMaxEnemy)
         {
             spawnTimer = spawnInterval;
             SpawnEnemy();
@@ -46,6 +56,41 @@ public class Spawner : MonoBehaviour
         {
             enemyScript.SetPath(enemyRoute.waypoints);
         }
+        enemiesSpawned++;
+        enemiesAlive++;
     }
-    
+    /// <summary>
+    /// Limpiamos la memoria de los enemigos vivos por si venimos de un reinicio de escena.
+    /// Evita el bug de arrastrar enemigos "fantasmas" de partidas anteriores.
+    /// </summary>
+    private void Awake()
+    {
+        enemiesAlive = 0;
+    }
+    /// <summary>
+    /// Comprueba si la ronda actual ha terminado.
+    /// Una ronda se considera terminada cuando han salido todos los enemigos límite y ya no queda ninguno vivo.
+    /// </summary>
+    /// <returns>True si la ronda terminó, False en caso contrario.</returns>
+    public bool statusRound()
+    {
+        if (enemiesAlive == 0 && enemiesSpawned == countMaxEnemy)
+        {
+            GameManager.countRound += 1;
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Prepara el spawner para la siguiente oleada, reiniciando los contadores 
+    /// y subiendo la dificultad (añadiendo enemigos extra al límite).
+    /// </summary>
+    public void restartCountEnemy()
+    {
+        enemiesSpawned = 0;
+        enemiesAlive = 0;
+        countMaxEnemy += 1;
+    }
+
+
 }

@@ -1,4 +1,5 @@
 using Mono.Cecil;
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -19,9 +20,18 @@ public class GameManager : MonoBehaviour
     public static AudioClip soundLostGame;
     // Efecto de sonido que se reproduce cuando un enemigo ataca y resta vida.
     public static AudioClip soundTakeLife;
+    public TextMeshProUGUI messageErrorText;
+    [Header("Control de Rondas")]
+    [Tooltip("Texto de la interfaz que muestra el número de ronda actual.")]
+    public TextMeshProUGUI messageRound;
+    [Tooltip("Referencia al Spawner para poder consultarle el estado de la ronda.")]
+    public Spawner spawner;
+    // Contador global de la ronda en la que se encuentra el jugador.
+    public static int countRound = 0;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
+    /// Añade al texto de Ronda el numero de la ronda
     /// </summary>
     public void Start()
     {
@@ -40,34 +50,27 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("No se ha encontrado soundTakeLife");
         }
+        messageRound.text = "Ronda " + countRound;
     }
     /// <summary>
-    /// Construye una torre en la casilla seleccionada por el jugador. 
-    /// Oculta la imagen del botón, busca el objeto torre asociado en la escena 
-    /// y le asigna el sprite de referencia, además de borrar el texto del botón.
+    /// Se ejecuta antes que el Start. Ideal para limpiar variables estáticas 
+    /// y asegurar que la ronda vuelva a 0 si el jugador reinicia la escena.
     /// </summary>
-    /// <param name="button">El GameObject del botón interactuado por el jugador.</param>
-    public void buildTower(GameObject button)
+    private void Awake()
     {
-        if (!towerImage)
+        countRound = 0;
+    }
+    /// <summary>
+    /// Comprueba en cada frame si el Spawner indica que la ronda ha finalizado.
+    /// En caso afirmativo, prepara la siguiente oleada y actualiza el texto en pantalla.
+    /// </summary>
+    public void Update()
+    {
+        if (spawner.statusRound())
         {
-            Debug.LogWarning("No se ha podido encontrar la imagen");
-            return;
+            spawner.restartCountEnemy();
+            messageRound.text = "Ronda " + countRound;
         }
-        string name = button.name + "_tower";
-        button.GetComponent<Image>().enabled = false;
-        
-        // Guardamos la referencia a la torre que acabamos de encontrar
-        GameObject towerObject = GameObject.Find(name);
-        
-        // 1. Le ponemos la imagen visible
-        towerObject.GetComponent<SpriteRenderer>().sprite = towerImage.sprite;
-        
-        // 2. ¡Encendemos el script para que empiece a detectar y disparar!
-        towerObject.GetComponent<Tower>().enabled = true; 
-        
-        // 3. Limpiamos el texto del botón
-        button.GetComponentInChildren<TextMeshProUGUI>().text = "";
     }
     /// <summary>
     /// Quita la pausa del juego y recarga la escena inicial para empezar una nueva partida.
@@ -85,5 +88,15 @@ public class GameManager : MonoBehaviour
     public static void changeTimeScale()
     {
         Time.timeScale = Time.timeScale == 1.0f ? 0.0f : 1.0f;
+    }
+    /// <summary>
+    /// Muestra un mensaje de error en pantalla durante 2 segundos y luego lo borra.
+    /// </summary>
+    public IEnumerator messageError(string text)
+    {
+        messageErrorText.text = text;
+        messageErrorText.color = Color.red;
+        yield return new WaitForSeconds(2f);
+        messageErrorText.text = "";
     }
 }

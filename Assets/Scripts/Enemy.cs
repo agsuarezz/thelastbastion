@@ -81,10 +81,11 @@ public class Enemy : MonoBehaviour
 
     
     /// <summary>
-    /// Destruye a este mismo enemigo.
+    /// Destruye a este mismo enemigo. y Resta uno al numero de enemigo en escena
     /// </summary>
     public void DestroyEnemy()
     {
+        Spawner.enemiesAlive--;
         Destroy(gameObject);
     }
 }
