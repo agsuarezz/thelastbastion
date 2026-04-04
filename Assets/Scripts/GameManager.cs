@@ -1,7 +1,5 @@
-using Mono.Cecil;
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,6 +16,10 @@ public class GameManager : MonoBehaviour
     public static AudioSource audioSource;
     // Efecto de sonido que se reproduce al saltar el Game Over.
     public static AudioClip soundLostGame;
+    // Efecto de sonido que se reproduce al pausar.
+    public static AudioClip soundPause;
+    // Efecto de sonido que se reproduce al Restart.
+    public static AudioClip soundRestart;
     // Efecto de sonido que se reproduce cuando un enemigo ataca y resta vida.
     public static AudioClip soundTakeLife;
     public TextMeshProUGUI messageErrorText;
@@ -26,6 +28,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI messageRound;
     [Tooltip("Referencia al Spawner para poder consultarle el estado de la ronda.")]
     public Spawner spawner;
+    [Tooltip("Referencia del castillo.")]
+    public castleScript castlescript;
     // Contador global de la ronda en la que se encuentra el jugador.
     public static int countRound = 0;
     /// <summary>
@@ -38,6 +42,8 @@ public class GameManager : MonoBehaviour
         audioSource = this.GetComponent<AudioSource>();
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
+        soundPause = Resources.Load<AudioClip>("soundPause");
+        soundRestart = Resources.Load<AudioClip>("soundRestart");
         if (!audioSource)
         {
             Debug.LogWarning("No se ha encontrado audioSource");
@@ -49,6 +55,14 @@ public class GameManager : MonoBehaviour
         if (!soundTakeLife)
         {
             Debug.LogWarning("No se ha encontrado soundTakeLife");
+        }
+        if(!soundPause)
+        {
+            Debug.LogWarning("No se ha encontrado soundPause");
+        }
+        if (!soundRestart)
+        {
+            Debug.LogWarning("No se ha encontrado soundRestart");
         }
         messageRound.text = "Ronda " + countRound;
     }
@@ -71,6 +85,23 @@ public class GameManager : MonoBehaviour
             spawner.restartCountEnemy();
             messageRound.text = "Ronda " + countRound;
         }
+    }
+    /// <summary>
+    /// Gestiona la lógica de pausa del juego mostrando u ocultando el panel del menú.
+    /// Alterna la escala de tiempo y reproduce un efecto de sonido dependiendo del estado actual.
+    /// </summary>
+    /// <param name="menuPanel">El GameObject que contiene la interfaz gráfica del menú de pausa.</param>
+    public void pauseaandRestartButton(GameObject menuPanel)
+    {
+        changeTimeScale();
+        bool status = menuPanel.activeSelf;
+        menuPanel.SetActive(!status);
+        AudioClip audioClip = Time.timeScale != 1.0f ? GameManager.soundPause : GameManager.soundRestart;
+        StartCoroutine(castlescript.sound(audioClip));
+    }
+    public void mainMenuButton()
+    {
+        StartCoroutine(messageError("Esta función no esta disponible por ahora"));
     }
     /// <summary>
     /// Quita la pausa del juego y recarga la escena inicial para empezar una nueva partida.
