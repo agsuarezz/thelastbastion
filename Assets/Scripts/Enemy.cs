@@ -63,6 +63,7 @@ public class Enemy : MonoBehaviour
 
     /// <summary>
     /// Resta vida al enemigo y actualiza su barra. Si llega a 0, se destruye.
+    /// Suma uno al contador de enemigos Derrotados
     /// </summary>
     public void TakeDamage(int damageAmount)
     {
@@ -75,6 +76,7 @@ public class Enemy : MonoBehaviour
 
         if (currentLife <= 0)
         {
+            GameManager.enemiesDestroyed += 1;
             DestroyEnemy();
         }
     }

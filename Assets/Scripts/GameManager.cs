@@ -32,6 +32,13 @@ public class GameManager : MonoBehaviour
     public castleScript castlescript;
     // Contador global de la ronda en la que se encuentra el jugador.
     public static int countRound = 0;
+    // Contador global del tiempo transcurrido en segundos desde que empezó la partida.
+    // Se utiliza para mostrar cuánto aguantó el jugador en la pantalla de derrota.
+    public static float timeinGame;
+    // Registro total de enemigos eliminados por las defensas del jugador durante la partida.
+    public static int enemiesDestroyed = 0;
+    // Cantidad total de torres que el jugador ha construido en el mapa a lo largo del juego.
+    public static int countTower = 0;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -85,6 +92,7 @@ public class GameManager : MonoBehaviour
             spawner.restartCountEnemy();
             messageRound.text = "Ronda " + countRound;
         }
+        timeinGame += Time.deltaTime;
     }
     /// <summary>
     /// Gestiona la lógica de pausa del juego mostrando u ocultando el panel del menú.

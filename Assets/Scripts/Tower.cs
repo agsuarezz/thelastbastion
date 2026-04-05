@@ -107,6 +107,7 @@ public class Tower : MonoBehaviour
     /// <summary>
     /// Se dispara automáticamente al hacer clic izquierdo sobre el objeto. 
     /// Construye la torre, actualiza las colisiones y desactiva el candado lógico.
+    /// Suma uno al contador de torres activas
     /// </summary>
     private void OnMouseDown()
     {
@@ -118,6 +119,7 @@ public class Tower : MonoBehaviour
             BoxCollider2D boxCollider2D = towerImage.GetComponent<BoxCollider2D>();
             this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
             isBuilt = true;
+            GameManager.countTower += 1;
         }
         else
             StartCoroutine(gameManager.messageError("Lugar ya ocupado"));

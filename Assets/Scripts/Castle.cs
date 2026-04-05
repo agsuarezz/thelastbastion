@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 /// <summary>
 /// Gestiona la life del castillo, actualiza la UI y dispara el Game Over.
@@ -67,6 +69,22 @@ public class castleScript : MonoBehaviour
             GameManager.changeTimeScale();
             StartCoroutine(sound(GameManager.soundLostGame));
             EndPanel.SetActive(true);
+            TextMeshProUGUI[] lista = EndPanel.GetComponentsInChildren<TextMeshProUGUI>();
+            foreach(TextMeshProUGUI text in lista)
+            {
+                if(text.name == "durationText")
+                {
+                    text.text = "Duracion: " + GameManager.timeinGame.ConvertTo<int>().ToString() + " s";
+                }
+                if(text.name == "enemiesDestroyedText")
+                {
+                    text.text = "Enemigo Derrotados: " + GameManager.enemiesDestroyed;
+                }
+                if (text.name == "countTowerText")
+                {
+                    text.text = "Torres Colocadas: " + GameManager.countTower;
+                }
+            }
         }
     }
     /// <summary>
