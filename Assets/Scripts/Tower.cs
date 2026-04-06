@@ -103,16 +103,21 @@ public class Tower : MonoBehaviour
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
 
-        if (spriteRenderer.sprite.name == "Square")
+        if (spriteRenderer.sprite.name == "Square" && GameManager.countMoney >= 40)
         {
             spriteRenderer.sprite = towerImage.GetComponent<SpriteRenderer>().sprite;
             BoxCollider2D boxCollider2D = towerImage.GetComponent<BoxCollider2D>();
             this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
             isBuilt = true;
             GameManager.countTower += 1;
+            GameManager.countMoney -= 50;
+        }
+        else if (spriteRenderer.sprite.name != "Square")
+        {
+            StartCoroutine(gameManager.messageError("Lugar ya ocupado"));
         }
         else
-            StartCoroutine(gameManager.messageError("Lugar ya ocupado"));
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
     }
 
     /// <summary>

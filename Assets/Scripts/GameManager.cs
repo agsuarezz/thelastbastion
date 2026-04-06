@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     public static int enemiesDestroyed = 0;
     // Cantidad total de torres que el jugador ha construido en el mapa a lo largo del juego.
     public static int countTower = 0;
+    public static int countMoney = 0;
+    public TextMeshProUGUI countMoneyText;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -80,6 +82,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         countRound = 0;
+        countMoney = 200;
     }
     /// <summary>
     /// Comprueba en cada frame si el Spawner indica que la ronda ha finalizado.
@@ -94,6 +97,7 @@ public class GameManager : MonoBehaviour
             messageRound.text = "Ronda " + countRound;
         }
         timeinGame += Time.deltaTime;
+        countMoneyText.text = "Dinero: " + countMoney;
     }
     public IEnumerator waitTime(float time)
     {

@@ -79,6 +79,7 @@ public class Enemy : MonoBehaviour
         {
             isDead = true;
             GameManager.enemiesDestroyed += 1;
+            GameManager.countMoney += 10;
             DestroyEnemy();
         }
     }
