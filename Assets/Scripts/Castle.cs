@@ -30,7 +30,6 @@ public class castleScript : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        Debug.Log(life);
         lifeMax = life;
         EndPanel.SetActive(false);
     }

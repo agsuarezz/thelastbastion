@@ -23,18 +23,28 @@ public class Spawner : MonoBehaviour
 
     // Cantidad límite de enemigos que el Spawner debe soltar en esta ronda.
     int countMaxEnemy = 5;
+    public void Start()
+    {
+        Debug.Log("enemiesAlive" + enemiesAlive);
+        Debug.Log("enemiesSpawned" + enemiesSpawned);
+    }
     /// <summary>
     /// Reduce el temporizador frame a frame. Cuando llega a cero o menos, 
     /// reinicia el contador y llama a la función para crear el enemigo.
     /// </summary>
     private void Update()
     {
-        spawnTimer -= Time.deltaTime;
-
-        if (spawnTimer <= 0 && enemiesSpawned < countMaxEnemy)
+        Debug.Log("enemiesAlive " + enemiesAlive);
+        Debug.Log("enemiesSpawned " + enemiesSpawned);
+        if(enemiesSpawned < countMaxEnemy)
         {
-            spawnTimer = spawnInterval;
-            SpawnEnemy();
+            spawnTimer -= Time.deltaTime;
+
+            if (spawnTimer <= 0)
+            {
+                spawnTimer = spawnInterval;
+                SpawnEnemy();
+            }
         }
     }
     /// <summary>
@@ -74,7 +84,7 @@ public class Spawner : MonoBehaviour
     /// <returns>True si la ronda terminó, False en caso contrario.</returns>
     public bool statusRound()
     {
-        if (enemiesAlive == 0 && enemiesSpawned == countMaxEnemy)
+        if (enemiesAlive <= 0 && enemiesSpawned == countMaxEnemy)
         {
             GameManager.countRound += 1;
             return true;
@@ -88,8 +98,8 @@ public class Spawner : MonoBehaviour
     public void restartCountEnemy()
     {
         enemiesSpawned = 0;
-        enemiesAlive = 0;
         countMaxEnemy += 1;
+        spawnTimer = spawnInterval;
     }
 
 

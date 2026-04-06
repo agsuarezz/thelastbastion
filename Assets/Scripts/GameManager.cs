@@ -89,10 +89,15 @@ public class GameManager : MonoBehaviour
     {
         if (spawner.statusRound())
         {
+            waitTime(5f);
             spawner.restartCountEnemy();
             messageRound.text = "Ronda " + countRound;
         }
         timeinGame += Time.deltaTime;
+    }
+    public IEnumerator waitTime(float time)
+    {
+        yield return new WaitForSeconds(time);
     }
     /// <summary>
     /// Gestiona la lógica de pausa del juego mostrando u ocultando el panel del menú.

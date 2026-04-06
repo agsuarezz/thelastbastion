@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
 
     private Transform[] pathWaypoints;
     private int currentWaypointIndex = 0;
+    private bool isDead = false;
 
     /// <summary>
     /// Mueve al enemigo hacia la derecha de la pantalla de forma continua y fluida.
@@ -74,8 +75,9 @@ public class Enemy : MonoBehaviour
             lifeSlider.value = currentLife;
         }
 
-        if (currentLife <= 0)
+        if (currentLife <= 0 && !isDead)
         {
+            isDead = true;
             GameManager.enemiesDestroyed += 1;
             DestroyEnemy();
         }

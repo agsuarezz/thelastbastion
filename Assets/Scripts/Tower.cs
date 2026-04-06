@@ -35,7 +35,6 @@ public class Tower : MonoBehaviour
     {
         if (!isBuilt) return;
 
-        Debug.Log("La torre está buscando...");
         UpdateTarget();
 
         if (currentTarget == null) return;
@@ -54,10 +53,7 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void UpdateTarget()
     {
-        Debug.Log("Me estoy ejecutando jijiji");
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-
-        Debug.Log(gameObject.name + " ve " + enemies.Length + " enemigos en el mapa.");
 
         float shortestDistance = Mathf.Infinity;
         GameObject nearestEnemy = null;
@@ -73,15 +69,9 @@ public class Tower : MonoBehaviour
             }
         }
 
-        if (nearestEnemy != null)
-        {
-            Debug.Log("El enemigo más cercano está a una distancia de: " + shortestDistance + ". Mi radio es: " + attackRadius);
-        }
-
         if (nearestEnemy != null && shortestDistance <= attackRadius)
         {
             currentTarget = nearestEnemy.transform;
-            Debug.Log("¡OBJETIVO FIJADO! Preparando disparo...");
         }
         else
         {
