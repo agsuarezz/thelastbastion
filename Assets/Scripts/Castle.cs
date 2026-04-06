@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 /// <summary>
 /// Gestiona la life del castillo, actualiza la UI y dispara el Game Over.
 /// </summary>
 public class castleScript : MonoBehaviour
 {
     // Referencia al texto en la interfaz que muestra la vida actual.
-    [Tooltip("Texto de la UI donde se muestra la vida restante.")]
+    [Tooltip("Texto y Slider de la UI donde se muestra la vida restante.")]
     public TextMeshProUGUI lifeText;
+    public Slider lifeSlider;
     // Puntos de vida actuales de la base o del jugador (Inicia en 100).
     [Tooltip("Cantidad inicial de vida del jugador o la base.")]
     public int life = 100;
@@ -31,6 +33,11 @@ public class castleScript : MonoBehaviour
     private void Start()
     {
         lifeMax = life;
+        if(lifeSlider != null)
+        {
+            lifeSlider.maxValue = lifeMax;
+            lifeSlider.value = life;
+        }
         EndPanel.SetActive(false);
     }
     /// <summary>
@@ -40,6 +47,8 @@ public class castleScript : MonoBehaviour
     private void FixedUpdate()
     {
         lifeText.text = life.ToString() + "/" + lifeMax;
+        if(lifeSlider != null)
+            lifeSlider.value = life;
     }
     /// <summary>
     /// Comprueba si el tag del objecto con el que colisiona, es enemigo 
