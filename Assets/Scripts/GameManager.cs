@@ -142,7 +142,7 @@ public class GameManager : MonoBehaviour
             if (countRound % 2 == 0 && countRound != 0)
             {
                 int random = Random.Range(0, randomEvents.eventList.Count-1);
-                StartCoroutine(randomEvents.eventList[4]());
+                StartCoroutine(randomEvents.eventList[random]());
             }
         }
         timeinGame += Time.deltaTime;
