@@ -248,8 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6265b332be243f44ca43c958e7f591e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  maxLife: 50
+  enemyData: {fileID: 11400000, guid: ef6e8e2cbdc866342ba4a1cd9397feff, type: 2}
   lifeSlider: {fileID: 8856403064977849420}
 --- !u!1 &4049809416180203725
 GameObject:

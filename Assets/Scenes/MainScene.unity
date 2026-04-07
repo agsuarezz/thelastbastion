@@ -280,6 +280,7 @@ GameObject:
   - component: {fileID: 64441736}
   - component: {fileID: 64441735}
   - component: {fileID: 64441737}
+  - component: {fileID: 64441738}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -305,6 +306,7 @@ MonoBehaviour:
   spawner: {fileID: 452400196}
   castlescript: {fileID: 196915343}
   countMoneyText: {fileID: 1781555234}
+  randomEvent: {fileID: 64441738}
 --- !u!4 &64441736
 Transform:
   m_ObjectHideFlags: 0
@@ -417,6 +419,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &64441738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 64441734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1cb1cdc44fe8a24c8b6a7cf3e22612b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &66280147
 GameObject:
   m_ObjectHideFlags: 0
@@ -6341,7 +6355,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 3934873377327053164, guid: bb64c829220b6d642925637897228475, type: 3}
-  enemyDataToSpawn: {fileID: 0}
+  enemyDataToSpawn: {fileID: 11400000, guid: ef6e8e2cbdc866342ba4a1cd9397feff, type: 2}
   enemyRoute: {fileID: 1726024625}
 --- !u!4 &452400197
 Transform:

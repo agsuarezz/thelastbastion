@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
     public static int countTower = 0;
     public static int countMoney = 0;
     public TextMeshProUGUI countMoneyText;
+
+    public randomEvents randomEvent;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -95,6 +97,10 @@ public class GameManager : MonoBehaviour
             waitTime(5f);
             spawner.restartCountEnemy();
             messageRound.text = "Ronda " + countRound;
+            if (countRound % 2 == 0 && countRound != 0)
+            {
+                StartCoroutine(randomEvent.EventGoblinStampede());
+            }
         }
         timeinGame += Time.deltaTime;
         countMoneyText.text = "Dinero: " + countMoney;

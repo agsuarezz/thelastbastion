@@ -36,8 +36,6 @@ public class Spawner : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        Debug.Log("enemiesAlive " + enemiesAlive);
-        Debug.Log("enemiesSpawned " + enemiesSpawned);
         if(enemiesSpawned < countMaxEnemy)
         {
             spawnTimer -= Time.deltaTime;
