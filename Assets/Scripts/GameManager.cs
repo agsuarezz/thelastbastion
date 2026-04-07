@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using static Unity.VisualScripting.FlowStateWidget;
 /// <summary>
 /// Controla la lógica general del nivel, la creación de defensas y el reinicio de la partida.
 /// </summary>
@@ -43,6 +45,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI countMoneyText;
 
     public randomEvents randomEvent;
+    public static int globalMoneyMultiplier = 1;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -99,7 +102,8 @@ public class GameManager : MonoBehaviour
             messageRound.text = "Ronda " + countRound;
             if (countRound % 2 == 0 && countRound != 0)
             {
-                StartCoroutine(randomEvent.EventGoblinStampede());
+                int random = Random.Range(0, randomEvents.eventList.Count-1);
+                StartCoroutine(randomEvents.eventList[1]());
             }
         }
         timeinGame += Time.deltaTime;

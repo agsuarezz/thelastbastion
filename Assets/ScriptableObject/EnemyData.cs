@@ -6,5 +6,4 @@ public class EnemyData : ScriptableObject
     public float health;
     public int damage;
     public float speed;
-    public float speedDefault;
 }

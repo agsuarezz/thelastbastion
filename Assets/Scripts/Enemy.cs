@@ -15,12 +15,14 @@ public class Enemy : MonoBehaviour
     public Slider lifeSlider;
 
     // Estado interno de la vida actual del enemigo
-    private float currentLife;
-    private float currentSpeed;
+    public float currentLife;
+    public float currentSpeed;
 
     private Transform[] pathWaypoints;
     private int currentWaypointIndex = 0;
     private bool isDead = false;
+
+    public static float globalSpeedMultiplier = 1f;
 
     /// <summary>
     /// Mueve al enemigo hacia la derecha de la pantalla de forma continua y fluida.
@@ -36,8 +38,7 @@ public class Enemy : MonoBehaviour
         {
             currentLife = 100f;
             currentSpeed = 1.5f;
-        }
-            
+        }  
 
         if (lifeSlider != null && enemyData != null)
         {
@@ -64,7 +65,7 @@ public class Enemy : MonoBehaviour
         Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
 
         Vector3 direction = targetWaypoint.position - transform.position;
-        transform.Translate(direction.normalized * currentSpeed * Time.deltaTime, Space.World);
+        transform.Translate(direction.normalized * currentSpeed * globalSpeedMultiplier * Time.deltaTime, Space.World);
 
         if (Vector2.Distance(transform.position, targetWaypoint.position) <= 0.1f)
         {
@@ -79,7 +80,6 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damageAmount)
     {
         currentLife -= damageAmount;
-        Debug.Log(currentLife);
  
         if (lifeSlider != null)
         {
@@ -90,7 +90,7 @@ public class Enemy : MonoBehaviour
         {
             isDead = true;
             GameManager.enemiesDestroyed += 1;
-            GameManager.countMoney += 10;
+            GameManager.countMoney += 10 * GameManager.globalMoneyMultiplier;
             DestroyEnemy();
         }
     }

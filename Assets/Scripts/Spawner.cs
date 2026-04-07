@@ -25,11 +25,6 @@ public class Spawner : MonoBehaviour
 
     // Cantidad límite de enemigos que el Spawner debe soltar en esta ronda.
     int countMaxEnemy = 5;
-    public void Start()
-    {
-        Debug.Log("enemiesAlive" + enemiesAlive);
-        Debug.Log("enemiesSpawned" + enemiesSpawned);
-    }
     /// <summary>
     /// Reduce el temporizador frame a frame. Cuando llega a cero o menos, 
     /// reinicia el contador y llama a la función para crear el enemigo.
