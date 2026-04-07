@@ -14,14 +14,15 @@ public class Enemy : MonoBehaviour
     [Tooltip("Barra de vida de la interfaz (UI).")]
     public Slider lifeSlider;
 
-    // Estado interno de la vida actual del enemigo
+    // Estado de la vida y speed actual del enemigo
     public float currentLife;
     public float currentSpeed;
 
     private Transform[] pathWaypoints;
     private int currentWaypointIndex = 0;
+    // 
     private bool isDead = false;
-
+    // Se utiliza en randomEvents para que los enemigos vaya mas rapido
     public static float globalSpeedMultiplier = 1f;
 
     /// <summary>

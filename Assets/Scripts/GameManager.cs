@@ -41,10 +41,25 @@ public class GameManager : MonoBehaviour
     public static int enemiesDestroyed = 0;
     // Cantidad total de torres que el jugador ha construido en el mapa a lo largo del juego.
     public static int countTower = 0;
-    public static int countMoney = 0;
-    public TextMeshProUGUI countMoneyText;
+    [Header("Economía y Eventos")]
 
+    /// <summary>
+    /// Cantidad actual de monedas que posee el jugador para construir y mejorar torres. 
+    /// Al ser estática, permite que cualquier script (como los enemigos al ser destruidos) pueda modificarla fácilmente.
+    /// </summary>
+    public static int countMoney = 0;
+    /// <summary>
+    /// Referencia al componente de texto de la interfaz gráfica (UI) encargado de mostrar el oro disponible en pantalla.
+    /// </summary>
+    public TextMeshProUGUI countMoneyText;
+    /// <summary>
+    /// Enlace al script gestor de eventos aleatorios, utilizado para disparar eventos (como estampidas o bonus) desde aquí.
+    /// </summary>
     public randomEvents randomEvent;
+    /// <summary>
+    /// Multiplicador global que afecta a todo el oro ganado durante la partida. 
+    /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales (ej. Frenesí Capitalista).
+    /// </summary>
     public static int globalMoneyMultiplier = 1;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
@@ -82,15 +97,17 @@ public class GameManager : MonoBehaviour
     }
     /// <summary>
     /// Se ejecuta antes que el Start. Ideal para limpiar variables estáticas 
-    /// y asegurar que la ronda vuelva a 0 si el jugador reinicia la escena.
     /// </summary>
     private void Awake()
     {
         countRound = 0;
         countMoney = 200;
+        globalMoneyMultiplier = 1;
+        Enemy.globalSpeedMultiplier = 1f;
     }
     /// <summary>
     /// Comprueba en cada frame si el Spawner indica que la ronda ha finalizado.
+    /// En caso de que la ronda sea par y no sea la ronda 0, activa un evento random
     /// En caso afirmativo, prepara la siguiente oleada y actualiza el texto en pantalla.
     /// </summary>
     public void Update()
@@ -109,6 +126,10 @@ public class GameManager : MonoBehaviour
         timeinGame += Time.deltaTime;
         countMoneyText.text = "Dinero: " + countMoney;
     }
+    /// <summary>
+    /// Corrutina de utilidad para pausar la ejecución de un proceso durante un tiempo determinado.
+    /// </summary>
+    /// <param name="time">El tiempo en segundos que el sistema debe esperar antes de continuar con la siguiente línea de código.</param>
     public IEnumerator waitTime(float time)
     {
         yield return new WaitForSeconds(time);
