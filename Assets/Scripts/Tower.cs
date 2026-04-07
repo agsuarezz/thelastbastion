@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -43,7 +44,7 @@ public class Tower : MonoBehaviour
         if (fireTimer <= 0)
         {
             Shoot();
-            fireTimer = fireCooldown;
+            fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
         }
     }
 
@@ -98,6 +99,7 @@ public class Tower : MonoBehaviour
     /// Se dispara automáticamente al hacer clic izquierdo sobre el objeto. 
     /// Construye la torre, actualiza las colisiones y desactiva el candado lógico.
     /// Suma uno al contador de torres activas
+    /// 
     /// </summary>
     private void OnMouseDown()
     {
@@ -110,7 +112,7 @@ public class Tower : MonoBehaviour
             this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
             isBuilt = true;
             GameManager.countTower += 1;
-            GameManager.countMoney -= 50;
+            GameManager.countMoney -= (50 * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else if (spriteRenderer.sprite.name != "Square")
         {

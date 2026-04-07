@@ -31,6 +31,9 @@ public class randomEvents : MonoBehaviour
         // Cargamos el catálogo de eventos disponibles en el juego
         eventList.Add(EventGoblinStampede);
         eventList.Add(EventLuckyGold);
+        eventList.Add(EventTowerDiscount);
+        eventList.Add(EventTankEnemies);
+        eventList.Add(EventArcherStrike);
     }
 
     /// <summary>
@@ -39,12 +42,12 @@ public class randomEvents : MonoBehaviour
     /// </summary>
     public IEnumerator EventGoblinStampede()
     {
-        Enemy.globalSpeedMultiplier = 2f;
+        GameManager.globalSpeedMultiplier = 2f;
         messageEvent.text = "Error 404: Exceso de cafeína detectado en el enemigo.";
 
         yield return new WaitForSeconds(5f);
 
-        Enemy.globalSpeedMultiplier = 1f;
+        GameManager.globalSpeedMultiplier = 1f;
         messageEvent.text = "";
     }
 
@@ -60,6 +63,45 @@ public class randomEvents : MonoBehaviour
         yield return new WaitForSeconds(10f);
 
         GameManager.globalMoneyMultiplier = 1;
+        messageEvent.text = "";
+    }
+    /// <summary>
+    /// Evento Positivo: "Rebajas del Black Friday".
+    /// Reduce a la mitad el coste de construcción de todas las torres durante 10 segundos.
+    /// Requiere aplicar 'globalCostMultiplier' al precio de la torre antes de restar el oro.
+    /// </summary>
+    public IEnumerator EventTowerDiscount()
+    {
+        GameManager.globalCostMultiplier = 0.5f;
+        messageEvent.text = "¡Black Friday en la herrería! Torres a mitad de precio";
+        yield return new WaitForSeconds(10f);
+        GameManager.globalCostMultiplier = 1f;
+        messageEvent.text = "";
+    }
+    /// <summary>
+    /// Evento Negativo: "Armaduras de Amazon Prime".
+    /// Los enemigos reciben la mitad de daño durante 10 segundos.
+    /// Requiere aplicar 'Enemy.globalDamageTakenMultiplier' en el método TakeDamage del enemigo.
+    /// </summary>
+    public IEnumerator EventTankEnemies()
+    {
+        GameManager.globalDamageTakenMultiplier = 0.5f;
+        messageEvent.text = "Los duendes se han puesto doble calzoncillo. Reciben menos daño.";
+        yield return new WaitForSeconds(10f);
+        GameManager.globalDamageTakenMultiplier = 1f;
+        messageEvent.text = "";
+    }
+    /// <summary>
+    /// Evento Caótico: "Huelga de Arqueros".
+    /// Las torres tardan el doble en disparar durante 10 segundos.
+    /// Requiere aplicar la variable en el temporizador de disparo del script de la Torre.
+    /// </summary>
+    public IEnumerator EventArcherStrike()
+    {
+        GameManager.globalAttackSpeedMultiplier = 2;
+        messageEvent.text = "Sindicato de tiradores en huelga. Disparos más lentos.";
+        yield return new WaitForSeconds(10f);
+        GameManager.globalAttackSpeedMultiplier = 1;
         messageEvent.text = "";
     }
 }

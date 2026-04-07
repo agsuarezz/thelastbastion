@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using static Unity.VisualScripting.FlowStateWidget;
+using static UnityEditor.PlayerSettings;
 /// <summary>
 /// Controla la lógica general del nivel, la creación de defensas y el reinicio de la partida.
 /// </summary>
@@ -62,6 +63,24 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public static int globalMoneyMultiplier = 1;
     /// <summary>
+    /// Multiplicador global que afecta al precio de la torre. 
+    /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales.
+    /// </summary>
+    public static float globalCostMultiplier = 1f;
+    /// <summary>
+    /// Multiplicador global que afecta a la vida que quita al enemigo. 
+    /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales.
+    /// </summary>
+    public static float globalDamageTakenMultiplier = 1f;
+    /// <summary>
+    /// Multiplicador global que afecta al cooldown de disparo 
+    /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales.
+    /// </summary>
+    public static int globalAttackSpeedMultiplier = 1;
+    // Se utiliza en randomEvents para que los enemigos vaya mas rapido
+    public static float globalSpeedMultiplier = 1f;
+
+    /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
     /// Añade al texto de Ronda el numero de la ronda
@@ -103,7 +122,10 @@ public class GameManager : MonoBehaviour
         countRound = 0;
         countMoney = 200;
         globalMoneyMultiplier = 1;
-        Enemy.globalSpeedMultiplier = 1f;
+        globalCostMultiplier = 1;
+        globalAttackSpeedMultiplier = 1;
+        globalDamageTakenMultiplier = 1f;
+        globalSpeedMultiplier = 1f;
     }
     /// <summary>
     /// Comprueba en cada frame si el Spawner indica que la ronda ha finalizado.
@@ -120,7 +142,7 @@ public class GameManager : MonoBehaviour
             if (countRound % 2 == 0 && countRound != 0)
             {
                 int random = Random.Range(0, randomEvents.eventList.Count-1);
-                StartCoroutine(randomEvents.eventList[1]());
+                StartCoroutine(randomEvents.eventList[4]());
             }
         }
         timeinGame += Time.deltaTime;

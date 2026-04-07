@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
@@ -22,8 +23,6 @@ public class Enemy : MonoBehaviour
     private int currentWaypointIndex = 0;
     // 
     private bool isDead = false;
-    // Se utiliza en randomEvents para que los enemigos vaya mas rapido
-    public static float globalSpeedMultiplier = 1f;
 
     /// <summary>
     /// Mueve al enemigo hacia la derecha de la pantalla de forma continua y fluida.
@@ -66,7 +65,7 @@ public class Enemy : MonoBehaviour
         Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
 
         Vector3 direction = targetWaypoint.position - transform.position;
-        transform.Translate(direction.normalized * currentSpeed * globalSpeedMultiplier * Time.deltaTime, Space.World);
+        transform.Translate(direction.normalized * currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime, Space.World);
 
         if (Vector2.Distance(transform.position, targetWaypoint.position) <= 0.1f)
         {
@@ -80,8 +79,7 @@ public class Enemy : MonoBehaviour
     /// </summary>
     public void TakeDamage(int damageAmount)
     {
-        currentLife -= damageAmount;
- 
+        currentLife -= (damageAmount * GameManager.globalDamageTakenMultiplier).ConvertTo<int>();
         if (lifeSlider != null)
         {
             lifeSlider.value = currentLife;
