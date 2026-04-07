@@ -7,6 +7,8 @@ public class Spawner : MonoBehaviour
 {
     [Tooltip("El prefab del enemigo que se va a instanciar en la escena.")]
     public GameObject prefab;
+    [Tooltip("Los datos (ScriptableObject) que definirán al enemigo (Ej: GoblinData, OrcData).")]
+    public EnemyData enemyDataToSpawn;
     [Tooltip("La ruta que seguirán los enemigos generados por este Spawner.")]
     public LevelRoute enemyRoute;
     // Tiempo en segundos que debe transcurrir entre la aparición de cada enemigo.
@@ -65,6 +67,8 @@ public class Spawner : MonoBehaviour
         if (enemyScript != null)
         {
             enemyScript.SetPath(enemyRoute.waypoints);
+
+            enemyScript.enemyData = enemyDataToSpawn;
         }
         enemiesSpawned++;
         enemiesAlive++;

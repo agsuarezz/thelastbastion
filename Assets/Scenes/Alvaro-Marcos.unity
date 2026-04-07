@@ -4991,6 +4991,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 3934873377327053164, guid: bb64c829220b6d642925637897228475, type: 3}
+  enemyDataToSpawn: {fileID: 11400000, guid: ef6e8e2cbdc866342ba4a1cd9397feff, type: 2}
   enemyRoute: {fileID: 1726024625}
 --- !u!4 &452400197
 Transform:

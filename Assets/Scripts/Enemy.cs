@@ -6,17 +6,16 @@ using UnityEngine.UI;
 /// </summary>
 public class Enemy : MonoBehaviour
 {
-    [Tooltip("Velocidad a la que se desplaza el enemigo.")]
-    public float speed = 2f;
+    [Header("Datos (Inyectados por el Spawner)")]
+    [Tooltip("El ScriptableObject con las estadísticas base (Vida, Daño, Velocidad).")]
+    public EnemyData enemyData;
 
-    [Tooltip("Vida del enemigo.")]
-    public int maxLife = 100;
-
+    [Header("UI")]
     [Tooltip("Barra de vida de la interfaz (UI).")]
     public Slider lifeSlider;
 
     // Estado interno de la vida actual del enemigo
-    private int currentLife;
+    private float currentLife;
 
     private Transform[] pathWaypoints;
     private int currentWaypointIndex = 0;
@@ -27,11 +26,19 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        currentLife = maxLife;
-
-        if (lifeSlider != null)
+        if (enemyData != null)
         {
-            lifeSlider.maxValue = maxLife;
+            currentLife = enemyData.health;
+        }
+        else 
+        {
+            currentLife = 100f;
+        }
+            
+
+        if (lifeSlider != null && enemyData != null)
+        {
+            lifeSlider.maxValue = enemyData.health;
             lifeSlider.value = currentLife;
         }
     }
@@ -54,7 +61,7 @@ public class Enemy : MonoBehaviour
         Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
 
         Vector3 direction = targetWaypoint.position - transform.position;
-        transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+        transform.Translate(direction.normalized * enemyData.speed * Time.deltaTime, Space.World);
 
         if (Vector2.Distance(transform.position, targetWaypoint.position) <= 0.1f)
         {

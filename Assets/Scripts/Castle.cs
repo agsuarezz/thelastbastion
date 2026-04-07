@@ -52,16 +52,23 @@ public class castleScript : MonoBehaviour
     }
     /// <summary>
     /// Comprueba si el tag del objecto con el que colisiona, es enemigo 
-    /// En caso de que si, lo destruye y le resta 20 vida al castillo
+    /// En caso de que si, lee su daño, le resta esa vida al castillo y lo destruye
     /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.CompareTag("Enemy") && !isGameOver)
+        if (other.CompareTag("Enemy") && !isGameOver)
         {
-           other.gameObject.GetComponent<Enemy>().DestroyEnemy();
-            life -= 20;
+            // 1. Obtenemos el script del enemigo que nos acaba de chocar
+            Enemy atacante = other.gameObject.GetComponent<Enemy>();
+
+            // 2. Le restamos al castillo el daño específico de ESE enemigo
+            life -= atacante.enemyData.damage;
+
+            // 3. Reproducimos el sonido, comprobamos la vida y destruimos al enemigo
             StartCoroutine(sound(GameManager.soundTakeLife));
             checkLife();
+
+            atacante.DestroyEnemy();
         }
     }
     /// <summary>
