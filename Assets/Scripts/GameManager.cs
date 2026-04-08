@@ -141,8 +141,15 @@ public class GameManager : MonoBehaviour
             messageRound.text = "Ronda " + countRound;
             if (countRound % 2 == 0 && countRound != 0)
             {
-                int random = Random.Range(0, randomEvents.eventList.Count-1);
+                Debug.Log(randomEvents.eventList.Count);
+                if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
+                {
+                    this.GetComponent<randomEvents>().loadEventsInList();
+                }
+                int random = Random.Range(0, randomEvents.eventList.Count);
                 StartCoroutine(randomEvents.eventList[random]());
+                randomEvents.eventList.RemoveAt(random);
+            
             }
         }
         timeinGame += Time.deltaTime;

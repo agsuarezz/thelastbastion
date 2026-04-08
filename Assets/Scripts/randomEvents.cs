@@ -27,13 +27,7 @@ public class randomEvents : MonoBehaviour
     {
         // Inicializamos la lista vacía para evitar errores de referencia nula
         eventList = new List<System.Func<IEnumerator>>();
-
-        // Cargamos el catálogo de eventos disponibles en el juego
-        eventList.Add(EventGoblinStampede);
-        eventList.Add(EventLuckyGold);
-        eventList.Add(EventTowerDiscount);
-        eventList.Add(EventTankEnemies);
-        eventList.Add(EventArcherStrike);
+        loadEventsInList();
     }
 
     /// <summary>
@@ -103,5 +97,14 @@ public class randomEvents : MonoBehaviour
         yield return new WaitForSeconds(10f);
         GameManager.globalAttackSpeedMultiplier = 1;
         messageEvent.text = "";
+    }
+    public void loadEventsInList()
+    {
+        // Cargamos el catálogo de eventos disponibles en el juego
+        eventList.Add(EventGoblinStampede);
+        eventList.Add(EventLuckyGold);
+        eventList.Add(EventTowerDiscount);
+        eventList.Add(EventTankEnemies);
+        eventList.Add(EventArcherStrike);
     }
 }
