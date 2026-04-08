@@ -1,108 +1,170 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-// 1. Creamos una estructura para vincular cada Pooler con sus Datos en el Inspector
 [System.Serializable]
 public struct EnemyTypeConfig
 {
     [Tooltip("El Pooler que contiene los prefabs de este enemigo.")]
     public ObjectPooler pooler;
+
     [Tooltip("Los datos (vida, daño, velocidad) para este tipo de enemigo.")]
     public EnemyData enemyData;
+
+    [Tooltip("Cuántos puntos cuesta este enemigo.")]
+    public int cost;
+
+    [Tooltip("Ronda mínima a partir de la que puede aparecer.")]
+    public int minRound;
 }
 
-/// <summary>
-/// Se encarga de gestionar el ritmo de aparición y las oleadas, 
-/// eligiendo aleatoriamente entre varios tipos de enemigos.
-/// </summary>
 public class Spawner : MonoBehaviour
 {
     [Header("Ruta")]
-    [Tooltip("La ruta que seguirán los enemigos generados por este Spawner.")]
     public LevelRoute enemyRoute;
-    
-    [Header("Tipos de Enemigos Disponibles")]
-    [Tooltip("Añade aquí los diferentes poolers y sus datos asociados.")]
+
+    [Header("Tipos de Enemigos")]
     [SerializeField] private EnemyTypeConfig[] enemyTypes;
 
-    // Tiempo en segundos que debe transcurrir entre la aparición de cada enemigo.
-    private float spawnInterval = 1f;
-    // Temporizador interno para llevar la cuenta regresiva hasta el próximo spawn.
+    [Header("Spawn")]
+    [SerializeField] private float spawnInterval = 1f;
     private float spawnTimer;
 
     [Header("Sistema de Oleadas")]
     public static int enemiesAlive = 0;
-    int enemiesSpawned = 0;
-    int countMaxEnemy = 5;
+
+    private List<EnemyTypeConfig> currentWave = new List<EnemyTypeConfig>();
+    private int currentWaveIndex = 0;
 
     private void Awake()
     {
         enemiesAlive = 0;
-        
+
         if (enemyTypes == null || enemyTypes.Length == 0)
         {
-            Debug.LogError("¡ATENCIÓN! No has asignado ningún tipo de enemigo al Spawner: " + gameObject.name);
+            Debug.LogError("No hay enemigos asignados al Spawner");
         }
     }
-    
+
+    private void Start()
+    {
+        PrepareWave();
+    }
+
     private void Update()
     {
-        if(enemiesSpawned < countMaxEnemy)
+        if (currentWaveIndex < currentWave.Count)
         {
             spawnTimer -= Time.deltaTime;
 
-            if (spawnTimer <= 0)
+            if (spawnTimer <= 0f)
             {
                 spawnTimer = spawnInterval;
-                SpawnEnemy();
+                SpawnEnemyFromWave();
             }
         }
     }
 
-    private void SpawnEnemy()
+    // =========================
+    // GENERACIÓN DE OLEADA
+    // =========================
+
+    private void PrepareWave()
+    {
+        int round = GameManager.countRound;
+        int budget = GetWaveBudget(round);
+
+        currentWave = GenerateWave(round, budget);
+        currentWaveIndex = 0;
+        spawnTimer = spawnInterval;
+
+        Debug.Log($"Ronda {round} | Presupuesto: {budget} | Enemigos: {currentWave.Count}");
+    }
+
+    private int GetWaveBudget(int round)
+    {
+        return 5 + round * 3;
+    }
+
+    private List<EnemyTypeConfig> GenerateWave(int round, int budget)
+    {
+        List<EnemyTypeConfig> wave = new List<EnemyTypeConfig>();
+
+        while (budget > 0)
+        {
+            List<EnemyTypeConfig> available = new List<EnemyTypeConfig>();
+
+            foreach (var enemy in enemyTypes)
+            {
+                if (enemy.minRound <= round && enemy.cost <= budget)
+                {
+                    available.Add(enemy);
+                }
+            }
+
+            if (available.Count == 0)
+                break;
+
+            // Selección aleatoria simple
+            EnemyTypeConfig selected = available[Random.Range(0, available.Count)];
+
+            wave.Add(selected);
+            budget -= selected.cost;
+        }
+
+        return wave;
+    }
+
+    // =========================
+    // SPAWN
+    // =========================
+
+    private void SpawnEnemyFromWave()
     {
         if (enemyRoute == null || enemyRoute.waypoints.Length == 0)
         {
-            Debug.LogWarning("El Spawner no tiene una ruta asignada.");
+            Debug.LogWarning("Spawner sin ruta");
             return;
         }
 
-        if (enemyTypes == null || enemyTypes.Length == 0) return;
+        if (currentWaveIndex >= currentWave.Count)
+            return;
 
-        // 2. Elegimos un enemigo de forma totalmente aleatoria
-        int randomIndex = Random.Range(0, enemyTypes.Length);
-        EnemyTypeConfig chosenEnemy = enemyTypes[randomIndex];
+        EnemyTypeConfig enemyConfig = currentWave[currentWaveIndex];
 
-        // 3. Verificamos que el pooler de ese enemigo esté asignado
-        if (chosenEnemy.pooler == null) 
+        if (enemyConfig.pooler == null)
         {
-            Debug.LogWarning("Falta un pooler en el índice " + randomIndex);
+            Debug.LogWarning("Enemy sin pooler");
+            currentWaveIndex++;
             return;
         }
 
-        // 4. Pedimos el objeto al pooler elegido
-        GameObject spawnedObject = chosenEnemy.pooler.GetPooledObject();
-        
-        if (spawnedObject != null)
+        GameObject obj = enemyConfig.pooler.GetPooledObject();
+
+        if (obj != null)
         {
-            spawnedObject.transform.position = enemyRoute.waypoints[0].position;
-            Enemy enemyScript = spawnedObject.GetComponent<Enemy>();
-            
-            if (enemyScript != null)
+            obj.transform.position = enemyRoute.waypoints[0].position;
+
+            Enemy enemy = obj.GetComponent<Enemy>();
+            if (enemy != null)
             {
-                enemyScript.SetPath(enemyRoute.waypoints);
-                // Le inyectamos los datos específicos del enemigo que ha tocado
-                enemyScript.enemyData = chosenEnemy.enemyData;
+                enemy.SetPath(enemyRoute.waypoints);
+                enemy.enemyData = enemyConfig.enemyData;
             }
 
-            spawnedObject.SetActive(true);
-            enemiesSpawned++;
+            obj.SetActive(true);
+
+            currentWaveIndex++;
             enemiesAlive++;
         }
     }
 
+    // =========================
+    // CONTROL DE RONDA
+    // =========================
+
     public bool statusRound()
     {
-        if (enemiesAlive <= 0 && enemiesSpawned == countMaxEnemy)
+        if (enemiesAlive <= 0 && currentWaveIndex >= currentWave.Count)
         {
             GameManager.countRound += 1;
             return true;
@@ -112,8 +174,6 @@ public class Spawner : MonoBehaviour
 
     public void restartCountEnemy()
     {
-        enemiesSpawned = 0;
-        countMaxEnemy += 1;
-        spawnTimer = spawnInterval;
+        PrepareWave();
     }
 }

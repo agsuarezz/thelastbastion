@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     [Header("Atributos del Proyectil")]
     [Tooltip("Velocidad de vuelo del proyectil")]
     public float speed = 15f;
+
     [Tooltip("Cantidad de vida que restará al impactar.")]
     public int damage = 25;
 
@@ -20,16 +21,24 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-        if (target == null)
+        if (target == null || !target.gameObject.activeInHierarchy)
         {
             Destroy(gameObject);
             return;
         }
 
-        Vector3 direction = target.position - transform.position;
         float distanceThisFrame = speed * Time.deltaTime;
 
-        transform.Translate(direction.normalized * distanceThisFrame, Space.World);
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target.position,
+            distanceThisFrame
+        );
+
+        if (Vector3.Distance(transform.position, target.position) < 0.05f)
+        {
+            HitTarget(target.gameObject);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -42,6 +51,12 @@ public class Projectile : MonoBehaviour
 
     private void HitTarget(GameObject enemyGO)
     {
+        if (enemyGO == null || !enemyGO.activeInHierarchy)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Enemy enemyScript = enemyGO.GetComponent<Enemy>();
         if (enemyScript != null)
         {
