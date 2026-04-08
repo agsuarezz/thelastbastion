@@ -34,7 +34,11 @@ public class Enemy : MonoBehaviour
         pathWaypoints = routeWaypoints;
         currentWaypointIndex = 0;
     }
-
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Enemy"))
+            return;
+    }
     private void MoveAlongPath()
     {
         if (pathWaypoints == null || currentWaypointIndex >= pathWaypoints.Length) return;

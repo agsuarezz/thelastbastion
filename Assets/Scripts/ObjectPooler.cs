@@ -24,6 +24,7 @@ public class ObjectPooler : MonoBehaviour
         GameObject obj = Instantiate(prefab, transform);
         obj.SetActive(false);
         _pool.Add(obj);
+        Debug.Log("¡Fabricando clon de emergencia!");
         return obj;
     }
 

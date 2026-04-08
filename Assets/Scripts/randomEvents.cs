@@ -52,7 +52,7 @@ public class randomEvents : MonoBehaviour
     public IEnumerator EventLuckyGold()
     {
         GameManager.globalMoneyMultiplier = 2;
-        messageEvent.text = "Hacienda te ha devuelto la declaración. ¡Disfruta el bonus!";
+        messageEvent.text = "Los duendes acaban de cobrar la nómina y traen los bolsillos llenos. ¡A por ellos!";
 
         yield return new WaitForSeconds(10f);
 

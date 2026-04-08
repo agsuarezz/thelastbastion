@@ -156,6 +156,9 @@ public class Spawner : MonoBehaviour
             currentWaveIndex++;
             enemiesAlive++;
         }
+        {
+            Debug.LogWarning("¡El Pooler está vacío! El Spawner está esperando a que muera un enemigo.");
+        }
     }
 
     // =========================
