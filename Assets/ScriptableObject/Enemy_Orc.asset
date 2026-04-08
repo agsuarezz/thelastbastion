@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7adb479f1fc33764b9ae165b07728445, type: 3}
   m_Name: Enemy_Orc
   m_EditorClassIdentifier: 
-  health: 200
-  damage: 50
+  health: 400
+  damage: 28
   speed: 0.5
   money: 25

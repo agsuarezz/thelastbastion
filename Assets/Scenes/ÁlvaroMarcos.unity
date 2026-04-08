@@ -1651,7 +1651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
@@ -8855,7 +8855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
@@ -9815,7 +9815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
@@ -10788,7 +10788,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
@@ -12372,7 +12372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
@@ -17846,7 +17846,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
@@ -19077,7 +19077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
@@ -19415,7 +19415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
+  attackRadius: 4
   fireCooldown: 1
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   towerImage: {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
