@@ -105,7 +105,7 @@ public class Tower : MonoBehaviour
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
 
-        if (spriteRenderer.sprite.name == "Square" && GameManager.countMoney >= 40)
+        if (spriteRenderer.sprite.name == "Square" && GameManager.countMoney >= 50)
         {
             spriteRenderer.sprite = towerImage.GetComponent<SpriteRenderer>().sprite;
             BoxCollider2D boxCollider2D = towerImage.GetComponent<BoxCollider2D>();

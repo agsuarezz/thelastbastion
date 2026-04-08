@@ -24,29 +24,6 @@ public class Enemy : MonoBehaviour
     // 
     private bool isDead = false;
 
-    /// <summary>
-    /// Mueve al enemigo hacia la derecha de la pantalla de forma continua y fluida.
-    /// </summary>
-    private void Start()
-    {
-        if (enemyData != null)
-        {
-            currentLife = enemyData.health;
-            currentSpeed = enemyData.speed;
-        }
-        else 
-        {
-            currentLife = 100f;
-            currentSpeed = 1.5f;
-        }  
-
-        if (lifeSlider != null && enemyData != null)
-        {
-            lifeSlider.maxValue = enemyData.health;
-            lifeSlider.value = currentLife;
-        }
-    }
-    
     private void Update()
     {
         MoveAlongPath();
@@ -89,7 +66,7 @@ public class Enemy : MonoBehaviour
         {
             isDead = true;
             GameManager.enemiesDestroyed += 1;
-            GameManager.countMoney += 10 * GameManager.globalMoneyMultiplier;
+            GameManager.countMoney += enemyData.money * GameManager.globalMoneyMultiplier;
             DestroyEnemy();
         }
     }
@@ -101,6 +78,29 @@ public class Enemy : MonoBehaviour
     public void DestroyEnemy()
     {
         Spawner.enemiesAlive--;
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+    }
+
+private void OnEnable() 
+    {
+        isDead = false;
+
+        if (enemyData != null)
+        {
+            currentLife = enemyData.health;
+            currentSpeed = enemyData.speed;
+        }
+        else 
+        {
+            currentLife = 100f;
+            currentSpeed = 1.5f;
+        }
+
+        if (lifeSlider != null && enemyData != null)
+        {
+            lifeSlider.maxValue = enemyData.health;
+            lifeSlider.value = currentLife;
+        }
     }
 }
+
