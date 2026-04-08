@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+
 /// <summary>
 /// Controla el comportamiento básico del enemigo, gestionando su movimiento y su destrucción.
 /// </summary>
@@ -21,7 +22,7 @@ public class Enemy : MonoBehaviour
 
     private Transform[] pathWaypoints;
     private int currentWaypointIndex = 0;
-    // 
+
     private bool isDead = false;
 
     private void Update()
@@ -34,11 +35,13 @@ public class Enemy : MonoBehaviour
         pathWaypoints = routeWaypoints;
         currentWaypointIndex = 0;
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Enemy"))
+        if (collision.CompareTag("Enemy"))
             return;
     }
+
     private void MoveAlongPath()
     {
         if (pathWaypoints == null || currentWaypointIndex >= pathWaypoints.Length) return;
@@ -52,6 +55,38 @@ public class Enemy : MonoBehaviour
         {
             currentWaypointIndex++;
         }
+    }
+
+    /// <summary>
+    /// Devuelve cuánto ha avanzado este enemigo por la ruta.
+    /// Cuanto mayor sea el valor, más cerca está del final.
+    /// </summary>
+    public float GetPathProgress()
+    {
+        if (pathWaypoints == null || pathWaypoints.Length == 0)
+            return 0f;
+
+        // Si ya pasó todos los waypoints, es el más adelantado posible
+        if (currentWaypointIndex >= pathWaypoints.Length)
+            return pathWaypoints.Length;
+
+        float progress = currentWaypointIndex;
+
+        Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
+        Transform previousWaypoint = currentWaypointIndex > 0 ? pathWaypoints[currentWaypointIndex - 1] : null;
+
+        if (previousWaypoint != null)
+        {
+            float segmentLength = Vector2.Distance(previousWaypoint.position, targetWaypoint.position);
+            float distanceFromPrevious = Vector2.Distance(previousWaypoint.position, transform.position);
+
+            if (segmentLength > 0f)
+            {
+                progress += Mathf.Clamp01(distanceFromPrevious / segmentLength);
+            }
+        }
+
+        return progress;
     }
 
     /// <summary>
@@ -75,7 +110,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    
     /// <summary>
     /// Destruye a este mismo enemigo. y Resta uno al numero de enemigo en escena
     /// </summary>
@@ -85,7 +119,7 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-private void OnEnable() 
+    private void OnEnable()
     {
         isDead = false;
 
@@ -94,7 +128,7 @@ private void OnEnable()
             currentLife = enemyData.health;
             currentSpeed = enemyData.speed;
         }
-        else 
+        else
         {
             currentLife = 100f;
             currentSpeed = 1.5f;
@@ -107,4 +141,3 @@ private void OnEnable()
         }
     }
 }
-

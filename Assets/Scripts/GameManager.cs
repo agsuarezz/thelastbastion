@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         audioSource = this.GetComponent<AudioSource>();
-        Time.timeScale = 3f;
+        Time.timeScale = 1f;
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
         soundPause = Resources.Load<AudioClip>("soundPause");

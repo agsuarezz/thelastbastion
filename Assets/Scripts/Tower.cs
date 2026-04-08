@@ -49,30 +49,41 @@ public class Tower : MonoBehaviour
     }
 
     /// <summary>
-    /// Busca a todos los enemigos en la escena, calcula la distancia hasta ellos 
-    /// y fija como objetivo al más cercano dentro del radio de ataque.
+    /// Busca enemigos dentro del radio y elige al que más adelantado va en el camino.
     /// </summary>
     private void UpdateTarget()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
-        float shortestDistance = Mathf.Infinity;
-        GameObject nearestEnemy = null;
+        float bestProgress = -Mathf.Infinity;
+        GameObject bestEnemy = null;
 
         foreach (GameObject enemy in enemies)
         {
+            if (!enemy.activeInHierarchy) continue;
+
             float distanceToEnemy = Vector2.Distance(transform.position, enemy.transform.position);
 
-            if (distanceToEnemy < shortestDistance)
+            if (distanceToEnemy <= attackRadius)
             {
-                shortestDistance = distanceToEnemy;
-                nearestEnemy = enemy;
+                Enemy enemyScript = enemy.GetComponent<Enemy>();
+
+                if (enemyScript != null)
+                {
+                    float progress = enemyScript.GetPathProgress();
+
+                    if (progress > bestProgress)
+                    {
+                        bestProgress = progress;
+                        bestEnemy = enemy;
+                    }
+                }
             }
         }
 
-        if (nearestEnemy != null && shortestDistance <= attackRadius)
+        if (bestEnemy != null)
         {
-            currentTarget = nearestEnemy.transform;
+            currentTarget = bestEnemy.transform;
         }
         else
         {
@@ -99,27 +110,28 @@ public class Tower : MonoBehaviour
     /// Se dispara automáticamente al hacer clic izquierdo sobre el objeto. 
     /// Construye la torre, actualiza las colisiones y desactiva el candado lógico.
     /// Suma uno al contador de torres activas
-    /// 
     /// </summary>
     private void OnMouseDown()
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
 
-        if (spriteRenderer.sprite.name == "Square" && GameManager.countMoney >= 50)
+        if (spriteRenderer.sprite.name == "Square" && GameManager.countMoney >= 100)
         {
             spriteRenderer.sprite = towerImage.GetComponent<SpriteRenderer>().sprite;
             BoxCollider2D boxCollider2D = towerImage.GetComponent<BoxCollider2D>();
             this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
             isBuilt = true;
             GameManager.countTower += 1;
-            GameManager.countMoney -= (50 * GameManager.globalCostMultiplier).ConvertTo<int>();
+            GameManager.countMoney -= (100 * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else if (spriteRenderer.sprite.name != "Square")
         {
             StartCoroutine(gameManager.messageError("Lugar ya ocupado"));
         }
         else
+        {
             StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        }
     }
 
     /// <summary>
