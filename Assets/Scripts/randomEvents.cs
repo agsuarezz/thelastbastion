@@ -31,21 +31,6 @@ public class randomEvents : MonoBehaviour
     }
 
     /// <summary>
-    /// Evento Negativo: "Estampida de Duendes". 
-    /// Duplica la velocidad de movimiento de todos los enemigos en el mapa durante 5 segundos.
-    /// </summary>
-    public IEnumerator EventGoblinStampede()
-    {
-        GameManager.globalSpeedMultiplier = 2f;
-        messageEvent.text = "Error 404: Exceso de cafeína detectado en el enemigo.";
-
-        yield return new WaitForSeconds(5f);
-
-        GameManager.globalSpeedMultiplier = 1f;
-        messageEvent.text = "";
-    }
-
-    /// <summary>
     /// Evento Positivo: "Frenesí Capitalista".
     /// Duplica la recompensa de oro obtenida por cada enemigo derrotado durante 10 segundos.
     /// </summary>
@@ -61,28 +46,31 @@ public class randomEvents : MonoBehaviour
     }
     /// <summary>
     /// Evento Positivo: "Rebajas del Black Friday".
-    /// Reduce a la mitad el coste de construcción de todas las torres durante 10 segundos.
-    /// Requiere aplicar 'globalCostMultiplier' al precio de la torre antes de restar el oro.
+    /// Torres a mitad de precio. Además, te devuelve dinero por las torres que ya tengas.
     /// </summary>
     public IEnumerator EventTowerDiscount()
     {
         GameManager.globalCostMultiplier = 0.5f;
-        messageEvent.text = "¡Black Friday en la herrería! Torres a mitad de precio";
+
+        // Buscamos cuántas torres hay ya construidas
+        GameObject[] torresConstruidas = GameObject.FindGameObjectsWithTag("tower");
+        int bonusCashback = torresConstruidas.Length * 20; // 20 monedas de regalo por torre
+
+        // Sumamos el bono
+        GameManager.countMoney += bonusCashback;
+
+        if (bonusCashback > 0)
+        {
+            messageEvent.text = $"¡Black Friday! Torres a mitad de precio. Te devuelven {bonusCashback} de oro por tus compras anteriores.";
+        }
+        else
+        {
+            messageEvent.text = "¡Black Friday en la herrería! Torres a mitad de precio.";
+        }
+
         yield return new WaitForSeconds(10f);
+
         GameManager.globalCostMultiplier = 1f;
-        messageEvent.text = "";
-    }
-    /// <summary>
-    /// Evento Negativo: "Armaduras de Amazon Prime".
-    /// Los enemigos reciben la mitad de daño durante 10 segundos.
-    /// Requiere aplicar 'Enemy.globalDamageTakenMultiplier' en el método TakeDamage del enemigo.
-    /// </summary>
-    public IEnumerator EventTankEnemies()
-    {
-        GameManager.globalDamageTakenMultiplier = 0.5f;
-        messageEvent.text = "Los duendes se han puesto doble calzoncillo. Reciben menos daño.";
-        yield return new WaitForSeconds(10f);
-        GameManager.globalDamageTakenMultiplier = 1f;
         messageEvent.text = "";
     }
     /// <summary>
@@ -98,13 +86,74 @@ public class randomEvents : MonoBehaviour
         GameManager.globalAttackSpeedMultiplier = 1;
         messageEvent.text = "";
     }
+    /// <summary>
+    /// Evento Negativo: "El Cobrador".
+    /// Hacienda se lleva el 20% de tus ahorros actuales. ¡Duele más cuanto más rico eres!
+    /// </summary>
+    public IEnumerator EventTaxCollector()
+    {
+        int taxes = (int)(GameManager.countMoney * 0.20f); // Calcula el 20%
+        GameManager.countMoney -= taxes;
+        messageEvent.text = $"El inspector de Hacienda te ha confiscado {taxes} de Oro por no declarar las torres.";
+
+        yield return new WaitForSeconds(5f);
+        messageEvent.text = "";
+    }
+    /// <summary>
+    /// Evento Negativo (Cruel): "Tasa de Limpieza".
+    /// El multiplicador de dinero pasa a negativo. ¡Pagas por cada baja!
+    /// </summary>
+    public IEnumerator EventCleanUpCosts()
+    {
+        GameManager.globalMoneyMultiplier = -2;
+        messageEvent.text = "Tasa ecológica activa. Ahora PAGAS tú por limpiar los cadáveres de duende.";
+
+        yield return new WaitForSeconds(10f);
+
+        GameManager.globalMoneyMultiplier = 1;
+        messageEvent.text = "";
+    }
+    /// <summary>
+    /// Evento Caótico: "Subidón de Azúcar".
+    /// Los enemigos corren casi al triple de velocidad, pero reciben el DOBLE de daño.
+    /// </summary>
+    public IEnumerator EventSugarRush()
+    {
+        GameManager.globalSpeedMultiplier = 2.5f;
+        GameManager.globalDamageTakenMultiplier = 2f;
+        messageEvent.text = "¡Alguien les dio bebida energética! Corren como locos pero son de cristal.";
+
+        yield return new WaitForSeconds(10f);
+
+        GameManager.globalSpeedMultiplier = 1f;
+        GameManager.globalDamageTakenMultiplier = 1f;
+        messageEvent.text = "";
+    }
+
+    /// <summary>
+    /// Evento Positivo: "Lluvia de Inversiones".
+    /// Hace llover 5 monedas del cielo en posiciones aleatorias para que el jugador las recoja.
+    /// </summary>
+    public IEnumerator EventCoinRain()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-10f, 10f), 10f, 0f);
+            Instantiate(Resources.Load<GameObject>("prefabCoins"), spawnPos, Quaternion.identity);
+        }
+        messageEvent.text = "Bug detectado: Lluvia de monedas. ¡Aprovecha antes del parche!";
+        yield return new WaitForSeconds(5f);
+        messageEvent.text = "";
+    }
     public void loadEventsInList()
     {
-        // Cargamos el catálogo de eventos disponibles en el juego
-        eventList.Add(EventGoblinStampede);
-        eventList.Add(EventLuckyGold);
-        eventList.Add(EventTowerDiscount);
-        eventList.Add(EventTankEnemies);
-        eventList.Add(EventArcherStrike);
+        // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
+        eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
+        eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
+        eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
+        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
+        eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
+        eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
+        eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
     }
 }
