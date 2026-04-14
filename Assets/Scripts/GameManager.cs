@@ -10,6 +10,13 @@ using UnityEngine.UI;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    [Header("Ajustes de Sonido")]
+    public GameObject botonMusica;
+    public Image imagenBotonMusica;
+    public Sprite iconoMusicaOn;
+    public Sprite iconoMusicaOff;
+    private bool musicaActiva = true;
+
     // SpriteRenderer de referencia para asignar el gráfico correcto a las nuevas torres construidas.
     [Tooltip("SpriteRenderer base del cual se copiará el sprite para las torres.")]
     public SpriteRenderer towerImage;
@@ -187,6 +194,22 @@ public class GameManager : MonoBehaviour
         menuPanel.SetActive(!status);
         AudioClip audioClip = Time.timeScale != 1.0f ? GameManager.soundPause : GameManager.soundRestart;
         StartCoroutine(castlescript.sound(audioClip));
+    }
+
+    public void cambiarEstadoMusica()
+    {
+        musicaActiva = !musicaActiva;
+
+        if (musicaActiva)
+        {
+            imagenBotonMusica.sprite = iconoMusicaOn;
+            AudioListener.volume = 1f; // Activa el sonido global
+        }
+        else
+        {
+            imagenBotonMusica.sprite = iconoMusicaOff;
+            AudioListener.volume = 0f; // Silencia el sonido global
+        }
     }
     public void mainMenuButton()
     {
