@@ -64,10 +64,6 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    // =========================
-    // GENERACIÓN DE OLEADA
-    // =========================
-
     private void PrepareWave()
     {
         int round = GameManager.countRound;
@@ -104,19 +100,13 @@ public class Spawner : MonoBehaviour
             if (available.Count == 0)
                 break;
 
-            // Selección aleatoria simple
             EnemyTypeConfig selected = available[Random.Range(0, available.Count)];
-
             wave.Add(selected);
             budget -= selected.cost;
         }
 
         return wave;
     }
-
-    // =========================
-    // SPAWN
-    // =========================
 
     private void SpawnEnemyFromWave()
     {
@@ -147,8 +137,8 @@ public class Spawner : MonoBehaviour
             Enemy enemy = obj.GetComponent<Enemy>();
             if (enemy != null)
             {
-                enemy.SetPath(enemyRoute.waypoints);
                 enemy.enemyData = enemyConfig.enemyData;
+                enemy.SetPath(enemyRoute.waypoints);
             }
 
             obj.SetActive(true);
@@ -156,14 +146,11 @@ public class Spawner : MonoBehaviour
             currentWaveIndex++;
             enemiesAlive++;
         }
+        else
         {
             Debug.LogWarning("¡El Pooler está vacío! El Spawner está esperando a que muera un enemigo.");
         }
     }
-
-    // =========================
-    // CONTROL DE RONDA
-    // =========================
 
     public bool statusRound()
     {
@@ -172,6 +159,7 @@ public class Spawner : MonoBehaviour
             GameManager.countRound += 1;
             return true;
         }
+
         return false;
     }
 
