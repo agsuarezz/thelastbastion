@@ -1,46 +1,45 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class ObjectPooler : MonoBehaviour
 {
-    [Tooltip("El prefab que se va a instanciar y guardar en el pool.")]
-    [SerializeField] private GameObject prefab;
-    [Tooltip("Cantidad inicial de objetos en el pool.")]
-    [SerializeField] private int poolSize = 5;
+    [Header("Configuración del Pool")]
+    [Tooltip("Prefab que se va a reutilizar")]
+    public GameObject prefab;
 
-    private List<GameObject> _pool;
+    [Tooltip("Cantidad inicial de objetos en el pool")]
+    public int initialSize = 10;
 
-    void Awake()
+    private List<GameObject> pool;
+
+    private void Awake()
     {
-        _pool = new List<GameObject>();
-        for (int i = 0; i < poolSize; i++)
+        pool = new List<GameObject>();
+
+        for (int i = 0; i < initialSize; i++)
         {
-            CreateNewObject();
+            GameObject obj = Instantiate(prefab);
+            obj.SetActive(false);
+            pool.Add(obj);
         }
     }
 
-    private GameObject CreateNewObject()
-    {
-        GameObject obj = Instantiate(prefab, transform);
-        obj.SetActive(false);
-        _pool.Add(obj);
-        Debug.Log("¡Fabricando clon de emergencia!");
-        return obj;
-    }
-
-    /// <summary>
-    /// Busca un objeto inactivo en la lista. Si todos están en uso, crea uno nuevo (Pool Dinámico).
-    /// </summary>
     public GameObject GetPooledObject()
     {
-        for (int i = 0; i < _pool.Count; i++)
+        // Buscar objeto libre
+        for (int i = 0; i < pool.Count; i++)
         {
-            if (!_pool[i].activeInHierarchy)
+            if (!pool[i].activeInHierarchy)
             {
-                return _pool[i];
+                return pool[i];
             }
         }
 
-        return CreateNewObject();
+        // 🔥 IMPORTANTE: pool dinámico (esto evita que se rompa el juego)
+        GameObject newObj = Instantiate(prefab);
+        newObj.SetActive(false);
+        pool.Add(newObj);
+
+        return newObj;
     }
 }

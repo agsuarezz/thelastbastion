@@ -49,20 +49,26 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void HitTarget(GameObject enemyGO)
+   private void HitTarget(GameObject enemyGO)
+{
+    if (enemyGO == null || !enemyGO.activeInHierarchy)
     {
-        if (enemyGO == null || !enemyGO.activeInHierarchy)
+        Destroy(gameObject);
+        return;
+    }
+
+    Enemy enemyScript = enemyGO.GetComponent<Enemy>();
+    if (enemyScript != null)
+    {
+        if (enemyScript.IsDead)
         {
             Destroy(gameObject);
             return;
         }
 
-        Enemy enemyScript = enemyGO.GetComponent<Enemy>();
-        if (enemyScript != null)
-        {
-            enemyScript.TakeDamage(damage);
-        }
-
-        Destroy(gameObject);
+        enemyScript.TakeDamage(damage);
     }
+
+    Destroy(gameObject);
+}
 }

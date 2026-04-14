@@ -52,44 +52,39 @@ public class Tower : MonoBehaviour
     /// Busca enemigos dentro del radio y elige al que más adelantado va en el camino.
     /// </summary>
     private void UpdateTarget()
+{
+    GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+    float bestProgress = -Mathf.Infinity;
+    GameObject bestEnemy = null;
+
+    foreach (GameObject enemy in enemies)
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (!enemy.activeInHierarchy) continue;
 
-        float bestProgress = -Mathf.Infinity;
-        GameObject bestEnemy = null;
+        float distanceToEnemy = Vector2.Distance(transform.position, enemy.transform.position);
 
-        foreach (GameObject enemy in enemies)
+        if (distanceToEnemy <= (attackRadius * GameManager.globalRadiusMultiplier))
         {
-            if (!enemy.activeInHierarchy) continue;
+            Enemy enemyScript = enemy.GetComponent<Enemy>();
 
-            float distanceToEnemy = Vector2.Distance(transform.position, enemy.transform.position);
-
-            if (distanceToEnemy <= (attackRadius * GameManager.globalRadiusMultiplier))
+            if (enemyScript != null)
             {
-                Enemy enemyScript = enemy.GetComponent<Enemy>();
+                if (enemyScript.IsDead) continue;
 
-                if (enemyScript != null)
+                float progress = enemyScript.GetPathProgress();
+
+                if (progress > bestProgress)
                 {
-                    float progress = enemyScript.GetPathProgress();
-
-                    if (progress > bestProgress)
-                    {
-                        bestProgress = progress;
-                        bestEnemy = enemy;
-                    }
+                    bestProgress = progress;
+                    bestEnemy = enemy;
                 }
             }
         }
-
-        if (bestEnemy != null)
-        {
-            currentTarget = bestEnemy.transform;
-        }
-        else
-        {
-            currentTarget = null;
-        }
     }
+
+    currentTarget = bestEnemy != null ? bestEnemy.transform : null;
+}
 
     /// <summary>
     /// Instancia un proyectil en la posición actual de la torre y le asigna el objetivo fijado.

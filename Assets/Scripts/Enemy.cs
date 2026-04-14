@@ -1,22 +1,15 @@
-using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Controla el comportamiento básico del enemigo, gestionando su movimiento y su destrucción.
-/// </summary>
 public class Enemy : MonoBehaviour
 {
     [Header("Datos (Inyectados por el Spawner)")]
-    [Tooltip("El ScriptableObject con las estadísticas base (Vida, Daño, Velocidad).")]
     public EnemyData enemyData;
 
     [Header("UI")]
-    [Tooltip("Barra de vida de la interfaz (UI).")]
     public Slider lifeSlider;
 
-    // Estado de la vida y speed actual del enemigo
     public float currentLife;
     public float currentSpeed;
 
@@ -24,9 +17,23 @@ public class Enemy : MonoBehaviour
     private int currentWaypointIndex = 0;
 
     private bool isDead = false;
+    public bool IsDead => isDead;
+
+    private Animator animator;
+    private Collider2D enemyCollider;
+    private Rigidbody2D rb;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+        enemyCollider = GetComponent<Collider2D>();
+        rb = GetComponent<Rigidbody2D>();
+    }
 
     private void Update()
     {
+        if (isDead) return;
+
         MoveAlongPath();
     }
 
@@ -34,12 +41,6 @@ public class Enemy : MonoBehaviour
     {
         pathWaypoints = routeWaypoints;
         currentWaypointIndex = 0;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Enemy"))
-            return;
     }
 
     private void MoveAlongPath()
@@ -57,16 +58,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Devuelve cuánto ha avanzado este enemigo por la ruta.
-    /// Cuanto mayor sea el valor, más cerca está del final.
-    /// </summary>
     public float GetPathProgress()
     {
         if (pathWaypoints == null || pathWaypoints.Length == 0)
             return 0f;
 
-        // Si ya pasó todos los waypoints, es el más adelantado posible
         if (currentWaypointIndex >= pathWaypoints.Length)
             return pathWaypoints.Length;
 
@@ -89,39 +85,87 @@ public class Enemy : MonoBehaviour
         return progress;
     }
 
-    /// <summary>
-    /// Resta vida al enemigo y actualiza su barra. Si llega a 0, se destruye.
-    /// Suma uno al contador de enemigos Derrotados
-    /// </summary>
     public void TakeDamage(int damageAmount)
     {
+        if (isDead) return;
+
         currentLife -= (damageAmount * GameManager.globalDamageTakenMultiplier).ConvertTo<int>();
+
         if (lifeSlider != null)
         {
-            lifeSlider.value = currentLife;
+            lifeSlider.value = Mathf.Max(currentLife, 0);
         }
 
-        if (currentLife <= 0 && !isDead)
+        if (currentLife <= 0)
         {
-            isDead = true;
-            GameManager.enemiesDestroyed += 1;
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        if (isDead) return;
+
+        isDead = true;
+
+        GameManager.enemiesDestroyed += 1;
+
+        if (enemyData != null)
+        {
             GameManager.countMoney += enemyData.money * GameManager.globalMoneyMultiplier;
+        }
+
+        currentSpeed = 0f;
+
+        if (enemyCollider != null)
+        {
+            enemyCollider.enabled = false;
+        }
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.simulated = false;
+        }
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+        else
+        {
             DestroyEnemy();
         }
     }
 
-    /// <summary>
-    /// Destruye a este mismo enemigo. y Resta uno al numero de enemigo en escena
-    /// </summary>
     public void DestroyEnemy()
     {
         Spawner.enemiesAlive--;
         gameObject.SetActive(false);
     }
 
+    public void OnDeathAnimationFinished()
+    {
+        DestroyEnemy();
+    }
+
     private void OnEnable()
     {
         isDead = false;
+        currentWaypointIndex = 0;
+
+        if (enemyCollider != null)
+        {
+            enemyCollider.enabled = true;
+        }
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.simulated = true;
+        }
 
         if (enemyData != null)
         {
@@ -138,6 +182,12 @@ public class Enemy : MonoBehaviour
         {
             lifeSlider.maxValue = enemyData.health;
             lifeSlider.value = currentLife;
+        }
+
+        if (animator != null)
+        {
+            animator.Rebind();
+            animator.Update(0f);
         }
     }
 }
