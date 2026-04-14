@@ -64,7 +64,7 @@ public class Tower : MonoBehaviour
 
             float distanceToEnemy = Vector2.Distance(transform.position, enemy.transform.position);
 
-            if (distanceToEnemy <= attackRadius)
+            if (distanceToEnemy <= (attackRadius * GameManager.globalRadiusMultiplier))
             {
                 Enemy enemyScript = enemy.GetComponent<Enemy>();
 

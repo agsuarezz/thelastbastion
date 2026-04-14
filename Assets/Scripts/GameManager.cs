@@ -3,9 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using static Unity.VisualScripting.FlowStateWidget;
-using static UnityEditor.PlayerSettings;
+// Las de VisualScripting y UnityEditor han sido eliminadas
+
 /// <summary>
 /// Controla la lógica general del nivel, la creación de defensas y el reinicio de la partida.
 /// </summary>
@@ -76,9 +75,15 @@ public class GameManager : MonoBehaviour
     /// Multiplicador global que afecta al cooldown de disparo 
     /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales.
     /// </summary>
-    public static int globalAttackSpeedMultiplier = 1;
+    public static float globalAttackSpeedMultiplier = 1f;
     // Se utiliza en randomEvents para que los enemigos vaya mas rapido
     public static float globalSpeedMultiplier = 1f;
+    public static float globalRadiusMultiplier = 1f;
+
+    [Header("Sistema de Cartas")]
+    public CardManager cardManager;
+    [Tooltip("Cada cuántas rondas aparecerán las cartas.")]
+    public int roundsForCards = 3;
 
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
@@ -140,6 +145,12 @@ public class GameManager : MonoBehaviour
             waitTime(5f);
             spawner.restartCountEnemy();
             messageRound.text = "Ronda " + countRound;
+
+            if (countRound % roundsForCards == 0 && countRound != 0)
+            {
+                if(cardManager != null) cardManager.ShowCards();
+            }
+            
             if (countRound % 2 == 0 && countRound != 0)
             {
                 Debug.Log(randomEvents.eventList.Count);
