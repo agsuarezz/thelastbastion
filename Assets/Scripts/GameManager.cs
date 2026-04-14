@@ -220,8 +220,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void restartGame()
     {
-        changeTimeScale();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Main");
+    }
+    public void cargarGameOver()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("GameOver");
     }
     /// <summary>
     /// Cambia el time.TimeScale

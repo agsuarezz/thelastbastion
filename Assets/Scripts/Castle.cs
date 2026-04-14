@@ -77,29 +77,15 @@ public class castleScript : MonoBehaviour
     /// </summary>
     void checkLife()
     {
-        if (life <= 0)
+        if (life <= 0 && !isGameOver)
         {
             isGameOver = true;
             life = 0;
-            GameManager.changeTimeScale();
-            StartCoroutine(sound(GameManager.soundLostGame));
-            EndPanel.SetActive(true);
-            TextMeshProUGUI[] lista = EndPanel.GetComponentsInChildren<TextMeshProUGUI>();
-            foreach(TextMeshProUGUI text in lista)
-            {
-                if(text.name == "durationText")
-                {
-                    text.text = "Duracion: " + GameManager.timeinGame.ConvertTo<int>().ToString() + " s";
-                }
-                if(text.name == "enemiesDestroyedText")
-                {
-                    text.text = "Enemigo Derrotados: " + GameManager.enemiesDestroyed;
-                }
-                if (text.name == "countTowerText")
-                {
-                    text.text = "Torres Colocadas: " + GameManager.countTower;
-                }
-            }
+
+
+            Time.timeScale = 1f;
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
         }
     }
     /// <summary>
