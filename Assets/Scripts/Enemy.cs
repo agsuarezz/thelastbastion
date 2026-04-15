@@ -19,6 +19,9 @@ public class Enemy : MonoBehaviour
     private bool isDead = false;
     public bool IsDead => isDead;
 
+    // Controla si este enemigo debe mostrar la barra de vida o no
+    private bool showLifeBar = true;
+
     private Animator animator;
     private Collider2D enemyCollider;
     private Rigidbody2D rb;
@@ -41,6 +44,16 @@ public class Enemy : MonoBehaviour
     {
         pathWaypoints = routeWaypoints;
         currentWaypointIndex = 0;
+    }
+
+    public void SetLifeBarVisible(bool visible)
+    {
+        showLifeBar = visible;
+
+        if (lifeSlider != null)
+        {
+            lifeSlider.gameObject.SetActive(visible);
+        }
     }
 
     private void MoveAlongPath()
@@ -178,10 +191,15 @@ public class Enemy : MonoBehaviour
             currentSpeed = 1.5f;
         }
 
-        if (lifeSlider != null && enemyData != null)
+        if (lifeSlider != null)
         {
-            lifeSlider.maxValue = enemyData.health;
-            lifeSlider.value = currentLife;
+            lifeSlider.gameObject.SetActive(showLifeBar);
+
+            if (enemyData != null)
+            {
+                lifeSlider.maxValue = enemyData.health;
+                lifeSlider.value = currentLife;
+            }
         }
 
         if (animator != null)
