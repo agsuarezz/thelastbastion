@@ -182,7 +182,7 @@ public class Enemy : MonoBehaviour
 
         if (enemyData != null)
         {
-            currentLife = enemyData.health;
+            currentLife = enemyData.health * GameManager.globalEnemyHealthMultiplier;
             currentSpeed = enemyData.speed;
         }
         else

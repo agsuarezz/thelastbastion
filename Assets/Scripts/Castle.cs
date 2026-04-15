@@ -62,7 +62,9 @@ public class castleScript : MonoBehaviour
             Enemy atacante = other.gameObject.GetComponent<Enemy>();
 
             // 2. Le restamos al castillo el daño específico de ESE enemigo
-            life -= atacante.enemyData.damage;
+            float damageScaled = atacante.enemyData.damage * GameManager.globalEnemyDamageMultiplier;
+            life -= Mathf.RoundToInt(damageScaled);
+            Debug.Log("El daño del enemigo es " + damageScaled);
 
             // 3. Reproducimos el sonido, comprobamos la vida y destruimos al enemigo
             StartCoroutine(sound(GameManager.soundTakeLife));

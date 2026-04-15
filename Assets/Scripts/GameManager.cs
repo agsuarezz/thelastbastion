@@ -86,6 +86,8 @@ public class GameManager : MonoBehaviour
     // Se utiliza en randomEvents para que los enemigos vaya mas rapido
     public static float globalSpeedMultiplier = 1f;
     public static float globalRadiusMultiplier = 1f;
+    public static float globalEnemyHealthMultiplier = 1f;
+    public static float globalEnemyDamageMultiplier = 1f;
 
     [Header("Sistema de Cartas")]
     public CardManager cardManager;
@@ -139,6 +141,8 @@ public class GameManager : MonoBehaviour
         globalAttackSpeedMultiplier = 1;
         globalDamageTakenMultiplier = 1f;
         globalSpeedMultiplier = 1f;
+        globalEnemyDamageMultiplier = 1f;
+        globalEnemyHealthMultiplier = 1f;
     }
     /// <summary>
     /// Comprueba en cada frame si el Spawner indica que la ronda ha finalizado.
@@ -170,6 +174,9 @@ public class GameManager : MonoBehaviour
                 randomEvents.eventList.RemoveAt(random);
             
             }
+
+            globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
+            globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
         }
         timeinGame += Time.deltaTime;
         countMoneyText.text = "Dinero: " + countMoney;
