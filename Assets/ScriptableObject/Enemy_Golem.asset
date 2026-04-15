@@ -16,3 +16,5 @@ MonoBehaviour:
   damage: 28
   speed: 0.8
   money: 25
+  attackRange: 0.8
+  attackCooldown: 2

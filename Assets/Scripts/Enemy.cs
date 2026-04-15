@@ -19,12 +19,17 @@ public class Enemy : MonoBehaviour
     private bool isDead = false;
     public bool IsDead => isDead;
 
-    // Controla si este enemigo debe mostrar la barra de vida o no
+    // 🔹 MANTENEMOS ESTO (LO USA EL SPAWNER)
     private bool showLifeBar = true;
+
+    // 🔹 NUEVO: ATAQUE AL CASTILLO
+    private bool isAttackingCastle = false;
+    private float attackTimer = 0f;
 
     private Animator animator;
     private Collider2D enemyCollider;
     private Rigidbody2D rb;
+    private castleScript targetCastle;
 
     private void Awake()
     {
@@ -33,9 +38,20 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    private void Start()
+    {
+        targetCastle = FindObjectOfType<castleScript>();
+    }
+
     private void Update()
     {
         if (isDead) return;
+
+        if (isAttackingCastle)
+        {
+            AttackCastle();
+            return;
+        }
 
         MoveAlongPath();
     }
@@ -44,8 +60,11 @@ public class Enemy : MonoBehaviour
     {
         pathWaypoints = routeWaypoints;
         currentWaypointIndex = 0;
+        isAttackingCastle = false;
+        attackTimer = 0f;
     }
 
+    // 🔹 NO LO QUITES (LO USA EL SPAWNER)
     public void SetLifeBarVisible(bool visible)
     {
         showLifeBar = visible;
@@ -58,7 +77,26 @@ public class Enemy : MonoBehaviour
 
     private void MoveAlongPath()
     {
-        if (pathWaypoints == null || currentWaypointIndex >= pathWaypoints.Length) return;
+        if (pathWaypoints == null || pathWaypoints.Length == 0) return;
+
+        // 🔹 CHECK DE RANGO AL CASTILLO
+        if (targetCastle != null && targetCastle.castleCollider != null)
+        {
+            Vector2 closestPoint = targetCastle.castleCollider.ClosestPoint(transform.position);
+            float distance = Vector2.Distance(transform.position, closestPoint);
+
+            if (distance <= enemyData.attackRange)
+            {
+                StartAttackingCastle();
+                return;
+            }
+        }
+
+        if (currentWaypointIndex >= pathWaypoints.Length)
+        {
+            StartAttackingCastle();
+            return;
+        }
 
         Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
 
@@ -71,10 +109,51 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void StartAttackingCastle()
+    {
+        if (isAttackingCastle) return;
+
+        isAttackingCastle = true;
+        currentSpeed = 0f;
+        attackTimer = 0f;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+
+        // Si luego quieres animación:
+        // animator.SetBool("IsAttacking", true);
+    }
+
+    private void AttackCastle()
+    {
+        if (targetCastle == null)
+        {
+            targetCastle = FindObjectOfType<castleScript>();
+            if (targetCastle == null) return;
+        }
+
+        attackTimer -= Time.deltaTime;
+
+        if (attackTimer <= 0f)
+        {
+            float damage = enemyData.damage * GameManager.globalEnemyDamageMultiplier;
+            targetCastle.TakeDamage(Mathf.RoundToInt(damage));
+
+            attackTimer = enemyData.attackCooldown;
+        }
+    }
+
     public float GetPathProgress()
     {
         if (pathWaypoints == null || pathWaypoints.Length == 0)
             return 0f;
+
+        // 🔹 IMPORTANTE: enemigos atacando tienen prioridad máxima
+        if (isAttackingCastle)
+            return pathWaypoints.Length + 1f;
 
         if (currentWaypointIndex >= pathWaypoints.Length)
             return pathWaypoints.Length;
@@ -120,6 +199,7 @@ public class Enemy : MonoBehaviour
         if (isDead) return;
 
         isDead = true;
+        isAttackingCastle = false;
 
         GameManager.enemiesDestroyed += 1;
 
@@ -166,7 +246,9 @@ public class Enemy : MonoBehaviour
     private void OnEnable()
     {
         isDead = false;
+        isAttackingCastle = false;
         currentWaypointIndex = 0;
+        attackTimer = 0f;
 
         if (enemyCollider != null)
         {
@@ -194,12 +276,8 @@ public class Enemy : MonoBehaviour
         if (lifeSlider != null)
         {
             lifeSlider.gameObject.SetActive(showLifeBar);
-
-            if (enemyData != null)
-            {
-                lifeSlider.maxValue = enemyData.health;
-                lifeSlider.value = currentLife;
-            }
+            lifeSlider.maxValue = currentLife;
+            lifeSlider.value = currentLife;
         }
 
         if (animator != null)

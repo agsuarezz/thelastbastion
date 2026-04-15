@@ -9,7 +9,7 @@ public class Tower : MonoBehaviour
 {
     [Header("Atributos de la torre.")]
     [Tooltip("Radio de detección de los enemigos.")]
-    public float attackRadius = 3f;
+    public float attackRadius = 1f;
 
     [Tooltip("Tiempo de recarga en segundos entre cada disparo.")]
     public float fireCooldown = 1f;
