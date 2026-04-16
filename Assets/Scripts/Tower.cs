@@ -147,15 +147,19 @@ public class Tower : MonoBehaviour
         {
             StartCoroutine(gameManager.messageError("Lugar ya ocupado"));
         }
-        else
-        {
-            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
-        }
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres
+    /// </summary>
     public void cancelFunction()
     {
         menuTowerSelect.SetActive(false);
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres y Añade a una Torre Mediana en el lugar seleccionado
+    /// </summary>
     public void towerMedian()
     {
         
@@ -171,7 +175,15 @@ public class Tower : MonoBehaviour
             menuTowerSelect.SetActive(false);
             typeTower = 0;
         }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        }
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres y Añade a una Torre Ligera en el lugar seleccionado
+    /// </summary>
     public void towerLight()
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
@@ -188,7 +200,15 @@ public class Tower : MonoBehaviour
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
             menuTowerSelect.SetActive(false);
         }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        }
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres y Añade a una Torre Pesada en el lugar seleccionado
+    /// </summary>
     public void towerHeavy()
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
@@ -204,6 +224,10 @@ public class Tower : MonoBehaviour
             typeTower = 2;
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
             menuTowerSelect.SetActive(false);
+        }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
         }
     }
     /// <summary>
