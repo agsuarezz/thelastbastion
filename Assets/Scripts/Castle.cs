@@ -24,7 +24,7 @@ public class castleScript : MonoBehaviour
     public BoxCollider2D castleCollider;
 
     private bool isGameOver = false;
-
+    public GameObject LogicaGameOver;
     private void Start()
     {
         lifeMax = life;
@@ -38,6 +38,10 @@ public class castleScript : MonoBehaviour
         if (EndPanel != null)
         {
             EndPanel.SetActive(false);
+        }
+        if(LogicaGameOver != null)
+        {
+            LogicaGameOver.SetActive(false);
         }
     }
 
@@ -74,7 +78,8 @@ public class castleScript : MonoBehaviour
             isGameOver = true;
             life = 0;
             Time.timeScale = 1f;
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
+            EndPanel.SetActive(true);
+            LogicaGameOver.SetActive(true);
         }
     }
 
