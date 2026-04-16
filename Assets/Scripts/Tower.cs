@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class Tower : MonoBehaviour
 {
-    [Header("Atributos de la torre.")]
+    [Header("Atributos de la torre (Algunos son privados).")]
     [Tooltip("Radio de detección de los enemigos.")]
     public float attackRadius = 1f;
 
