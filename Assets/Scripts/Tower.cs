@@ -33,12 +33,15 @@ public class Tower : MonoBehaviour
     private bool isBuilt = false;
     public GameObject menuTowerSelect;
     SpriteRenderer spriteRenderer;
+    deleteTower deletetower;
+    public GameObject deleteTowerGameObject;
     // Flag que indica el tipo de torre elegida por el usuario
     int typeTower = 0;
     private void Start()
     {
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         menuTowerSelect.SetActive(false);
+        deletetower = this.GetComponentInChildren<deleteTower>(true);
     }
     /// <summary>
     /// Comprueba frame a frame si la torre está construida.
@@ -46,6 +49,18 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (deletetower && deletetower.isDeleteTower)
+        {
+            spriteRenderer.sprite = Resources.Load<Sprite>("Square");
+            this.GetComponent<BoxCollider2D>().size = new Vector2(1f, 1f);
+            GameManager.countMoney += 25;
+            isBuilt = false;
+            GameManager.countTower -= 1;
+            if (menuTowerSelect) menuTowerSelect.SetActive(false);
+            deletetower.isDeleteTower = false;
+            deleteTowerGameObject.SetActive(false);
+            return;
+        }
         if (!isBuilt) return;
 
         UpdateTarget();
@@ -104,9 +119,9 @@ public class Tower : MonoBehaviour
     private void Shoot()
     {
         Vector3 startPos = transform.position;
-        if(typeTower == 1)
+        if (typeTower == 1)
             projectilePrefab = projectilePrefabTower2;
-        if(typeTower == 2)
+        if (typeTower == 2)
             projectilePrefab = projectilePrefabTower3;
         GameObject projectileGO = Instantiate(projectilePrefab, startPos, Quaternion.identity);
 
@@ -122,7 +137,7 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void OnMouseDown()
     {
-        if(spriteRenderer.sprite.name == "Square")
+        if (spriteRenderer.sprite.name == "Square")
         {
             menuTowerSelect.SetActive(true);
             // 1. Buscamos los botones
@@ -147,21 +162,26 @@ public class Tower : MonoBehaviour
         {
             StartCoroutine(gameManager.messageError("Lugar ya ocupado"));
         }
-        else
-        {
-            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
-        }
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres
+    /// </summary>
     public void cancelFunction()
     {
         menuTowerSelect.SetActive(false);
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres y Añade a una Torre Mediana en el lugar seleccionado
+    /// </summary>
     public void towerMedian()
     {
-        
+
         int costTower = 50;
         if (GameManager.countMoney >= costTower)
         {
+            deleteTowerGameObject.SetActive(true);
             spriteRenderer.sprite = towerImage.GetComponent<SpriteRenderer>().sprite;
             BoxCollider2D boxCollider2D = towerImage.GetComponent<BoxCollider2D>();
             this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
@@ -171,13 +191,22 @@ public class Tower : MonoBehaviour
             menuTowerSelect.SetActive(false);
             typeTower = 0;
         }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        }
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres y Añade a una Torre Ligera en el lugar seleccionado
+    /// </summary>
     public void towerLight()
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
         int costTower = 100;
         if (GameManager.countMoney >= costTower)
         {
+            deleteTowerGameObject.SetActive(true);
             fireCooldown = 0.5f;
             spriteRenderer.sprite = towerImage2.GetComponent<SpriteRenderer>().sprite;
             BoxCollider2D boxCollider2D = towerImage2.GetComponent<BoxCollider2D>();
@@ -188,13 +217,22 @@ public class Tower : MonoBehaviour
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
             menuTowerSelect.SetActive(false);
         }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        }
     }
+
+    /// <summary>
+    /// Desactiva el menu de Selector de Torres y Añade a una Torre Pesada en el lugar seleccionado
+    /// </summary>
     public void towerHeavy()
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
         int costTower = 100;
         if (GameManager.countMoney >= costTower)
         {
+            deleteTowerGameObject.SetActive(true);
             fireCooldown = 2f;
             spriteRenderer.sprite = towerImage3.GetComponent<SpriteRenderer>().sprite;
             BoxCollider2D boxCollider2D = towerImage3.GetComponent<BoxCollider2D>();
@@ -204,6 +242,10 @@ public class Tower : MonoBehaviour
             typeTower = 2;
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
             menuTowerSelect.SetActive(false);
+        }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
         }
     }
     /// <summary>
