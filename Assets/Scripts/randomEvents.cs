@@ -54,19 +54,8 @@ public class randomEvents : MonoBehaviour
 
         // Buscamos cuántas torres hay ya construidas
         GameObject[] torresConstruidas = GameObject.FindGameObjectsWithTag("tower");
-        int bonusCashback = torresConstruidas.Length * 20; // 20 monedas de regalo por torre
 
-        // Sumamos el bono
-        GameManager.countMoney += bonusCashback;
-
-        if (bonusCashback > 0)
-        {
-            messageEvent.text = $"¡Black Friday! Torres a mitad de precio. Te devuelven {bonusCashback} de oro por tus compras anteriores.";
-        }
-        else
-        {
-            messageEvent.text = "¡Black Friday en la herrería! Torres a mitad de precio.";
-        }
+        messageEvent.text = "¡Black Friday en la herrería! Torres a mitad de precio.";
 
         yield return new WaitForSeconds(10f);
 
