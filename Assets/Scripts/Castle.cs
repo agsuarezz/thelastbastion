@@ -77,9 +77,9 @@ public class castleScript : MonoBehaviour
         {
             isGameOver = true;
             life = 0;
-            Time.timeScale = 1f;
-            EndPanel.SetActive(true);
-            LogicaGameOver.SetActive(true);
+
+            
+            FindObjectOfType<GameManager>().cargarGameOver();
         }
     }
 
