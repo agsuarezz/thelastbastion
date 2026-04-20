@@ -127,7 +127,8 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("No se ha encontrado soundRestart");
         }
-        messageRound.text = "Ronda " + countRound;
+        if(messageRound != null)
+            messageRound.text = "Ronda " + countRound;
     }
     /// <summary>
     /// Se ejecuta antes que el Start. Ideal para limpiar variables estáticas 
@@ -151,7 +152,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Update()
     {
-        if (spawner.statusRound())
+        if (spawner != null && spawner.statusRound())
         {
             waitTime(5f);
             spawner.restartCountEnemy();
@@ -179,7 +180,8 @@ public class GameManager : MonoBehaviour
             globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
         }
         timeinGame += Time.deltaTime;
-        countMoneyText.text = "Dinero: " + countMoney;
+        if(countMoneyText != null)
+            countMoneyText.text = "Dinero: " + countMoney;
     }
     /// <summary>
     /// Corrutina de utilidad para pausar la ejecución de un proceso durante un tiempo determinado.

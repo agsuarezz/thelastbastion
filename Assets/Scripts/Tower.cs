@@ -29,18 +29,56 @@ public class Tower : MonoBehaviour
     public List<GameObject> towerImagen3;
     [Tooltip("Referencia al GameManager principal de la escena.")]
     public GameManager gameManager;
+    // ==========================================
+    // ESTADO INTERNO DE LA TORRE
+    // ==========================================
 
+    /// <summary>
+    /// El enemigo actual al que la torre está apuntando y disparando.
+    /// </summary>
     private Transform currentTarget;
+    /// <summary>
+    /// Temporizador interno que cuenta el tiempo restante (en segundos) hasta el próximo disparo.
+    /// </summary>
     private float fireTimer = 0f;
+    /// <summary>
+    /// Indica si la torre ya ha sido comprada y construida en esta casilla.
+    /// </summary>
     private bool isBuilt = false;
+    // ==========================================
+    // INTERFAZ DE USUARIO Y COMPONENTES HIJOS
+    // ==========================================
+
+    /// <summary>
+    /// Referencia al panel o menú visual que aparece al hacer clic en una casilla vacía para comprar torres.
+    /// </summary>
     public GameObject menuTowerSelect;
+    /// <summary>
+    /// Referencia al componente visual principal de la torre (su dibujo).
+    /// </summary>
     SpriteRenderer spriteRenderer;
+    /// <summary>
+    /// Referencia al script hijo encargado de detectar si el jugador quiere vender/borrar esta torre.
+    /// </summary>
     DeleteTower deletetower;
+    /// <summary>
+    /// Referencia al script hijo encargado de detectar si el jugador quiere mejorar (upgrade) esta torre.
+    /// </summary>
     UpdateTower updatetower;
+    /// <summary>
+    /// El GameObject visual  que contiene el script de borrado y el sprite.
+    /// </summary>
     public GameObject deleteTowerGameObject;
+    /// <summary>
+    /// El GameObject visualque contiene el script de mejora y el sprite.
+    /// </summary>
     public GameObject updateTowerGameObject;
     // Flag que indica el tipo de torre elegida por el usuario
     int typeTower = -1;
+    /// <summary>
+    /// Inicializa las referencias principales de la torre (SpriteRenderer y los scripts de los botones hijos)
+    /// y se asegura de que el menú emergente de selección empiece oculto al iniciar la partida.
+    /// </summary>
     private void Start()
     {
         spriteRenderer = this.GetComponent<SpriteRenderer>();
@@ -49,8 +87,10 @@ public class Tower : MonoBehaviour
         updatetower = this.GetComponentInChildren<UpdateTower>(true);
     }
     /// <summary>
-    /// Comprueba frame a frame si la torre está construida.
-    /// De ser así, busca objetivos y gestiona el tiempo de recarga para disparar.
+    /// Se ejecuta frame a frame y controla el ciclo de vida de la torre:
+    /// 1. Comprueba si el jugador ha solicitado una mejora (cambiando sprites y niveles).
+    /// 2. Comprueba si el jugador ha vendido la torre (restaurando la casilla y devolviendo oro).
+    /// 3. Si la torre está construida y activa, busca enemigos y gestiona el temporizador para disparar.
     /// </summary>
     private void Update()
     {
@@ -76,13 +116,13 @@ public class Tower : MonoBehaviour
             {
                 if (updatetower.levelOfTower == 1)
                 {
-                    towerMedian(towerImagen2[1].GetComponent<SpriteRenderer>().sprite, towerImagen2[1].GetComponent<BoxCollider2D>());
+                    towerLight(towerImagen2[1].GetComponent<SpriteRenderer>().sprite, towerImagen2[1].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
                 else if (updatetower.levelOfTower == 2)
                 {
-                    towerMedian(towerImagen2[2].GetComponent<SpriteRenderer>().sprite, towerImagen2[2].GetComponent<BoxCollider2D>());
+                    towerLight(towerImagen2[2].GetComponent<SpriteRenderer>().sprite, towerImagen2[2].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
@@ -92,13 +132,13 @@ public class Tower : MonoBehaviour
             {
                 if (updatetower.levelOfTower == 1)
                 {
-                    towerMedian(towerImagen3[1].GetComponent<SpriteRenderer>().sprite, towerImagen3[1].GetComponent<BoxCollider2D>());
+                    towerHeavy(towerImagen3[1].GetComponent<SpriteRenderer>().sprite, towerImagen3[1].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
                 else if (updatetower.levelOfTower == 2)
                 {
-                    towerMedian(towerImagen3[2].GetComponent<SpriteRenderer>().sprite, towerImagen3[2].GetComponent<BoxCollider2D>());
+                    towerHeavy(towerImagen3[2].GetComponent<SpriteRenderer>().sprite, towerImagen3[2].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
