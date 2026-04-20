@@ -220,7 +220,8 @@ public class GameManager : MonoBehaviour
     }
     public void mainMenuButton()
     {
-        StartCoroutine(messageError("Esta función no esta disponible por ahora"));
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("principalMenu");
     }
     /// <summary>
     /// Quita la pausa del juego y recarga la escena inicial para empezar una nueva partida.
