@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
     [Header("Sistema de Cartas")]
     public CardManager cardManager;
     [Tooltip("Cada cuántas rondas aparecerán las cartas.")]
-    public int roundsForCards = 3;
+    public int roundsForCards = 1;
 
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
