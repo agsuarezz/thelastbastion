@@ -7,16 +7,20 @@ public class Projectile : MonoBehaviour
 {
     [Header("Atributos del Proyectil")]
     [Tooltip("Velocidad de vuelo del proyectil")]
-    public float speed = 15f;
+    [HideInInspector] public float speed = 20f;
 
     [Tooltip("Cantidad de vida que restará al impactar.")]
-    public int damage = 25;
+    [HideInInspector] public int damage = 20;
 
     private Transform target;
 
     public void Seek(Transform newTarget)
     {
         target = newTarget;
+    }
+    public void SetDamage(int newDamage)
+    {
+        damage = newDamage;
     }
 
     private void Update()
