@@ -73,8 +73,6 @@ public class Tower : MonoBehaviour
     /// El GameObject visualque contiene el script de mejora y el sprite.
     /// </summary>
     public GameObject updateTowerGameObject;
-    // Flag que indica el tipo de torre elegida por el usuario
-    int typeTower = -1;
     [Tooltip("El daño actual de ESTA torre específica.")]
     public int currentDamage;
     /// <summary>
@@ -83,7 +81,6 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void Start()
     {
-       
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         menuTowerSelect.SetActive(false);
         deletetower = this.GetComponentInChildren<DeleteTower>(true);
@@ -155,7 +152,6 @@ public class Tower : MonoBehaviour
             GameManager.countMoney += 25;
             isBuilt = false;
             GameManager.countTower -= 1;
-            typeTower = -1;
             updatetower.typeOfTower = -1;
             updatetower.levelOfTower = 0;
             if (menuTowerSelect) menuTowerSelect.SetActive(false);
@@ -222,11 +218,8 @@ public class Tower : MonoBehaviour
     private void Shoot()
     {
         Vector3 startPos = transform.position;
-        if (typeTower == 1)
-            projectilePrefab = projectilePrefabTower2;
-        if (typeTower == 2)
-            projectilePrefab = projectilePrefabTower3;
-        GameObject projectileGO = Instantiate(projectilePrefab, startPos, Quaternion.identity);
+        GameObject projectPrefabSelect = setProjectPrefabSelect();
+        GameObject projectileGO = Instantiate(projectPrefabSelect, startPos, Quaternion.identity);
 
         Projectile projectile = projectileGO.GetComponent<Projectile>();
         if (projectile != null)
@@ -291,16 +284,12 @@ public class Tower : MonoBehaviour
         {
 
             Projectile projectilePrefabScript = projectilePrefab.GetComponent<Projectile>();
-            if(updatetower.levelOfTower > 0 )
-            {
-                fireCooldown += 0.5f;
-                currentDamage += 10;
-            }
+            updateFireCooldownAndDamage();
             updateExtensionsTower();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
-            GameManager.countTower += 1;
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
+            increaseCountTower();
             setTypeTower(0);
             setCurrentDamage();
         }
@@ -324,10 +313,10 @@ public class Tower : MonoBehaviour
         if (GameManager.countMoney >= costTower)
         {
             updateExtensionsTower();
-            fireCooldown = 0.5f;
+            updateFireCooldownAndDamage();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
-            GameManager.countTower += 1;
+            increaseCountTower();
             setTypeTower(1);
             setCurrentDamage();
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
@@ -351,11 +340,11 @@ public class Tower : MonoBehaviour
             boxCollider = towerImagen3[0].GetComponent<BoxCollider2D>();
         if (GameManager.countMoney >= costTower)
         {
-            updateExtensionsTower();
-            fireCooldown = 2f;
+            updateExtensionsTower(); 
+            updateFireCooldownAndDamage();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
-            GameManager.countTower += 1;
+            increaseCountTower();
             setTypeTower(2);
             setCurrentDamage();
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
@@ -386,7 +375,6 @@ public class Tower : MonoBehaviour
     }
     void setTypeTower(int type)
     {
-        typeTower = type;
         updatetower.typeOfTower = type;
     }
     void updateExtensionsTower()
@@ -400,5 +388,49 @@ public class Tower : MonoBehaviour
         spriteRenderer.sprite = sprite;
         this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider.size.x, boxCollider.size.y);
 
+    }
+    GameObject setProjectPrefabSelect()
+    {
+        switch (updatetower.typeOfTower)
+        {
+            case 0:
+               return projectilePrefab;
+            case 1:
+                return projectilePrefabTower2;
+            case 2:
+                return projectilePrefabTower3;
+            default: return projectilePrefab;
+        }
+
+    }
+    void updateFireCooldownAndDamage()
+    {
+        if(updatetower.levelOfTower == 0)
+        {
+            switch (updatetower.typeOfTower)
+            {
+                case 1:
+                    fireCooldown = 0.5f;
+                    return;
+                case 2:
+                    fireCooldown = 2f;
+                    return;
+                default:
+                    fireCooldown = 1f;
+                    return;
+            }
+        }
+        if (updatetower.levelOfTower > 0)
+        {
+            fireCooldown += 0.5f;
+            currentDamage += 10;
+        }
+    }
+    void increaseCountTower()
+    {
+        if(updatetower.levelOfTower == 0)
+        {
+            GameManager.countTower += 1;
+        }
     }
 }
