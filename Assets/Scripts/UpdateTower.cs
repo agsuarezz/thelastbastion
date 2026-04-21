@@ -26,11 +26,26 @@ public class UpdateTower : MonoBehaviour
         // 1. levelOfTower < 2: Asegura que no pase del nivel máximo (llegará hasta nivel 2).
         // 2. !needUpdateTower: Evita bugs si el jugador hace doble clic muy rápido (espera a que el script principal termine la mejora actual).
         // 3. typeOfTower != -1: Confirma que realmente hay una torre construida en esta casilla antes de intentar mejorarla.
-        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1)
+        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= costTower())
         {
             // Activamos la bandera para que el Tower.cs lo lea en su Update() y subimos el nivel
             needUpdateTower = true;
             levelOfTower++;
+        }
+    }
+
+    int costTower()
+    {
+        switch (typeOfTower)
+        {
+            case 0:
+                return 50;
+            case 1:
+                return 25;
+            case 2:
+                return 25;
+            default:
+                return 999999;
         }
     }
 }

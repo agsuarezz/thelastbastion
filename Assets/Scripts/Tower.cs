@@ -157,6 +157,7 @@ public class Tower : MonoBehaviour
             GameManager.countTower -= 1;
             typeTower = -1;
             updatetower.typeOfTower = -1;
+            updatetower.levelOfTower = 0;
             if (menuTowerSelect) menuTowerSelect.SetActive(false);
             deletetower.isDeleteTower = false;
             deleteTowerGameObject.SetActive(false);
@@ -280,6 +281,7 @@ public class Tower : MonoBehaviour
     /// </summary>
     public void towerMedian(Sprite sprite = null, BoxCollider2D boxCollider = null)
     {
+        SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
         if (sprite == null)
             sprite = towerImagen1[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
@@ -294,15 +296,11 @@ public class Tower : MonoBehaviour
                 fireCooldown += 0.5f;
                 currentDamage += 10;
             }
-            deleteTowerGameObject.SetActive(true);
-            updateTowerGameObject.SetActive(true);
-            spriteRenderer.sprite = sprite;
-            BoxCollider2D boxCollider2D = boxCollider;
-            this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
+            updateExtensionsTower();
+            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             GameManager.countTower += 1;
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
-            menuTowerSelect.SetActive(false);
             setTypeTower(0);
             setCurrentDamage();
         }
@@ -318,25 +316,21 @@ public class Tower : MonoBehaviour
     public void towerLight(Sprite sprite = null, BoxCollider2D boxCollider = null)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
-        int costTower = 100;
+        int costTower = 25;
         if (sprite == null)
             sprite = towerImagen2[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
             boxCollider = towerImagen2[0].GetComponent<BoxCollider2D>();
         if (GameManager.countMoney >= costTower)
         {
-            deleteTowerGameObject.SetActive(true);
-            updateTowerGameObject.SetActive(true);
+            updateExtensionsTower();
             fireCooldown = 0.5f;
-            spriteRenderer.sprite = sprite;
-            BoxCollider2D boxCollider2D = boxCollider;
-            this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
+            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             GameManager.countTower += 1;
             setTypeTower(1);
             setCurrentDamage();
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
-            menuTowerSelect.SetActive(false);
         }
         else
         {
@@ -350,26 +344,21 @@ public class Tower : MonoBehaviour
     public void towerHeavy(Sprite sprite = null, BoxCollider2D boxCollider = null)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
-        int costTower = 100;
+        int costTower = 25;
         if (sprite == null)
             sprite = towerImagen3[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
             boxCollider = towerImagen3[0].GetComponent<BoxCollider2D>();
         if (GameManager.countMoney >= costTower)
         {
-         
-            deleteTowerGameObject.SetActive(true);
-            updateTowerGameObject.SetActive(true);
+            updateExtensionsTower();
             fireCooldown = 2f;
-            spriteRenderer.sprite = sprite;
-            BoxCollider2D boxCollider2D = boxCollider;
-            this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider2D.size.x, boxCollider2D.size.y);
+            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             GameManager.countTower += 1;
             setTypeTower(2);
             setCurrentDamage();
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
-            menuTowerSelect.SetActive(false);
         }
         else
         {
@@ -399,5 +388,17 @@ public class Tower : MonoBehaviour
     {
         typeTower = type;
         updatetower.typeOfTower = type;
+    }
+    void updateExtensionsTower()
+    {
+        deleteTowerGameObject.SetActive(true);
+        updateTowerGameObject.SetActive(true);
+        menuTowerSelect.SetActive(false);
+    }
+    void setCollisionsAndSprite(SpriteRenderer spriteRenderer, Sprite sprite, BoxCollider2D boxCollider)
+    {
+        spriteRenderer.sprite = sprite;
+        this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider.size.x, boxCollider.size.y);
+
     }
 }
