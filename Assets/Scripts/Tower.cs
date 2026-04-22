@@ -282,16 +282,16 @@ public class Tower : MonoBehaviour
         int costTower = updatetower.costTower(0);
         if (GameManager.countMoney >= costTower)
         {
-
-            Projectile projectilePrefabScript = projectilePrefab.GetComponent<Projectile>();
-            updateFireCooldownAndDamage();
             updateExtensionsTower();
-            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
-            isBuilt = true;
-            GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
-            increaseCountTower();
+
             setTypeTower(0);
             setCurrentDamage();
+            Projectile projectilePrefabScript = projectilePrefab.GetComponent<Projectile>();
+            updateFireCooldownAndDamage();
+            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
+            isBuilt = true;
+            increaseCountTower();
+            GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else
         {
@@ -313,12 +313,12 @@ public class Tower : MonoBehaviour
         if (GameManager.countMoney >= costTower)
         {
             updateExtensionsTower();
+            setTypeTower(1);
+            setCurrentDamage();
             updateFireCooldownAndDamage();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             increaseCountTower();
-            setTypeTower(1);
-            setCurrentDamage();
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else
@@ -340,13 +340,13 @@ public class Tower : MonoBehaviour
         int costTower = updatetower.costTower(2);
         if (GameManager.countMoney >= costTower)
         {
-            updateExtensionsTower(); 
+            updateExtensionsTower();
+            setTypeTower(2);
+            setCurrentDamage();
             updateFireCooldownAndDamage();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             increaseCountTower();
-            setTypeTower(2);
-            setCurrentDamage();
             GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else
