@@ -983,6 +983,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!61 &128453710
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1073,7 +1074,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5900651436807427774, guid: 12b8f9a019c4e4747aaca75bc1dad80e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1081,7 +1082,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &134176583
@@ -1208,6 +1209,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!61 &138418466
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1298,7 +1300,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5900651436807427774, guid: 12b8f9a019c4e4747aaca75bc1dad80e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1306,7 +1308,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &196915342
@@ -1988,6 +1990,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 1649377257}
   updateTowerGameObject: {fileID: 1335775396}
+  currentDamage: 0
 --- !u!212 &289638181
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -8419,6 +8422,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!61 &708546704
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -8509,7 +8513,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5900651436807427774, guid: 12b8f9a019c4e4747aaca75bc1dad80e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -8517,7 +8521,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &733230387
@@ -10251,6 +10255,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!61 &970395886
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10341,7 +10346,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5900651436807427774, guid: 12b8f9a019c4e4747aaca75bc1dad80e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -10349,7 +10354,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1018275564
@@ -10765,6 +10770,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 352885302}
   updateTowerGameObject: {fileID: 970395883}
+  currentDamage: 0
 --- !u!212 &1079787121
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11646,6 +11652,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 438734534}
   updateTowerGameObject: {fileID: 1771422081}
+  currentDamage: 0
 --- !u!212 &1176675941
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -12746,6 +12753,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!61 &1335775399
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -13170,6 +13178,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!61 &1338873355
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -13260,7 +13269,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5900651436807427774, guid: 12b8f9a019c4e4747aaca75bc1dad80e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -13268,7 +13277,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1339451479
@@ -13432,6 +13441,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 741728134}
   updateTowerGameObject: {fileID: 1876594595}
+  currentDamage: 0
 --- !u!212 &1343707123
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -15190,6 +15200,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 1728365426}
   updateTowerGameObject: {fileID: 1338873352}
+  currentDamage: 0
 --- !u!212 &1517356069
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -16711,6 +16722,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!61 &1771422084
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -16801,7 +16813,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5900651436807427774, guid: 12b8f9a019c4e4747aaca75bc1dad80e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -16809,7 +16821,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1781555232
@@ -21601,6 +21613,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 1705956495}
   updateTowerGameObject: {fileID: 128453707}
+  currentDamage: 0
 --- !u!212 &1864818936
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -21728,8 +21741,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.08, y: 4.05}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 4.84, y: 5.12}
+    newSize: {x: 4.84, y: 5.12}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -21780,7 +21793,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5900651436807427774, guid: 12b8f9a019c4e4747aaca75bc1dad80e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -21788,7 +21801,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &1876594600
@@ -21806,6 +21819,7 @@ MonoBehaviour:
   needUpdateTower: 0
   levelOfTower: 0
   typeOfTower: -1
+  spriteUp: {fileID: 7088592879504031346, guid: ad8b1592fc9106b429c62b91f9d7bad9, type: 3}
 --- !u!1 &1905435231
 GameObject:
   m_ObjectHideFlags: 0
@@ -23314,6 +23328,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 1956473794}
   updateTowerGameObject: {fileID: 138418463}
+  currentDamage: 0
 --- !u!212 &2059594504
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -23943,6 +23958,7 @@ MonoBehaviour:
   menuTowerSelect: {fileID: 2049314089}
   deleteTowerGameObject: {fileID: 442852390}
   updateTowerGameObject: {fileID: 708546701}
+  currentDamage: 0
 --- !u!212 &2082916921
 SpriteRenderer:
   m_ObjectHideFlags: 0

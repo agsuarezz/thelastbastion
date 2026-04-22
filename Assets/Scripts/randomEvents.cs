@@ -128,6 +128,7 @@ public class randomEvents : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-10f, 10f), 10f, 0f);
+            yield return new WaitForSeconds(0.1f);
             Instantiate(Resources.Load<GameObject>("prefabCoins"), spawnPos, Quaternion.identity);
         }
         messageEvent.text = "Bug detectado: Lluvia de monedas. ¡Aprovecha antes del parche!";

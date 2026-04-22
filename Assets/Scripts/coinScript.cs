@@ -7,6 +7,10 @@ public class coinScript : MonoBehaviour
     {
         StartCoroutine(destroyCoin());
     }
+    private void FixedUpdate()
+    {
+        this.GetComponent<Transform>().Rotate(0f, 10f, 0f);
+    }
     private void OnMouseDown()
     {
         GameManager.countMoney += 10;

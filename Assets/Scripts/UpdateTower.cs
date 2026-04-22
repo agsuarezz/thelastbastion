@@ -15,18 +15,37 @@ public class UpdateTower : MonoBehaviour
 
     [Tooltip("Identificador del tipo de torre (ej. 0=Media, 1=Ligera, 2=Pesada). Un valor de -1 indica que no está asignado.")]
     public int typeOfTower = -1;
+    
+    Tower tower;
+    public Sprite spriteUp;
+    private void Start()
+    {
+        tower = this.GetComponentInParent<Tower>();
+    }
+    private void Update()
+    {
+        if (levelOfTower < 2 && GameManager.countMoney >= costTower() && this.GetComponent<SpriteRenderer>().sprite == null)
+        {
+            this.GetComponent<SpriteRenderer>().sprite = spriteUp;
 
+        }
+        if (levelOfTower >= 2 ||  GameManager.countMoney < costTower()) {
+            this.GetComponent<SpriteRenderer>().sprite = null;
+        }
+    }
     /// <summary>
     /// Método nativo de Unity que se ejecuta al hacer clic izquierdo sobre el Collider2D.
     /// Incrementa el nivel de la torre siempre y cuando cumpla todas las condiciones de seguridad.
     /// </summary>
     private void OnMouseDown()
     {
+
         // Comprobaciones de seguridad antes de aplicar la mejora:
         // 1. levelOfTower < 2: Asegura que no pase del nivel máximo (llegará hasta nivel 2).
         // 2. !needUpdateTower: Evita bugs si el jugador hace doble clic muy rápido (espera a que el script principal termine la mejora actual).
         // 3. typeOfTower != -1: Confirma que realmente hay una torre construida en esta casilla antes de intentar mejorarla.
-        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= costTower())
+        // 4. sprite != null
+        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= costTower() && this.GetComponent<SpriteRenderer>().sprite != null)
         {
             // Activamos la bandera para que el Tower.cs lo lea en su Update() y subimos el nivel
             needUpdateTower = true;
@@ -34,18 +53,23 @@ public class UpdateTower : MonoBehaviour
         }
     }
 
-    int costTower()
+    public int costTower(int typeTower = -1)
     {
-        switch (typeOfTower)
+        if(typeTower == -1)
         {
-            case 0:
-                return 50;
-            case 1:
-                return 25;
-            case 2:
-                return 25;
-            default:
-                return 999999;
+            typeTower = typeOfTower;
         }
+        switch (typeTower)
+            {
+                case 0:
+                    return 50;
+                case 1:
+                    return 25;
+                case 2:
+                    return 25;
+                default:
+                    return 999999;
+            }
+        
     }
 }

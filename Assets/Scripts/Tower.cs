@@ -279,7 +279,7 @@ public class Tower : MonoBehaviour
             sprite = towerImagen1[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
             boxCollider = towerImagen1[0].GetComponent<BoxCollider2D>();
-        int costTower = 50;
+        int costTower = updatetower.costTower(0);
         if (GameManager.countMoney >= costTower)
         {
 
@@ -305,11 +305,11 @@ public class Tower : MonoBehaviour
     public void towerLight(Sprite sprite = null, BoxCollider2D boxCollider = null)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
-        int costTower = 25;
         if (sprite == null)
             sprite = towerImagen2[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
             boxCollider = towerImagen2[0].GetComponent<BoxCollider2D>();
+        int costTower = updatetower.costTower(1);
         if (GameManager.countMoney >= costTower)
         {
             updateExtensionsTower();
@@ -333,11 +333,11 @@ public class Tower : MonoBehaviour
     public void towerHeavy(Sprite sprite = null, BoxCollider2D boxCollider = null)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
-        int costTower = 25;
         if (sprite == null)
             sprite = towerImagen3[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
             boxCollider = towerImagen3[0].GetComponent<BoxCollider2D>();
+        int costTower = updatetower.costTower(2);
         if (GameManager.countMoney >= costTower)
         {
             updateExtensionsTower(); 
@@ -382,6 +382,7 @@ public class Tower : MonoBehaviour
         deleteTowerGameObject.SetActive(true);
         updateTowerGameObject.SetActive(true);
         menuTowerSelect.SetActive(false);
+
     }
     void setCollisionsAndSprite(SpriteRenderer spriteRenderer, Sprite sprite, BoxCollider2D boxCollider)
     {
@@ -422,8 +423,25 @@ public class Tower : MonoBehaviour
         }
         if (updatetower.levelOfTower > 0)
         {
-            fireCooldown += 0.5f;
-            currentDamage += 10;
+            switch (updatetower.typeOfTower)
+            {
+                case 0:
+                    fireCooldown += 0.5f;
+                    currentDamage += 10;
+                    return;
+                case 1:
+                    fireCooldown += 1f;
+                    currentDamage += 5;
+                    return;
+                case 2:
+                    fireCooldown += 0.25f;
+                    currentDamage += 20;
+                    return;
+                default:
+                    fireCooldown += 0.5f;
+                    currentDamage += 10;
+                    return;
+            }
         }
     }
     void increaseCountTower()
