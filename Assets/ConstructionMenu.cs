@@ -7,6 +7,8 @@ public class ConstructionMenu : MonoBehaviour
 {
     public GameObject menuTowerSelect;
     public GameObject prefabTowerMedian;
+    public GameObject prefabTowerLight;
+    public GameObject prefabTowerHeavy;
     public Tilemap tilemap;
 
     // Da permiso para que coloque la torre
@@ -64,33 +66,64 @@ public class ConstructionMenu : MonoBehaviour
 
     public void BuyTorreMedian()
     {
-        flagTypeTower = 0;
-        int costTowerToInt = costTower(flagTypeTower);
+        int costTowerToInt = costTower(0);
 
         if (GameManager.countMoney >= costTowerToInt)
         {
-            tilemap.gameObject.SetActive(true);
-            isPlacing = true;
+            SetIsPlacingTilemapFlagTypeTower(0);
             cancelFunction();
         }
     }
+    public void BuyTorreLight()
+    {
+        int costTowerToInt = costTower(1);
 
+        if (GameManager.countMoney >= costTowerToInt)
+        {
+            SetIsPlacingTilemapFlagTypeTower(1);
+            cancelFunction();
+        }
+    }
+    public void BuyTorreHeavy()
+    {
+        int costTowerToInt = costTower(2);
+
+        if (GameManager.countMoney >= costTowerToInt)
+        {
+            SetIsPlacingTilemapFlagTypeTower(2);
+            cancelFunction();
+        }
+    }
     public void PlantTowerOnMap(Vector2 vector2)
     {
         int costTowerToInt = costTower(flagTypeTower);
-        GameManager.countMoney -= costTowerToInt;
-
-        Instantiate(prefabTowerMedian, vector2, Quaternion.identity);
+        GameObject prefab = setPrefabType();
+        if(prefab != null)
+            Instantiate(prefab, vector2, Quaternion.identity);
 
         tilemap.gameObject.SetActive(false);
         isPlacing = false;
     }
-
+    public void SetIsPlacingTilemapFlagTypeTower(int type)
+    {
+        flagTypeTower = type;
+        tilemap.gameObject.SetActive(true);
+        isPlacing = true;
+    }
     public void cancelFunction()
     {
         menuTowerSelect.SetActive(false);
     }
-
+    public GameObject setPrefabType()
+    {
+        switch(flagTypeTower)
+        {
+            case 0: return prefabTowerMedian;
+            case 1: return prefabTowerLight;
+            case 2: return prefabTowerHeavy;
+            default: return null;
+        }
+    }
     public int costTower(int typeTower = -1)
     {
         switch (typeTower)

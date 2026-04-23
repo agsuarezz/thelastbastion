@@ -80,7 +80,7 @@ public class Tower : MonoBehaviour
         updatetower = this.GetComponentInChildren<UpdateTower>(true);
         gameManager = FindAnyObjectByType<GameManager>();
         constructionMenu = FindAnyObjectByType<ConstructionMenu>();
-        setInitialTower();
+        SetTower(null, null, constructionMenu.flagTypeTower);
     }
     /// <summary>
     /// Se ejecuta frame a frame y controla el ciclo de vida de la torre:
@@ -92,53 +92,17 @@ public class Tower : MonoBehaviour
     {
         if(updatetower && updatetower.needUpdateTower && updatetower.typeOfTower != -1)
         {
-            if (updatetower.typeOfTower == 0)
+            if (updatetower.levelOfTower == 1)
             {
-                if (updatetower.levelOfTower == 1)
-                {
-                    towerMedian(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-                else if (updatetower.levelOfTower == 2)
-                {
-                    towerMedian(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-
+                SetTower(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>(), updatetower.typeOfTower);
+                updatetower.needUpdateTower = false;
+                return;
             }
-            if (updatetower.typeOfTower == 1)
+            else if (updatetower.levelOfTower == 2)
             {
-                if (updatetower.levelOfTower == 1)
-                {
-                    towerLight(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-                else if (updatetower.levelOfTower == 2)
-                {
-                    towerLight(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-
-            }
-            if (updatetower.typeOfTower == 2)
-            {
-                if (updatetower.levelOfTower == 1)
-                {
-                    towerHeavy(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-                else if (updatetower.levelOfTower == 2)
-                {
-                    towerHeavy(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-
+                SetTower(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>(), updatetower.typeOfTower);
+                updatetower.needUpdateTower = false;
+                return;
             }
 
         }
@@ -217,31 +181,29 @@ public class Tower : MonoBehaviour
             projectile.SetDamage(currentDamage);
         }
     }
-
     /// <summary>
-    /// Desactiva el menu de Selector de Torres y Añade a una Torre Mediana en el lugar seleccionado
+    /// Desactiva el menu de Selector de Torres y Añade a una Torre en el lugar seleccionado
     /// </summary>
-    public void towerMedian(Sprite sprite = null, BoxCollider2D boxCollider = null)
+    public void SetTower(Sprite sprite = null, BoxCollider2D boxCollider = null, int type = 0)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
         if (sprite == null)
             sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
             boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
-        int costTower = updatetower.costTower(0);
+        int costTower = updatetower.costTower(type);
         if (GameManager.countMoney >= costTower)
         {
             updateExtensionsTower();
 
-            setTypeTower(0);
+            setTypeTower(type);
             setCurrentDamage();
             Projectile projectilePrefabScript = projectilePrefab.GetComponent<Projectile>();
             updateFireCooldownAndDamage();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             increaseCountTower();
-            if (updatetower.levelOfTower >= 1)
-                GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
+            GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else
         {
@@ -249,63 +211,7 @@ public class Tower : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Desactiva el menu de Selector de Torres y Añade a una Torre Ligera en el lugar seleccionado
-    /// </summary>
-    public void towerLight(Sprite sprite = null, BoxCollider2D boxCollider = null)
-    {
-        SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
-        if (sprite == null)
-            sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
-        if (boxCollider == null)
-            boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
-        int costTower = updatetower.costTower(1);
-        if (GameManager.countMoney >= costTower)
-        {
-            updateExtensionsTower();
-            setTypeTower(1);
-            setCurrentDamage();
-            updateFireCooldownAndDamage();
-            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
-            isBuilt = true;
-            increaseCountTower();
-            if(updatetower.levelOfTower >= 1)
-                GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
-        }
-        else
-        {
-            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
-        }
-    }
-
-    /// <summary>
-    /// Desactiva el menu de Selector de Torres y Añade a una Torre Pesada en el lugar seleccionado
-    /// </summary>
-    public void towerHeavy(Sprite sprite = null, BoxCollider2D boxCollider = null)
-    {
-        SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
-        if (sprite == null)
-            sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
-        if (boxCollider == null)
-            boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
-        int costTower = updatetower.costTower(2);
-        if (GameManager.countMoney >= costTower)
-        {
-            updateExtensionsTower();
-            setTypeTower(2);
-            setCurrentDamage();
-            updateFireCooldownAndDamage();
-            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
-            isBuilt = true;
-            increaseCountTower();
-            if (updatetower.levelOfTower >= 1)
-                GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
-        }
-        else
-        {
-            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
-        }
-    }
+   
     /// <summary>
     /// Dibuja el radio de ataque en color rojo en la vista de escena (Scene) 
     /// cuando la torre está seleccionada para ayudar visualmente en el diseño del nivel.
@@ -385,16 +291,6 @@ public class Tower : MonoBehaviour
         if(updatetower.levelOfTower == 0)
         {
             GameManager.countTower += 1;
-        }
-    }
-    public void setInitialTower()
-    {
-        switch (constructionMenu.flagTypeTower)
-        {
-            case 0: towerMedian(towerImagen[0].GetComponent<SpriteRenderer>().sprite, towerImagen[0].GetComponent<BoxCollider2D>()); return;
-            case 1: towerLight(towerImagen[0].GetComponent<SpriteRenderer>().sprite, towerImagen[0].GetComponent<BoxCollider2D>()); return;
-            case 2: towerHeavy(towerImagen[0].GetComponent<SpriteRenderer>().sprite, towerImagen[0].GetComponent<BoxCollider2D>()); return;
-            default: return;
         }
     }
 }

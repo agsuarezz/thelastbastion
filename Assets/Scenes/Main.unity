@@ -310,7 +310,6 @@ MonoBehaviour:
   messageRound: {fileID: 1302712150}
   spawner: {fileID: 452400196}
   castlescript: {fileID: 196915343}
-  menuTowerSelect: {fileID: 0}
   countMoneyText: {fileID: 1781555234}
   randomEvent: {fileID: 64441738}
   cardManager: {fileID: 626184129}
@@ -453,8 +452,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuTowerSelect: {fileID: 2049314089}
-  prefabTowerMedian: {fileID: 944391082734077024, guid: b37e3f3d172294646a48f1513d28a1cf, type: 3}
+  prefabTowerMedian: {fileID: 8991276415801162673, guid: 9215f2686913cdc45aa6fab00fcff581, type: 3}
+  prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}
+  prefabTowerHeavy: {fileID: 8544740251689827319, guid: 65311828bfcba7d4999338877f98bf6e, type: 3}
   tilemap: {fileID: 554214137}
+  flagTypeTower: -1
 --- !u!1 &66280147
 GameObject:
   m_ObjectHideFlags: 0
@@ -1564,7 +1566,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 236126933}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 64441739}
+        m_TargetAssemblyTypeName: ConstructionMenu, Assembly-CSharp
+        m_MethodName: BuyTorreLight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &236126933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17335,7 +17349,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1628338298}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 64441739}
+        m_TargetAssemblyTypeName: ConstructionMenu, Assembly-CSharp
+        m_MethodName: BuyTorreHeavy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1628338298
 MonoBehaviour:
   m_ObjectHideFlags: 0
