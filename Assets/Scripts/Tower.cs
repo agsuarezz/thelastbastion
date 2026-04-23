@@ -18,17 +18,13 @@ public class Tower : MonoBehaviour
     float fireCooldown = 1f;
 
     [Header("Referencias.")]
-    [Tooltip("Los prefabs de los proyectiles que se va a instanciar.")]
+    [Tooltip("EL prefab del proyectile que se va a instanciar.")]
     public GameObject projectilePrefab;
-    public GameObject projectilePrefabTower2;
-    public GameObject projectilePrefabTower3;
 
     [Tooltip("GameObject que contiene el Sprite y BoxCollider2D base de la torre.")]
-    public List<GameObject> towerImagen1;
-    public List<GameObject> towerImagen2;
-    public List<GameObject> towerImagen3;
+    public List<GameObject> towerImagen;
     [Tooltip("Referencia al GameManager principal de la escena.")]
-    public GameManager gameManager;
+    GameManager gameManager;
     // ==========================================
     // ESTADO INTERNO DE LA TORRE
     // ==========================================
@@ -44,15 +40,11 @@ public class Tower : MonoBehaviour
     /// <summary>
     /// Indica si la torre ya ha sido comprada y construida en esta casilla.
     /// </summary>
-    private bool isBuilt = false;
+    [HideInInspector] public bool isBuilt = false;
     // ==========================================
     // INTERFAZ DE USUARIO Y COMPONENTES HIJOS
     // ==========================================
 
-    /// <summary>
-    /// Referencia al panel o menú visual que aparece al hacer clic en una casilla vacía para comprar torres.
-    /// </summary>
-    public GameObject menuTowerSelect;
     /// <summary>
     /// Referencia al componente visual principal de la torre (su dibujo).
     /// </summary>
@@ -75,6 +67,8 @@ public class Tower : MonoBehaviour
     public GameObject updateTowerGameObject;
     [Tooltip("El daño actual de ESTA torre específica.")]
     public int currentDamage;
+
+    ConstructionMenu constructionMenu;
     /// <summary>
     /// Inicializa las referencias principales de la torre (SpriteRenderer y los scripts de los botones hijos)
     /// y se asegura de que el menú emergente de selección empiece oculto al iniciar la partida.
@@ -82,9 +76,11 @@ public class Tower : MonoBehaviour
     private void Start()
     {
         spriteRenderer = this.GetComponent<SpriteRenderer>();
-        menuTowerSelect.SetActive(false);
         deletetower = this.GetComponentInChildren<DeleteTower>(true);
         updatetower = this.GetComponentInChildren<UpdateTower>(true);
+        gameManager = FindAnyObjectByType<GameManager>();
+        constructionMenu = FindAnyObjectByType<ConstructionMenu>();
+        setInitialTower();
     }
     /// <summary>
     /// Se ejecuta frame a frame y controla el ciclo de vida de la torre:
@@ -96,33 +92,33 @@ public class Tower : MonoBehaviour
     {
         if(updatetower && updatetower.needUpdateTower && updatetower.typeOfTower != -1)
         {
-            if(updatetower.typeOfTower == 0)
-            {
-                if(updatetower.levelOfTower == 1)
-                {
-                    towerMedian(towerImagen1[1].GetComponent<SpriteRenderer>().sprite, towerImagen1[1].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-                else if(updatetower.levelOfTower == 2)
-                {
-                    towerMedian(towerImagen1[2].GetComponent<SpriteRenderer>().sprite, towerImagen1[2].GetComponent<BoxCollider2D>());
-                    updatetower.needUpdateTower = false;
-                    return;
-                }
-                
-            }
-            if (updatetower.typeOfTower == 1)
+            if (updatetower.typeOfTower == 0)
             {
                 if (updatetower.levelOfTower == 1)
                 {
-                    towerLight(towerImagen2[1].GetComponent<SpriteRenderer>().sprite, towerImagen2[1].GetComponent<BoxCollider2D>());
+                    towerMedian(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
                 else if (updatetower.levelOfTower == 2)
                 {
-                    towerLight(towerImagen2[2].GetComponent<SpriteRenderer>().sprite, towerImagen2[2].GetComponent<BoxCollider2D>());
+                    towerMedian(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>());
+                    updatetower.needUpdateTower = false;
+                    return;
+                }
+
+            }
+            if (updatetower.typeOfTower == 1)
+            {
+                if (updatetower.levelOfTower == 1)
+                {
+                    towerLight(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>());
+                    updatetower.needUpdateTower = false;
+                    return;
+                }
+                else if (updatetower.levelOfTower == 2)
+                {
+                    towerLight(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
@@ -132,32 +128,26 @@ public class Tower : MonoBehaviour
             {
                 if (updatetower.levelOfTower == 1)
                 {
-                    towerHeavy(towerImagen3[1].GetComponent<SpriteRenderer>().sprite, towerImagen3[1].GetComponent<BoxCollider2D>());
+                    towerHeavy(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
                 else if (updatetower.levelOfTower == 2)
                 {
-                    towerHeavy(towerImagen3[2].GetComponent<SpriteRenderer>().sprite, towerImagen3[2].GetComponent<BoxCollider2D>());
+                    towerHeavy(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>());
                     updatetower.needUpdateTower = false;
                     return;
                 }
 
             }
+
         }
         if (deletetower && deletetower.isDeleteTower)
         {
-            spriteRenderer.sprite = Resources.Load<Sprite>("Square");
-            this.GetComponent<BoxCollider2D>().size = new Vector2(1f, 1f);
             GameManager.countMoney += 25;
             isBuilt = false;
             GameManager.countTower -= 1;
-            updatetower.typeOfTower = -1;
-            updatetower.levelOfTower = 0;
-            if (menuTowerSelect) menuTowerSelect.SetActive(false);
-            deletetower.isDeleteTower = false;
-            deleteTowerGameObject.SetActive(false);
-            updateTowerGameObject.SetActive(false);
+            Destroy(gameObject);
             return;
         }
         if (!isBuilt) return;
@@ -218,8 +208,7 @@ public class Tower : MonoBehaviour
     private void Shoot()
     {
         Vector3 startPos = transform.position;
-        GameObject projectPrefabSelect = setProjectPrefabSelect();
-        GameObject projectileGO = Instantiate(projectPrefabSelect, startPos, Quaternion.identity);
+        GameObject projectileGO = Instantiate(projectilePrefab, startPos, Quaternion.identity);
 
         Projectile projectile = projectileGO.GetComponent<Projectile>();
         if (projectile != null)
@@ -230,55 +219,15 @@ public class Tower : MonoBehaviour
     }
 
     /// <summary>
-    /// Activa el menu de Selector de Torres y Añade a los botones su respectiva funcion que se encarga de todo
-    /// </summary>
-    private void OnMouseDown()
-    {
-        if (spriteRenderer.sprite.name == "Square")
-        {
-            menuTowerSelect.SetActive(true);
-            // 1. Buscamos los botones
-            Button btnMedian = GameObject.Find("ButtonTowerMedian").GetComponent<Button>();
-            Button btnLight = GameObject.Find("ButtonTowerLight").GetComponent<Button>();
-            Button btnHeavy = GameObject.Find("ButtonTowerHeavy").GetComponent<Button>();
-            Button btnCancel = GameObject.Find("ButtonCancel").GetComponent<Button>();
-
-            // 2. ¡LA MAGIA! Limpiamos la memoria de los botones para que olviden otras torres
-            btnMedian.onClick.RemoveAllListeners();
-            btnLight.onClick.RemoveAllListeners();
-            btnHeavy.onClick.RemoveAllListeners();
-            btnCancel.onClick.RemoveAllListeners();
-
-            // 3. Añadimos las funciones de ESTA torre en concreto
-            btnMedian.onClick.AddListener(() => towerMedian());
-            btnLight.onClick.AddListener(() => towerLight());
-            btnHeavy.onClick.AddListener(() => towerHeavy());
-            btnCancel.onClick.AddListener(cancelFunction);
-        }
-        else if (spriteRenderer.sprite.name != "Square")
-        {
-            StartCoroutine(gameManager.messageError("Lugar ya ocupado"));
-        }
-    }
-
-    /// <summary>
-    /// Desactiva el menu de Selector de Torres
-    /// </summary>
-    public void cancelFunction()
-    {
-        menuTowerSelect.SetActive(false);
-    }
-
-    /// <summary>
     /// Desactiva el menu de Selector de Torres y Añade a una Torre Mediana en el lugar seleccionado
     /// </summary>
     public void towerMedian(Sprite sprite = null, BoxCollider2D boxCollider = null)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
         if (sprite == null)
-            sprite = towerImagen1[0].GetComponent<SpriteRenderer>().sprite;
+            sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
-            boxCollider = towerImagen1[0].GetComponent<BoxCollider2D>();
+            boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
         int costTower = updatetower.costTower(0);
         if (GameManager.countMoney >= costTower)
         {
@@ -291,7 +240,8 @@ public class Tower : MonoBehaviour
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             increaseCountTower();
-            GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
+            if (updatetower.levelOfTower >= 1)
+                GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else
         {
@@ -306,9 +256,9 @@ public class Tower : MonoBehaviour
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
         if (sprite == null)
-            sprite = towerImagen2[0].GetComponent<SpriteRenderer>().sprite;
+            sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
-            boxCollider = towerImagen2[0].GetComponent<BoxCollider2D>();
+            boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
         int costTower = updatetower.costTower(1);
         if (GameManager.countMoney >= costTower)
         {
@@ -319,7 +269,8 @@ public class Tower : MonoBehaviour
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             increaseCountTower();
-            GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
+            if(updatetower.levelOfTower >= 1)
+                GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else
         {
@@ -334,9 +285,9 @@ public class Tower : MonoBehaviour
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
         if (sprite == null)
-            sprite = towerImagen3[0].GetComponent<SpriteRenderer>().sprite;
+            sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
-            boxCollider = towerImagen3[0].GetComponent<BoxCollider2D>();
+            boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
         int costTower = updatetower.costTower(2);
         if (GameManager.countMoney >= costTower)
         {
@@ -347,7 +298,8 @@ public class Tower : MonoBehaviour
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             increaseCountTower();
-            GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
+            if (updatetower.levelOfTower >= 1)
+                GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
         }
         else
         {
@@ -363,7 +315,7 @@ public class Tower : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
-    void setCurrentDamage()
+    public void setCurrentDamage()
     {
         if (updatetower.levelOfTower == 0)
             if (updatetower.typeOfTower == 0)
@@ -373,38 +325,22 @@ public class Tower : MonoBehaviour
             else
                 currentDamage = 40;
     }
-    void setTypeTower(int type)
+    public void setTypeTower(int type)
     {
         updatetower.typeOfTower = type;
     }
-    void updateExtensionsTower()
+    public void updateExtensionsTower()
     {
         deleteTowerGameObject.SetActive(true);
         updateTowerGameObject.SetActive(true);
-        menuTowerSelect.SetActive(false);
-
     }
-    void setCollisionsAndSprite(SpriteRenderer spriteRenderer, Sprite sprite, BoxCollider2D boxCollider)
+    public void setCollisionsAndSprite(SpriteRenderer spriteRenderer, Sprite sprite, BoxCollider2D boxCollider)
     {
         spriteRenderer.sprite = sprite;
         this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider.size.x, boxCollider.size.y);
 
     }
-    GameObject setProjectPrefabSelect()
-    {
-        switch (updatetower.typeOfTower)
-        {
-            case 0:
-               return projectilePrefab;
-            case 1:
-                return projectilePrefabTower2;
-            case 2:
-                return projectilePrefabTower3;
-            default: return projectilePrefab;
-        }
-
-    }
-    void updateFireCooldownAndDamage()
+     public void updateFireCooldownAndDamage()
     {
         if(updatetower.levelOfTower == 0)
         {
@@ -444,11 +380,21 @@ public class Tower : MonoBehaviour
             }
         }
     }
-    void increaseCountTower()
+    public void increaseCountTower()
     {
         if(updatetower.levelOfTower == 0)
         {
             GameManager.countTower += 1;
+        }
+    }
+    public void setInitialTower()
+    {
+        switch (constructionMenu.flagTypeTower)
+        {
+            case 0: towerMedian(towerImagen[0].GetComponent<SpriteRenderer>().sprite, towerImagen[0].GetComponent<BoxCollider2D>()); return;
+            case 1: towerLight(towerImagen[0].GetComponent<SpriteRenderer>().sprite, towerImagen[0].GetComponent<BoxCollider2D>()); return;
+            case 2: towerHeavy(towerImagen[0].GetComponent<SpriteRenderer>().sprite, towerImagen[0].GetComponent<BoxCollider2D>()); return;
+            default: return;
         }
     }
 }
