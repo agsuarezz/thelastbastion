@@ -13,6 +13,7 @@ public class PantallaGameOver : MonoBehaviour
         durationText.text = "Duracion: " + (int)GameManager.timeinGame + " s";
         enemiesText.text = "Enemigos Derrotados: " + GameManager.enemiesDestroyed;
         towersText.text = "Torres Colocadas: " + GameManager.countTower;
+        GameManager.sound(GameManager.soundLostGame);
     }
 
     public void VolverAlMenu()

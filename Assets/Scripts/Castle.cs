@@ -63,11 +63,9 @@ public class castleScript : MonoBehaviour
         if (isGameOver) return;
 
         life -= damage;
-
+        GameManager.sound(GameManager.soundTakeLife);
         if (life < 0)
             life = 0;
-
-        StartCoroutine(sound(GameManager.soundTakeLife));
         CheckLife();
     }
 
@@ -81,16 +79,5 @@ public class castleScript : MonoBehaviour
             
             FindObjectOfType<GameManager>().cargarGameOver();
         }
-    }
-
-    public IEnumerator sound(AudioClip audioClip)
-    {
-        if (audioClip == null || GameManager.audioSource == null)
-            yield break;
-
-        GameManager.audioSource.clip = audioClip;
-        GameManager.audioSource.Play();
-        yield return new WaitForSeconds(audioClip.length);
-        GameManager.audioSource.clip = null;
     }
 }

@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour
         bool status = menuPanel.activeSelf;
         menuPanel.SetActive(!status);
         AudioClip audioClip = Time.timeScale != 1.0f ? GameManager.soundPause : GameManager.soundRestart;
-        StartCoroutine(castlescript.sound(audioClip));
+        sound(audioClip);
     }
 
     public void cambiarEstadoMusica()
@@ -256,5 +256,13 @@ public class GameManager : MonoBehaviour
         messageErrorText.color = Color.red;
         yield return new WaitForSeconds(2f);
         messageErrorText.text = "";
+    }
+
+    public static void sound(AudioClip audioClip)
+    {
+        if (audioClip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(audioClip);
+        }
     }
 }
