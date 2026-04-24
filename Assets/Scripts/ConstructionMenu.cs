@@ -14,7 +14,12 @@ public class ConstructionMenu : MonoBehaviour
     // Da permiso para que coloque la torre
     bool isPlacing = false;
     [HideInInspector] public int flagTypeTower = -1;
-
+    GameManager gameManager;
+    public List<GameObject> featureTower;
+    private void Start()
+    {
+        gameManager = FindAnyObjectByType<GameManager>();
+    }
     /// <summary>
     /// Se ejecuta en cada frame. Controla la lógica del "Modo Colocación" de torres:
     /// Sigue el ratón fijándolo a la cuadrícula, comprueba si el jugador sigue teniendo dinero, 
@@ -86,6 +91,10 @@ public class ConstructionMenu : MonoBehaviour
             SetIsPlacingTilemapFlagTypeTower(0);
             cancelFunction();
         }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        }
     }
     /// <summary>
     /// Método asignado al botón de comprar "Torre Ligera".
@@ -101,6 +110,10 @@ public class ConstructionMenu : MonoBehaviour
             SetIsPlacingTilemapFlagTypeTower(1);
             cancelFunction();
         }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        }
     }
     /// <summary>
     /// Método asignado al botón de comprar "Torre Pesada".
@@ -115,6 +128,10 @@ public class ConstructionMenu : MonoBehaviour
         {
             SetIsPlacingTilemapFlagTypeTower(2);
             cancelFunction();
+        }
+        else
+        {
+            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
         }
     }
     /// <summary>

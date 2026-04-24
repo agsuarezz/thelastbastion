@@ -15,24 +15,6 @@ public class UpdateTower : MonoBehaviour
 
     [Tooltip("Identificador del tipo de torre (ej. 0=Media, 1=Ligera, 2=Pesada). Un valor de -1 indica que no está asignado.")]
     public int typeOfTower = -1;
-    
-    /// <summary>
-    /// Se ejecuta frame a frame.
-    /// (Actualmente vacío) Pensado para gestionar cambios visuales dinámicos, 
-    /// como habilitar o deshabilitar el botón de mejora en la interfaz 
-    /// dependiendo de si el jugador tiene suficiente dinero o si la torre ya está al máximo.
-    /// </summary>
-    private void Update()
-    {
-        if (levelOfTower < 2 && GameManager.countMoney >= costTower())
-        {
-
-        }
-        if (levelOfTower >= 2 ||  GameManager.countMoney < costTower())
-        {
-
-        }
-    }
     /// <summary>
     /// Método que se enlaza al botón "Mejorar" de la interfaz de usuario.
     /// Valida si la torre puede mejorar (nivel máximo, tipo válido, coste) y, 

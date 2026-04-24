@@ -71,7 +71,6 @@ public class Tower : MonoBehaviour
     ConstructionMenu constructionMenu;
 
     public static GameObject gameObjectUpdateDeleteTower;
-
     /// <summary>
     /// Inicializa las referencias de los componentes, busca el menú global en la escena 
     /// y autoconstruye la torre base basándose en la elección del jugador en el menú de construcción.
@@ -140,18 +139,45 @@ public class Tower : MonoBehaviour
     public void OnMouseDown()
     {
         setGameObjectUpDeleStatus(true);
-        // 1. Buscamos los botones
-        Button btnUpdate = GameObject.Find("ButtonUpdateTower").GetComponent<Button>();
-        Button btnDelete = GameObject.Find("ButtonDeleteTower").GetComponent<Button>();
-        Button btnCancel = GameObject.Find("ButtonCancelTower").GetComponent<Button>();
 
-        // 2. ¡LA MAGIA! Limpiamos la memoria de los botones para que olviden otras torres
+        // 1. Preparamos las variables
+        Button btnUpdate = null;
+        Button btnDelete = null;
+        Button btnCancel = null;
+
+        // 2. Buscamos TODOS los botones que haya dentro del menú (el 'true' incluye los apagados)
+        Button[] todosLosBotones = gameObjectUpdateDeleteTower.GetComponentsInChildren<Button>(true);
+
+        // 3. Los asignamos por su nombre exacto
+        foreach (Button btn in todosLosBotones)
+        {
+            if (btn.gameObject.name == "ButtonUpdateTower") btnUpdate = btn;
+            if (btn.gameObject.name == "ButtonDeleteTower") btnDelete = btn;
+            if (btn.gameObject.name == "ButtonCancelTower") btnCancel = btn;
+        }
+
+        // --- Comprobación de seguridad por si te has equivocado en algún nombre en Unity ---
+        if (btnUpdate == null || btnDelete == null || btnCancel == null)
+        {
+            Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonUpdateTower, ButtonDeleteTower y ButtonCancelTower en la jerarquía.");
+            return;
+        }
+
+        // 4. Lógica del botón de Update (encender/apagar según nivel)
+        if (updatetower.levelOfTower < 2 && GameManager.countMoney >= updatetower.costTower(updatetower.typeOfTower))
+            btnUpdate.gameObject.SetActive(true);
+        else
+            btnUpdate.gameObject.SetActive(false);
+
+        // 5. ¡LA MAGIA! Limpiamos la memoria de los botones para que olviden otras torres
         btnUpdate.onClick.RemoveAllListeners();
         btnDelete.onClick.RemoveAllListeners();
         btnCancel.onClick.RemoveAllListeners();
 
-        // 3. Añadimos las funciones de ESTA torre en concreto
-        btnUpdate.onClick.AddListener(() => updatetower.onClickPlayer());
+        // 6. Añadimos las funciones de ESTA torre en concreto
+        if (updatetower.levelOfTower < 2)
+            btnUpdate.onClick.AddListener(() => updatetower.onClickPlayer());
+
         btnDelete.onClick.AddListener(() => deletetower.onClickPlayer());
         btnCancel.onClick.AddListener(() => setGameObjectUpDeleStatus(false));
     }
