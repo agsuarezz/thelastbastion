@@ -49,21 +49,31 @@ public class GridCursor : MonoBehaviour
 
     void UpdateDynamicColor(Vector2 center)
     {
-        // Lanzamos un escáner invisible para buscar obstáculos
-        Collider2D hit = Physics2D.OverlapCircle(center, 0.2f);
+        // Obtenemos todos los objetos en la casilla
+        Collider2D[] hits = Physics2D.OverlapBoxAll(center, new Vector2(0.1f, 0.1f), 0f);
+        bool hasObstacle = false;
 
-        // Si tocamos algo, Y ese algo es una Torre, un Camino o un Enemigo...
-        if (hit != null && (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy")))
+        // Comprobamos si alguno de ellos es ilegal
+        foreach (Collider2D hit in hits)
         {
-            // Bloqueado: La línea se pone ROJA
+            if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy"))
+            {
+                hasObstacle = true;
+                break; // Bloqueado, salimos del bucle
+            }
+        }
+
+        // Aplicamos el color
+        if (hasObstacle)
+        {
             line.startColor = Color.red;
             line.endColor = Color.red;
         }
         else
         {
-            // Libre: La línea se pone VERDE
             line.startColor = Color.green;
             line.endColor = Color.green;
         }
+    
     }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7611472788029974179}
   - component: {fileID: 1269333603004536476}
   - component: {fileID: -3715985671207351881}
-  - component: {fileID: 6685390322351515486}
+  - component: {fileID: -2455471115529497916}
   m_Layer: 5
   m_Name: towerImagen2
   m_TagString: Untagged
@@ -101,7 +101,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &6685390322351515486
+--- !u!61 &-2455471115529497916
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -131,7 +131,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -145,5 +145,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.6875, y: 1.625}
+  m_Size: {x: 0.95, y: 1.25}
   m_EdgeRadius: 0

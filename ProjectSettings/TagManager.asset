@@ -8,6 +8,7 @@ TagManager:
   - castle
   - tower
   - Path
+  - Bullet
   layers:
   - Default
   - TransparentFX

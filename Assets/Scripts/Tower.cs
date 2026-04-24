@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.U2D;
@@ -165,9 +166,13 @@ public class Tower : MonoBehaviour
 
         // 4. Lógica del botón de Update (encender/apagar según nivel)
         if (updatetower.levelOfTower < 2 && GameManager.countMoney >= updatetower.costTower(updatetower.typeOfTower))
+        {
             btnUpdate.gameObject.SetActive(true);
+            btnUpdate.GetComponentInChildren<TextMeshProUGUI>().text = "MEJORAR\n" + "(Coste: " + updatetower.costTower(updatetower.typeOfTower) + ")";
+        }
         else
             btnUpdate.gameObject.SetActive(false);
+        btnDelete.GetComponentInChildren<TextMeshProUGUI>().text = "VENDER\n" + "(Recuperas: 25 )";
 
         // 5. ¡LA MAGIA! Limpiamos la memoria de los botones para que olviden otras torres
         btnUpdate.onClick.RemoveAllListeners();

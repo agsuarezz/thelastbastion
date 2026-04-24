@@ -15,7 +15,6 @@ public class ConstructionMenu : MonoBehaviour
     bool isPlacing = false;
     [HideInInspector] public int flagTypeTower = -1;
     GameManager gameManager;
-    public List<GameObject> featureTower;
     private void Start()
     {
         gameManager = FindAnyObjectByType<GameManager>();
@@ -43,22 +42,30 @@ public class ConstructionMenu : MonoBehaviour
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float x = Mathf.Floor(mousePosition.x) + 0.5f;
             float y = Mathf.Floor(mousePosition.y) + 0.5f;
-            Vector2 posicionExacta = new Vector2(x, y);
+            Vector2 exactPosition = new Vector2(x, y);
 
             // 3. CLIC IZQUIERDO: Intentar plantar
             if (Input.GetMouseButtonDown(0))
             {
-                Collider2D hit = Physics2D.OverlapCircle(posicionExacta, 0.2f);
+                Collider2D[] hits = Physics2D.OverlapBoxAll(exactPosition, new Vector2(0.1f, 0.1f), 0f);
+                bool hasObstacle = false;
 
-                // Si tocamos algo, Y ese algo es Torre, Camino o Enemigo...
-                if (hit != null && (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy")))
+                foreach (Collider2D hit in hits)
                 {
-                    Debug.Log("No puedes construir ahí. Obstáculo: " + hit.gameObject.name);
-                    return; // Abortamos la lectura del clic
+                    if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy"))
+                    {
+                        hasObstacle = true;
+                        Debug.Log("Cannot build there. Obstacle: " + hit.gameObject.name);
+                        break;
+                    }
                 }
 
-                // Si llegamos aquí, es que la casilla está libre. ¡Construimos!
-                PlantTowerOnMap(posicionExacta);
+                if (hasObstacle)
+                {
+                    StartCoroutine(gameManager.messageError("Casilla bloqueada"));
+                    return;
+                }
+                PlantTowerOnMap(exactPosition);
             }
 
             // 4. CLIC DERECHO: Cancelar construcción si el jugador se arrepiente
