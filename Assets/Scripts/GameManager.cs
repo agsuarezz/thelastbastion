@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Controla la lógica general del nivel, la creación de defensas y el reinicio de la partida.
 /// </summary>
+public enum GameState { Playing, Paused, EventOpen }
 public class GameManager : MonoBehaviour
 {
     [Header("Ajustes de Sonido")]
@@ -93,7 +94,8 @@ public class GameManager : MonoBehaviour
     public CardManager cardManager;
     [Tooltip("Cada cuántas rondas aparecerán las cartas.")]
     public int roundsForCards = 1;
-
+    // Esta es la ÚNICA variable que controlará todo el juego
+    public static GameState currentState = GameState.Playing;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -160,12 +162,15 @@ public class GameManager : MonoBehaviour
 
             if (countRound % roundsForCards == 0 && countRound != 0)
             {
-                if(cardManager != null) cardManager.ShowCards();
+                if (cardManager != null)
+                {
+                    currentState = GameState.EventOpen;
+                    cardManager.ShowCards();
+                }
             }
             
             if (countRound % 2 == 0 && countRound != 0)
             {
-                Debug.Log(randomEvents.eventList.Count);
                 if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
                 {
                     this.GetComponent<randomEvents>().loadEventsInList();
@@ -198,6 +203,7 @@ public class GameManager : MonoBehaviour
     /// <param name="menuPanel">El GameObject que contiene la interfaz gráfica del menú de pausa.</param>
     public void pauseaandRestartButton(GameObject menuPanel)
     {
+        if (GameManager.currentState != GameState.Playing) return;
         changeTimeScale();
         bool status = menuPanel.activeSelf;
         menuPanel.SetActive(!status);

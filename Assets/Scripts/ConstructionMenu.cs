@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 public class ConstructionMenu : MonoBehaviour
@@ -12,7 +13,7 @@ public class ConstructionMenu : MonoBehaviour
     public Tilemap tilemap;
 
     // Da permiso para que coloque la torre
-    bool isPlacing = false;
+    [HideInInspector] public bool isPlacing = false;
     [HideInInspector] public int flagTypeTower = -1;
     GameManager gameManager;
     private void Start()
@@ -27,6 +28,7 @@ public class ConstructionMenu : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (GameManager.currentState != GameState.Playing) return;
         // 1. Entramos solo si estamos en modo colocación
         if (isPlacing)
         {
@@ -82,6 +84,7 @@ public class ConstructionMenu : MonoBehaviour
     /// </summary>
     public void contructionMenu()
     {
+        if (GameManager.currentState != GameState.Playing) return;
         menuTowerSelect.SetActive(true);
     }
     /// <summary>

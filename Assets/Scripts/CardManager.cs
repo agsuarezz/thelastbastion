@@ -104,6 +104,7 @@ public class CardManager : MonoBehaviour
                 break;
         }
 
+        GameManager.currentState = GameState.Playing;
         cardsPanel.SetActive(false);
         Time.timeScale = 1f;
     }
