@@ -16,28 +16,29 @@ public class UpdateTower : MonoBehaviour
     [Tooltip("Identificador del tipo de torre (ej. 0=Media, 1=Ligera, 2=Pesada). Un valor de -1 indica que no está asignado.")]
     public int typeOfTower = -1;
     
-    Tower tower;
-    public Sprite spriteUp;
-    private void Start()
-    {
-        tower = this.GetComponentInParent<Tower>();
-    }
+    /// <summary>
+    /// Se ejecuta frame a frame.
+    /// (Actualmente vacío) Pensado para gestionar cambios visuales dinámicos, 
+    /// como habilitar o deshabilitar el botón de mejora en la interfaz 
+    /// dependiendo de si el jugador tiene suficiente dinero o si la torre ya está al máximo.
+    /// </summary>
     private void Update()
     {
-        if (levelOfTower < 2 && GameManager.countMoney >= costTower() && this.GetComponent<SpriteRenderer>().sprite == null)
+        if (levelOfTower < 2 && GameManager.countMoney >= costTower())
         {
-            this.GetComponent<SpriteRenderer>().sprite = spriteUp;
 
         }
-        if (levelOfTower >= 2 ||  GameManager.countMoney < costTower()) {
-            this.GetComponent<SpriteRenderer>().sprite = null;
+        if (levelOfTower >= 2 ||  GameManager.countMoney < costTower())
+        {
+
         }
     }
     /// <summary>
-    /// Método nativo de Unity que se ejecuta al hacer clic izquierdo sobre el Collider2D.
-    /// Incrementa el nivel de la torre siempre y cuando cumpla todas las condiciones de seguridad.
+    /// Método que se enlaza al botón "Mejorar" de la interfaz de usuario.
+    /// Valida si la torre puede mejorar (nivel máximo, tipo válido, coste) y, 
+    /// de ser así, aumenta su nivel y avisa a la torre principal para que aplique los cambios.
     /// </summary>
-    private void OnMouseDown()
+    public void onClickPlayer()
     {
 
         // Comprobaciones de seguridad antes de aplicar la mejora:
@@ -45,14 +46,18 @@ public class UpdateTower : MonoBehaviour
         // 2. !needUpdateTower: Evita bugs si el jugador hace doble clic muy rápido (espera a que el script principal termine la mejora actual).
         // 3. typeOfTower != -1: Confirma que realmente hay una torre construida en esta casilla antes de intentar mejorarla.
         // 4. sprite != null
-        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= costTower() && this.GetComponent<SpriteRenderer>().sprite != null)
+        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= costTower())
         {
             // Activamos la bandera para que el Tower.cs lo lea en su Update() y subimos el nivel
+            Tower.setGameObjectUpDeleStatus(false);
             needUpdateTower = true;
             levelOfTower++;
         }
     }
-
+    /// <summary>
+    /// Calcula y devuelve el coste en oro necesario para construir o mejorar esta torre.
+    /// Si no se le pasa un tipo específico como parámetro, utiliza el tipo actual de la torre.
+    /// </summary>
     public int costTower(int typeTower = -1)
     {
         if(typeTower == -1)

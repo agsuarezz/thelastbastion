@@ -15,6 +15,12 @@ public class ConstructionMenu : MonoBehaviour
     bool isPlacing = false;
     [HideInInspector] public int flagTypeTower = -1;
 
+    /// <summary>
+    /// Se ejecuta en cada frame. Controla la lógica del "Modo Colocación" de torres:
+    /// Sigue el ratón fijándolo a la cuadrícula, comprueba si el jugador sigue teniendo dinero, 
+    /// valida mediante físicas (OverlapCircle) que la casilla esté libre al hacer clic izquierdo 
+    /// para construir, y permite cancelar la acción con el clic derecho.
+    /// </summary>
     private void Update()
     {
         // 1. Entramos solo si estamos en modo colocación
@@ -58,12 +64,19 @@ public class ConstructionMenu : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Activa el panel de la interfaz de usuario que permite al jugador seleccionar 
+    /// qué tipo de torre desea comprar y construir.
+    /// </summary>
     public void contructionMenu()
     {
         menuTowerSelect.SetActive(true);
     }
-
+    /// <summary>
+    /// Método asignado al botón de comprar "Torre Mediana".
+    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (0), 
+    /// activa el modo de colocación en el mapa y cierra el menú.
+    /// </summary>
     public void BuyTorreMedian()
     {
         int costTowerToInt = costTower(0);
@@ -74,6 +87,11 @@ public class ConstructionMenu : MonoBehaviour
             cancelFunction();
         }
     }
+    /// <summary>
+    /// Método asignado al botón de comprar "Torre Ligera".
+    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (1), 
+    /// activa el modo de colocación en el mapa y cierra el menú.
+    /// </summary>
     public void BuyTorreLight()
     {
         int costTowerToInt = costTower(1);
@@ -84,6 +102,11 @@ public class ConstructionMenu : MonoBehaviour
             cancelFunction();
         }
     }
+    /// <summary>
+    /// Método asignado al botón de comprar "Torre Pesada".
+    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (2), 
+    /// activa el modo de colocación en el mapa y cierra el menú.
+    /// </summary>
     public void BuyTorreHeavy()
     {
         int costTowerToInt = costTower(2);
@@ -94,6 +117,11 @@ public class ConstructionMenu : MonoBehaviour
             cancelFunction();
         }
     }
+    /// <summary>
+    /// Instancia el prefab de la torre seleccionada en la coordenada exacta de la cuadrícula.
+    /// Oculta la cuadrícula de ayuda (tilemap) y saca al jugador del modo colocación.
+    /// (El cobro del dinero se realiza posteriormente desde el script de la propia torre).
+    /// </summary>
     public void PlantTowerOnMap(Vector2 vector2)
     {
         int costTowerToInt = costTower(flagTypeTower);
@@ -104,16 +132,27 @@ public class ConstructionMenu : MonoBehaviour
         tilemap.gameObject.SetActive(false);
         isPlacing = false;
     }
+    /// <summary>
+    /// Prepara el sistema para el modo de construcción: guarda el tipo de torre elegida,
+    /// enciende la cuadrícula visual (tilemap) y activa la bandera (isPlacing) para que el Update empiece a leer el ratón.
+    /// </summary>
     public void SetIsPlacingTilemapFlagTypeTower(int type)
     {
         flagTypeTower = type;
         tilemap.gameObject.SetActive(true);
         isPlacing = true;
     }
+    /// <summary>
+    /// Cierra el menú de selección de torres sin realizar ninguna acción.
+    /// </summary>
     public void cancelFunction()
     {
         menuTowerSelect.SetActive(false);
     }
+    /// <summary>
+    /// Devuelve la referencia al GameObject (Prefab) correspondiente basándose 
+    /// en el tipo de torre seleccionada (flagTypeTower).
+    /// </summary>
     public GameObject setPrefabType()
     {
         switch(flagTypeTower)
@@ -124,6 +163,10 @@ public class ConstructionMenu : MonoBehaviour
             default: return null;
         }
     }
+    /// <summary>
+    /// Devuelve el coste base en oro necesario para comprar una torre 
+    /// específica según su identificador (0 = Media, 1 = Ligera, 2 = Pesada).
+    /// </summary>
     public int costTower(int typeTower = -1)
     {
         switch (typeTower)

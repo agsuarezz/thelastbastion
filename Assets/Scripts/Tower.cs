@@ -69,9 +69,12 @@ public class Tower : MonoBehaviour
     public int currentDamage;
 
     ConstructionMenu constructionMenu;
+
+    public static GameObject gameObjectUpdateDeleteTower;
+
     /// <summary>
-    /// Inicializa las referencias principales de la torre (SpriteRenderer y los scripts de los botones hijos)
-    /// y se asegura de que el menú emergente de selección empiece oculto al iniciar la partida.
+    /// Inicializa las referencias de los componentes, busca el menú global en la escena 
+    /// y autoconstruye la torre base basándose en la elección del jugador en el menú de construcción.
     /// </summary>
     private void Start()
     {
@@ -79,6 +82,9 @@ public class Tower : MonoBehaviour
         deletetower = this.GetComponentInChildren<DeleteTower>(true);
         updatetower = this.GetComponentInChildren<UpdateTower>(true);
         gameManager = FindAnyObjectByType<GameManager>();
+        gameObjectUpdateDeleteTower = GameObject.Find("gameObjectUpdateDeleteTower");
+        if (gameObjectUpdateDeleteTower == null)
+            Debug.LogWarning("No se ha podido dectectar ");
         constructionMenu = FindAnyObjectByType<ConstructionMenu>();
         SetTower(null, null, constructionMenu.flagTypeTower);
     }
@@ -127,7 +133,38 @@ public class Tower : MonoBehaviour
             fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
         }
     }
+    /// <summary>
+    /// Se ejecuta al hacer clic sobre la torre. Muestra el menú global de la interfaz 
+    /// y "formatea" los botones para que apunten a las funciones de ESTA torre específica.
+    /// </summary>
+    public void OnMouseDown()
+    {
+        setGameObjectUpDeleStatus(true);
+        // 1. Buscamos los botones
+        Button btnUpdate = GameObject.Find("ButtonUpdateTower").GetComponent<Button>();
+        Button btnDelete = GameObject.Find("ButtonDeleteTower").GetComponent<Button>();
+        Button btnCancel = GameObject.Find("ButtonCancelTower").GetComponent<Button>();
 
+        // 2. ¡LA MAGIA! Limpiamos la memoria de los botones para que olviden otras torres
+        btnUpdate.onClick.RemoveAllListeners();
+        btnDelete.onClick.RemoveAllListeners();
+        btnCancel.onClick.RemoveAllListeners();
+
+        // 3. Añadimos las funciones de ESTA torre en concreto
+        btnUpdate.onClick.AddListener(() => updatetower.onClickPlayer());
+        btnDelete.onClick.AddListener(() => deletetower.onClickPlayer());
+        btnCancel.onClick.AddListener(() => setGameObjectUpDeleStatus(false));
+    }
+    /// <summary>
+    /// Enciende o apaga todos los elementos hijos del menú global de la torre en la interfaz (UI).
+    /// </summary>
+    public static void setGameObjectUpDeleStatus(bool status)
+    {
+        foreach (Transform hijo in gameObjectUpdateDeleteTower.transform)
+        {
+            hijo.gameObject.SetActive(status);
+        }
+    }
     /// <summary>
     /// Busca enemigos dentro del radio y elige al que más adelantado va en el camino.
     /// </summary>
@@ -182,7 +219,8 @@ public class Tower : MonoBehaviour
         }
     }
     /// <summary>
-    /// Desactiva el menu de Selector de Torres y Añade a una Torre en el lugar seleccionado
+    /// Configura la torre recién comprada o mejorada. Valida si hay dinero suficiente, 
+    /// actualiza sus estadísticas (sprite, colisiones, daño, cadencia) y cobra el coste al jugador.
     /// </summary>
     public void SetTower(Sprite sprite = null, BoxCollider2D boxCollider = null, int type = 0)
     {
@@ -221,6 +259,10 @@ public class Tower : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
+    /// <summary>
+    /// Establece el daño inicial (Nivel 0) de la torre dependiendo de su tipo: 
+    /// Mediana (0), Ligera (1) o Pesada (2).
+    /// </summary>
     public void setCurrentDamage()
     {
         if (updatetower.levelOfTower == 0)
@@ -231,22 +273,36 @@ public class Tower : MonoBehaviour
             else
                 currentDamage = 40;
     }
+    /// <summary>
+    /// Asigna el tipo de torre al script hijo encargado de gestionar las futuras mejoras.
+    /// </summary>
     public void setTypeTower(int type)
     {
         updatetower.typeOfTower = type;
     }
+    /// <summary>
+    /// Activa los GameObjects internos de la torre que contienen los scripts de actualización y borrado.
+    /// </summary>
     public void updateExtensionsTower()
     {
         deleteTowerGameObject.SetActive(true);
         updateTowerGameObject.SetActive(true);
     }
+    /// <summary>
+    /// Actualiza la apariencia física de la torre, aplicándole un nuevo sprite y ajustando 
+    /// su caja de colisión (BoxCollider2D) al tamaño exacto de esa nueva imagen.
+    /// </summary>
     public void setCollisionsAndSprite(SpriteRenderer spriteRenderer, Sprite sprite, BoxCollider2D boxCollider)
     {
         spriteRenderer.sprite = sprite;
         this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider.size.x, boxCollider.size.y);
 
     }
-     public void updateFireCooldownAndDamage()
+    /// <summary>
+    /// Recalcula y aplica las estadísticas de combate (cadencia de tiro y daño extra) 
+    /// basándose en el tipo de la torre y su nivel actual de mejora.
+    /// </summary>
+    public void updateFireCooldownAndDamage()
     {
         if(updatetower.levelOfTower == 0)
         {
@@ -286,6 +342,10 @@ public class Tower : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Suma 1 al contador global de torres del GameManager, asegurándose de hacerlo 
+    /// solo si es una torre recién construida (Nivel 0) y no una mejora.
+    /// </summary>
     public void increaseCountTower()
     {
         if(updatetower.levelOfTower == 0)
