@@ -36,12 +36,12 @@ public class randomEvents : MonoBehaviour
     /// </summary>
     public IEnumerator EventLuckyGold()
     {
-        GameManager.globalMoneyMultiplier = 2;
+        GameManager.globalMoneyMultiplier *= 2;
         messageEvent.text = "Los duendes acaban de cobrar la nómina y traen los bolsillos llenos. ¡A por ellos!";
 
         yield return new WaitForSeconds(10f);
 
-        GameManager.globalMoneyMultiplier = 1;
+        GameManager.globalMoneyMultiplier /= 2;
         messageEvent.text = "";
     }
     /// <summary>
@@ -50,7 +50,7 @@ public class randomEvents : MonoBehaviour
     /// </summary>
     public IEnumerator EventTowerDiscount()
     {
-        GameManager.globalCostMultiplier = 0.5f;
+        GameManager.globalCostMultiplier *= 0.5f;
 
         // Buscamos cuántas torres hay ya construidas
         GameObject[] torresConstruidas = GameObject.FindGameObjectsWithTag("tower");
@@ -59,7 +59,7 @@ public class randomEvents : MonoBehaviour
 
         yield return new WaitForSeconds(10f);
 
-        GameManager.globalCostMultiplier = 1f;
+        GameManager.globalCostMultiplier /= 0.5f;
         messageEvent.text = "";
     }
     /// <summary>
@@ -69,10 +69,10 @@ public class randomEvents : MonoBehaviour
     /// </summary>
     public IEnumerator EventArcherStrike()
     {
-        GameManager.globalAttackSpeedMultiplier = 2;
+        GameManager.globalAttackSpeedMultiplier *= 2f;
         messageEvent.text = "Sindicato de tiradores en huelga. Disparos más lentos.";
         yield return new WaitForSeconds(10f);
-        GameManager.globalAttackSpeedMultiplier = 1;
+        GameManager.globalAttackSpeedMultiplier /= 2f;
         messageEvent.text = "";
     }
     /// <summary>
@@ -94,12 +94,12 @@ public class randomEvents : MonoBehaviour
     /// </summary>
     public IEnumerator EventCleanUpCosts()
     {
-        GameManager.globalMoneyMultiplier = -2;
+        GameManager.globalMoneyMultiplier *= -2;
         messageEvent.text = "Tasa ecológica activa. Ahora PAGAS tú por limpiar los cadáveres de duende.";
 
         yield return new WaitForSeconds(10f);
 
-        GameManager.globalMoneyMultiplier = 1;
+        GameManager.globalMoneyMultiplier /= -2;
         messageEvent.text = "";
     }
     /// <summary>
@@ -108,14 +108,15 @@ public class randomEvents : MonoBehaviour
     /// </summary>
     public IEnumerator EventSugarRush()
     {
-        GameManager.globalSpeedMultiplier = 2.5f;
-        GameManager.globalDamageTakenMultiplier = 2f;
+
+        GameManager.globalSpeedMultiplier *= 2.5f;
+        GameManager.globalDamageTakenMultiplier *= 2f;
         messageEvent.text = "¡Alguien les dio bebida energética! Corren como locos pero son de cristal.";
 
         yield return new WaitForSeconds(10f);
 
-        GameManager.globalSpeedMultiplier = 1f;
-        GameManager.globalDamageTakenMultiplier = 1f;
+        GameManager.globalSpeedMultiplier /= 2.5f;
+        GameManager.globalDamageTakenMultiplier /= 2f;
         messageEvent.text = "";
     }
 

@@ -359,6 +359,9 @@ public class Tower : MonoBehaviour
         {
             switch (updatetower.typeOfTower)
             {
+                case 0:
+                    fireCooldown = 1f;
+                    return;
                 case 1:
                     fireCooldown = 0.5f;
                     return;
@@ -375,23 +378,24 @@ public class Tower : MonoBehaviour
             switch (updatetower.typeOfTower)
             {
                 case 0:
-                    fireCooldown += 0.5f;
                     currentDamage += 10;
-                    return;
+                    fireCooldown -= 0.2f;
+                    break;
                 case 1:
-                    fireCooldown += 1f;
                     currentDamage += 5;
-                    return;
+                    fireCooldown -= 0.15f;
+                    break;
                 case 2:
-                    fireCooldown += 0.25f;
                     currentDamage += 20;
-                    return;
+                    fireCooldown -= 0.25f;
+                    break;
                 default:
-                    fireCooldown += 0.5f;
                     currentDamage += 10;
-                    return;
+                    fireCooldown -= 0.2f;
+                    break;
             }
         }
+        fireCooldown = Mathf.Max(fireCooldown, 0.1f);
     }
     /// <summary>
     /// Suma 1 al contador global de torres del GameManager, asegurándose de hacerlo 
