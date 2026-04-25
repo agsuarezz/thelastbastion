@@ -17,7 +17,14 @@ public class Tower : MonoBehaviour
 
     //Tiempo de recarga en segundos entre cada disparo.
     float fireCooldown = 1f;
+    // ==========================================
+    // DICCIONARIO DE MEJORAS (0: Mediana, 1: Ligera, 2: Pesada)
+    // ==========================================
+    // Cuánto daño gana cada torre al subir de nivel:
+    public static readonly int[] damageUpgradeAmount = { 10, 5, 20 };
 
+    // Cuánto tiempo de recarga se reduce al subir de nivel:
+    public static readonly float[] cooldownUpgradeAmount = { 0.2f, 0.15f, 0.25f };
     [Header("Referencias.")]
     [Tooltip("EL prefab del proyectile que se va a instanciar.")]
     public GameObject projectilePrefab;
@@ -148,9 +155,12 @@ public class Tower : MonoBehaviour
     /// </summary>
     public void OnMouseDown()
     {
-        towerActiveInMenu = this;
         if (GameManager.currentState != GameState.Playing) return;
+
+        towerActiveInMenu = this;
         setGameObjectUpDeleStatus(true);
+        assignInformationImage();
+        assignInformationText();
 
         // 1. Preparamos las variables
         Button btnDelete = null;
@@ -375,27 +385,10 @@ public class Tower : MonoBehaviour
         }
         if (updatetower.levelOfTower > 0)
         {
-            switch (updatetower.typeOfTower)
-            {
-                case 0:
-                    currentDamage += 10;
-                    fireCooldown -= 0.2f;
-                    break;
-                case 1:
-                    currentDamage += 5;
-                    fireCooldown -= 0.15f;
-                    break;
-                case 2:
-                    currentDamage += 20;
-                    fireCooldown -= 0.25f;
-                    break;
-                default:
-                    currentDamage += 10;
-                    fireCooldown -= 0.2f;
-                    break;
-            }
+            currentDamage += damageUpgradeAmount[updatetower.typeOfTower];
+            fireCooldown -= cooldownUpgradeAmount[updatetower.typeOfTower];
+            fireCooldown = Mathf.Max(fireCooldown, 0.1f);
         }
-        fireCooldown = Mathf.Max(fireCooldown, 0.1f);
     }
     /// <summary>
     /// Suma 1 al contador global de torres del GameManager, asegurándose de hacerlo 
@@ -406,6 +399,94 @@ public class Tower : MonoBehaviour
         if(updatetower.levelOfTower == 0)
         {
             GameManager.countTower += 1;
+        }
+    }
+    /// <summary>
+    /// Actualiza la imagen (sprite) mostrada en el panel de información, visualizando 
+    /// cómo se verá la torre si el jugador decide mejorarla al siguiente nivel.
+    /// Si ya está al máximo, muestra la imagen del nivel actual.
+    /// </summary>
+    public void assignInformationImage()
+    {
+        Image[] imageList = gameObjectUpdateDeleteTower.GetComponentsInChildren<Image>();
+        foreach (Image image in imageList)
+        {
+            if(image.gameObject.name == "towerImageUpgrade")
+            {
+                if(updatetower.levelOfTower < 2)
+                {
+                    image.sprite = towerImagen[updatetower.levelOfTower + 1].GetComponent<SpriteRenderer>().sprite;
+                    return;
+                }
+                image.sprite = towerImagen[updatetower.levelOfTower].GetComponent<SpriteRenderer>().sprite;
+                return;
+            }
+        }
+    }
+    /// <summary>
+    /// Actualiza los textos del panel de información (Nombre, Daño y Recarga).
+    /// Calcula las estadísticas futuras de la torre y las muestra con etiquetas 
+    /// de color verde para destacar que es una mejora positiva.
+    /// </summary>
+    public void assignInformationText()
+    {
+        TextMeshProUGUI[] textList = gameObjectUpdateDeleteTower.GetComponentsInChildren<TextMeshProUGUI>();
+        foreach (TextMeshProUGUI text in textList)
+        {
+            if (text.name == "typeLevelText")
+            {
+                text.text = nameTypeOfTower() + " (Niv." + updatetower.levelOfTower + ")";
+            }
+            if (text.name == "currentDamageText")
+            {
+                if (updatetower.levelOfTower < 2)
+                {
+                    int increaseCurrentDamage = currentDamage + damageUpgradeAmount[updatetower.typeOfTower];
+                    text.text = "Daño: [" + currentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
+                }
+                else
+                {
+                    text.text = "Daño: [" + currentDamage + "] (MÁXIMO)";
+                }
+            }
+            if (text.name == "cadenceText")
+            {
+                if (updatetower.levelOfTower < 2)
+                {
+                    // 1. Recarga REAL actual (Base * Cartas)
+                    float realCurrentCooldown = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+
+                    // 2. Simulamos cuál será la Base si la mejoramos
+                    float baseNextCooldown = fireCooldown - cooldownUpgradeAmount[updatetower.typeOfTower];
+                    baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); // Seguridad para la base
+
+                    // 3. Recarga REAL futura (Nueva Base * Cartas)
+                    float realNextCooldown = baseNextCooldown * GameManager.globalAttackSpeedMultiplier;
+                    realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); // Seguridad final
+
+                    text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextCooldown.ToString("F2") + "s] </color>";
+                }
+                else
+                {
+                    // Si ya es nivel máximo, calculamos su recarga real actual para mostrarla
+                    float realCurrentCooldown = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+                    text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] (MÁXIMO)";
+                }
+            }
+        }
+    }
+    public string nameTypeOfTower()
+    {
+        switch (updatetower.typeOfTower)
+        {
+            case 0:
+                return "Torre Media";
+            case 1:
+                return "Torre Ligera";
+            case 2:
+                return "Torre Pesada";
+            default:
+                return "Torre Media";
         }
     }
 }

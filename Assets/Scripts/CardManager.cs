@@ -98,6 +98,8 @@ public class CardManager : MonoBehaviour
                 break;
             case UpgradeType.AttackSpeedUp:
                 GameManager.globalAttackSpeedMultiplier *= 0.85f;
+                // Evitamos que las cartas rompan la velocidad de la luz:
+                GameManager.globalAttackSpeedMultiplier = Mathf.Max(GameManager.globalAttackSpeedMultiplier, 0.5f);
                 break;
             case UpgradeType.RadiusUp:
                 GameManager.globalRadiusMultiplier += 0.2f;
