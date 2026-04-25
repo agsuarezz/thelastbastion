@@ -198,9 +198,9 @@ public class ConstructionMenu : MonoBehaviour
     {
         switch (typeTower)
         {
-            case 0: return 50;
-            case 1: return 25;
-            case 2: return 25;
+            case 0: return 40;
+            case 1: return 50;
+            case 2: return 75;
             default: return 999999;
         }
     }

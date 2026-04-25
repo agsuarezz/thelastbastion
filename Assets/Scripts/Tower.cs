@@ -21,10 +21,19 @@ public class Tower : MonoBehaviour
     // DICCIONARIO DE MEJORAS (0: Mediana, 1: Ligera, 2: Pesada)
     // ==========================================
     // Cuánto daño gana cada torre al subir de nivel:
-    public static readonly int[] damageUpgradeAmount = { 10, 5, 20 };
+    public static readonly int[] damageUpgradeAmount = { 15, 8, 40 };
 
     // Cuánto tiempo de recarga se reduce al subir de nivel:
-    public static readonly float[] cooldownUpgradeAmount = { 0.2f, 0.15f, 0.25f };
+    public static readonly float[] cooldownUpgradeAmount = { 0.2f, 0.05f, 0.25f };
+
+    // Diccionario donde la Llave es el Tipo de Torre y el Valor son los Costes [Niv 1, Niv 2]
+    public static readonly Dictionary<int, int[]> upgradeCosts = new Dictionary<int, int[]>()
+    {
+        { 0, new int[] { 90, 150 } }, // Torre Mediana
+        { 1, new int[] { 75, 130 } }, // Torre Ligera
+        { 2, new int[] { 120, 200 } } // Torre Pesada
+    };
+    [HideInInspector] public int totalGoldInvested = 0;
     [Header("Referencias.")]
     [Tooltip("EL prefab del proyectile que se va a instanciar.")]
     public GameObject projectilePrefab;
@@ -130,7 +139,8 @@ public class Tower : MonoBehaviour
         }
         if (deletetower && deletetower.isDeleteTower)
         {
-            GameManager.countMoney += 25;
+            int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
+            GameManager.countMoney += goldRecovered;
             isBuilt = false;
             GameManager.countTower -= 1;
             Destroy(gameObject);
@@ -182,7 +192,9 @@ public class Tower : MonoBehaviour
             Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonDeleteTower y ButtonCancelTower en la jerarquía.");
             return;
         }
-
+        int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
+        // --- Asignamos cuanto dinero recuperaria si vende ---
+        btnDelete.GetComponentInChildren<TextMeshProUGUI>().text = "VENDER (Recuperas: " + goldRecovered + ")";
         // 5. ¡LA MAGIA! Limpiamos la memoria de los botones para que olviden otras torres
         btnDelete.onClick.RemoveAllListeners();
         btnCancel.onClick.RemoveAllListeners();
@@ -254,10 +266,11 @@ public class Tower : MonoBehaviour
             Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonUpdateTower en la jerarquía.");
             return;
         }
-        if (updatetower.levelOfTower < 2 && GameManager.countMoney >= updatetower.costTower(updatetower.typeOfTower))
+        int costTower = upgradeCosts[updatetower.typeOfTower][updatetower.levelOfTower];
+        if (updatetower.levelOfTower < 2 && GameManager.countMoney >= costTower)
         {
             btnUpdate.gameObject.SetActive(true);
-            btnUpdate.GetComponentInChildren<TextMeshProUGUI>().text = "MEJORAR\n" + "(Coste: " + updatetower.costTower(updatetower.typeOfTower) + ")";
+            btnUpdate.GetComponentInChildren<TextMeshProUGUI>().text = "MEJORAR\n" + "(Coste: " + costTower + ")";
             btnUpdate.onClick.RemoveAllListeners();
             btnUpdate.onClick.AddListener(() => updatetower.onClickPlayer());
         }
@@ -290,7 +303,7 @@ public class Tower : MonoBehaviour
             sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
         if (boxCollider == null)
             boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
-        int costTower = updatetower.costTower(type);
+        int costTower = Mathf.RoundToInt((updatetower.levelOfTower == 0 ? updatetower.costTower(type) : upgradeCosts[updatetower.typeOfTower][updatetower.levelOfTower]) * GameManager.globalCostMultiplier);
         if (GameManager.countMoney >= costTower)
         {
             updateExtensionsTower();
@@ -302,7 +315,7 @@ public class Tower : MonoBehaviour
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
             isBuilt = true;
             increaseCountTower();
-            GameManager.countMoney -= (costTower * GameManager.globalCostMultiplier).ConvertTo<int>();
+            setCountMoneyTotalGoldInvested(costTower);
         }
         else
         {
@@ -341,6 +354,15 @@ public class Tower : MonoBehaviour
     {
         updatetower.typeOfTower = type;
     }
+
+    public void setCountMoneyTotalGoldInvested(int finalCost)
+    {
+        // 2. Se lo restamos al dinero del jugador
+        GameManager.countMoney -= finalCost;
+
+        // 3. ¡Lo guardamos en la hucha de la torre para su futura venta!
+        totalGoldInvested += finalCost;
+    }
     /// <summary>
     /// Activa los GameObjects internos de la torre que contienen los scripts de actualización y borrado.
     /// </summary>
@@ -373,7 +395,7 @@ public class Tower : MonoBehaviour
                     fireCooldown = 1f;
                     return;
                 case 1:
-                    fireCooldown = 0.5f;
+                    fireCooldown = 0.4f;
                     return;
                 case 2:
                     fireCooldown = 2f;
