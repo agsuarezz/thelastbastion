@@ -263,6 +263,7 @@ public class Tower : MonoBehaviour
             return;
         }
         int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
+        if (indexToLook > 2) indexToLook = 2;
         int costTower = upgradeCosts[updatetower.typeOfTower][indexToLook];
         if (updatetower.levelOfTower < 2 && GameManager.countMoney >= costTower)
         {
@@ -458,7 +459,7 @@ public class Tower : MonoBehaviour
         {
             if (text.name == "typeLevelText")
             {
-                text.text = nameTypeOfTower() + " (Niv." + updatetower.levelOfTower + ")";
+                text.text = nameTypeOfTower() + " (Nivel " + (updatetower.levelOfTower + 1)  + ")";
             }
             if (text.name == "currentDamageText")
             {

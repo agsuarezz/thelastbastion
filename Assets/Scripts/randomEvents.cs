@@ -77,11 +77,11 @@ public class randomEvents : MonoBehaviour
     }
     /// <summary>
     /// Evento Negativo: "El Cobrador".
-    /// Hacienda se lleva el 20% de tus ahorros actuales. ¡Duele más cuanto más rico eres!
+    /// Hacienda se lleva el 40% de tus ahorros actuales. ¡Duele más cuanto más rico eres!
     /// </summary>
     public IEnumerator EventTaxCollector()
     {
-        int taxes = (int)(GameManager.countMoney * 0.20f); // Calcula el 20%
+        int taxes = (int)(GameManager.countMoney * 0.40f); // Calcula el 40%
         GameManager.countMoney -= taxes;
         messageEvent.text = $"El inspector de Hacienda te ha confiscado {taxes} de Oro por no declarar las torres.";
 
