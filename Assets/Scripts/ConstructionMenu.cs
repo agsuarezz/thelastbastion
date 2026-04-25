@@ -194,14 +194,14 @@ public class ConstructionMenu : MonoBehaviour
     /// Devuelve el coste base en oro necesario para comprar una torre 
     /// específica según su identificador (0 = Media, 1 = Ligera, 2 = Pesada).
     /// </summary>
-    public int costTower(int typeTower = -1)
+    public static int costTower(int typeTower = -1)
     {
         switch (typeTower)
         {
-            case 0: return 40;
-            case 1: return 50;
-            case 2: return 75;
-            default: return 999999;
+            case 0: return Tower.upgradeCosts[0][0];
+            case 1: return Tower.upgradeCosts[1][0];
+            case 2: return Tower.upgradeCosts[2][0];
+            default: return Tower.upgradeCosts[0][0];
         }
     }
 }

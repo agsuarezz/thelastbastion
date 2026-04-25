@@ -26,12 +26,11 @@ public class Tower : MonoBehaviour
     // Cuánto tiempo de recarga se reduce al subir de nivel:
     public static readonly float[] cooldownUpgradeAmount = { 0.2f, 0.05f, 0.25f };
 
-    // Diccionario donde la Llave es el Tipo de Torre y el Valor son los Costes [Niv 1, Niv 2]
     public static readonly Dictionary<int, int[]> upgradeCosts = new Dictionary<int, int[]>()
     {
-        { 0, new int[] { 90, 150 } }, // Torre Mediana
-        { 1, new int[] { 75, 130 } }, // Torre Ligera
-        { 2, new int[] { 120, 200 } } // Torre Pesada
+        { 0, new int[] { 40, 90, 150 } }, // Media: [Compra, Niv1, Niv2]
+        { 1, new int[] { 50, 75, 130 } }, // Ligera: [Compra, Niv1, Niv2]
+        { 2, new int[] { 70, 120, 200 } }  // Pesada: [Compra, Niv1, Niv2]
     };
     [HideInInspector] public int totalGoldInvested = 0;
     [Header("Referencias.")]
@@ -117,24 +116,17 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (towerActiveInMenu == this)
-        {
-            refreshButtonUpdate();
-        }
         if (updatetower && updatetower.needUpdateTower && updatetower.typeOfTower != -1)
         {
-            if (updatetower.levelOfTower == 1)
-            {
-                SetTower(towerImagen[1].GetComponent<SpriteRenderer>().sprite, towerImagen[1].GetComponent<BoxCollider2D>(), updatetower.typeOfTower);
-                updatetower.needUpdateTower = false;
-                return;
-            }
-            else if (updatetower.levelOfTower == 2)
-            {
-                SetTower(towerImagen[2].GetComponent<SpriteRenderer>().sprite, towerImagen[2].GetComponent<BoxCollider2D>(), updatetower.typeOfTower);
-                updatetower.needUpdateTower = false;
-                return;
-            }
+            int nextLevel = updatetower.levelOfTower + 1;
+            // Cogemos el sprite del nivel al que acabamos de subir (1 o 2)
+            Sprite proximoSprite = towerImagen[nextLevel].GetComponent<SpriteRenderer>().sprite;
+            BoxCollider2D proximoCol = towerImagen[nextLevel].GetComponent<BoxCollider2D>();
+
+            SetTower(proximoSprite, proximoCol, updatetower.typeOfTower);
+
+            updatetower.needUpdateTower = false; // Reset de la bandera
+            return; // Salimos del frame para evitar conflictos
 
         }
         if (deletetower && deletetower.isDeleteTower)
@@ -145,6 +137,10 @@ public class Tower : MonoBehaviour
             GameManager.countTower -= 1;
             Destroy(gameObject);
             return;
+        }
+        if (towerActiveInMenu == this)
+        {
+            refreshButtonUpdate();
         }
         if (!isBuilt) return;
 
@@ -266,7 +262,8 @@ public class Tower : MonoBehaviour
             Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonUpdateTower en la jerarquía.");
             return;
         }
-        int costTower = upgradeCosts[updatetower.typeOfTower][updatetower.levelOfTower];
+        int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
+        int costTower = upgradeCosts[updatetower.typeOfTower][indexToLook];
         if (updatetower.levelOfTower < 2 && GameManager.countMoney >= costTower)
         {
             btnUpdate.gameObject.SetActive(true);
@@ -293,29 +290,44 @@ public class Tower : MonoBehaviour
         }
     }
     /// <summary>
-    /// Configura la torre recién comprada o mejorada. Valida si hay dinero suficiente, 
-    /// actualiza sus estadísticas (sprite, colisiones, daño, cadencia) y cobra el coste al jugador.
+    /// Configura la torre recién comprada o mejorada.
     /// </summary>
     public void SetTower(Sprite sprite = null, BoxCollider2D boxCollider = null, int type = 0)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
-        if (sprite == null)
-            sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
-        if (boxCollider == null)
-            boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
-        int costTower = Mathf.RoundToInt((updatetower.levelOfTower == 0 ? updatetower.costTower(type) : upgradeCosts[updatetower.typeOfTower][updatetower.levelOfTower]) * GameManager.globalCostMultiplier);
+
+        // 1. Calculamos el nivel al que vamos y el coste
+        int nextLevel = !isBuilt ? 0 : updatetower.levelOfTower + 1;
+        int costTower = Mathf.RoundToInt(upgradeCosts[type][nextLevel] * GameManager.globalCostMultiplier);
+
         if (GameManager.countMoney >= costTower)
         {
-            updateExtensionsTower();
-
-            setTypeTower(type);
-            setCurrentDamage();
-            Projectile projectilePrefabScript = projectilePrefab.GetComponent<Projectile>();
-            updateFireCooldownAndDamage();
-            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
-            isBuilt = true;
-            increaseCountTower();
+            // 2. Cobramos y preparamos las variables
             setCountMoneyTotalGoldInvested(costTower);
+            updateExtensionsTower();
+            setTypeTower(type);
+
+            // 3. ¡LA CLAVE! Separamos Construir vs Mejorar para el orden de estadísticas
+            if (!isBuilt)
+            {
+                // ES NUEVA (Nivel 0)
+                isBuilt = true;
+                updatetower.levelOfTower = 0;
+                setCurrentDamage(); // Ponemos el daño base inicial
+                updateFireCooldownAndDamage(); // Ponemos la recarga base
+                increaseCountTower();
+            }
+            else
+            {
+                // ES UNA MEJORA
+                updatetower.levelOfTower++; // SUBIMOS EL NIVEL PRIMERO
+                updateFireCooldownAndDamage(); // Como el nivel ya subió, ahora sí sumará el daño extra
+            }
+
+            // 4. Aplicamos los visuales
+            if (sprite == null) sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
+            if (boxCollider == null) boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
+            setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
         }
         else
         {
@@ -323,7 +335,7 @@ public class Tower : MonoBehaviour
         }
     }
 
-   
+
     /// <summary>
     /// Dibuja el radio de ataque en color rojo en la vista de escena (Scene) 
     /// cuando la torre está seleccionada para ayudar visualmente en el diseño del nivel.
@@ -334,18 +346,17 @@ public class Tower : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
     /// <summary>
-    /// Establece el daño inicial (Nivel 0) de la torre dependiendo de su tipo: 
-    /// Mediana (0), Ligera (1) o Pesada (2).
+    /// Establece el daño inicial (Nivel 0) de la torre.
     /// </summary>
     public void setCurrentDamage()
     {
-        if (updatetower.levelOfTower == 0)
-            if (updatetower.typeOfTower == 0)
-                currentDamage = 20;
-            else if (updatetower.typeOfTower == 1)
-                currentDamage = 10;
-            else
-                currentDamage = 40;
+        // Ya no hace falta comprobar el nivel aquí, SetTower solo llama a esto en Nivel 0.
+        if (updatetower.typeOfTower == 0)
+            currentDamage = 25; // Mediana
+        else if (updatetower.typeOfTower == 1)
+            currentDamage = 12; // Ligera
+        else
+            currentDamage = 60; // Pesada
     }
     /// <summary>
     /// Asigna el tipo de torre al script hijo encargado de gestionar las futuras mejoras.
@@ -382,35 +393,25 @@ public class Tower : MonoBehaviour
 
     }
     /// <summary>
-    /// Recalcula y aplica las estadísticas de combate (cadencia de tiro y daño extra) 
-    /// basándose en el tipo de la torre y su nivel actual de mejora.
+    /// Aplica las estadísticas base en Nivel 0, o suma/resta estadísticas en Nivel 1 y 2.
     /// </summary>
     public void updateFireCooldownAndDamage()
     {
-        if(updatetower.levelOfTower == 0)
+        if (updatetower.levelOfTower == 0)
         {
             switch (updatetower.typeOfTower)
             {
-                case 0:
-                    fireCooldown = 1f;
-                    return;
-                case 1:
-                    fireCooldown = 0.4f;
-                    return;
-                case 2:
-                    fireCooldown = 2f;
-                    return;
-                default:
-                    fireCooldown = 1f;
-                    return;
+                case 0: fireCooldown = 1.0f; return; // Mediana
+                case 1: fireCooldown = 0.4f; return; // Ligera
+                case 2: fireCooldown = 2.0f; return; // Pesada
+                default: fireCooldown = 1.0f; return;
             }
         }
-        if (updatetower.levelOfTower > 0)
-        {
-            currentDamage += damageUpgradeAmount[updatetower.typeOfTower];
-            fireCooldown -= cooldownUpgradeAmount[updatetower.typeOfTower];
-            fireCooldown = Mathf.Max(fireCooldown, 0.1f);
-        }
+
+        // Si el código llega hasta aquí, es porque el nivel es > 0 (es una mejora)
+        currentDamage += damageUpgradeAmount[updatetower.typeOfTower];
+        fireCooldown -= cooldownUpgradeAmount[updatetower.typeOfTower];
+        fireCooldown = Mathf.Max(fireCooldown, 0.1f); // Límite de seguridad
     }
     /// <summary>
     /// Suma 1 al contador global de torres del GameManager, asegurándose de hacerlo 
