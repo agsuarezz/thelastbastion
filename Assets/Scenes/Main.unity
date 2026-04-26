@@ -494,6 +494,7 @@ GameObject:
   - component: {fileID: 64441737}
   - component: {fileID: 64441738}
   - component: {fileID: 64441739}
+  - component: {fileID: 64441740}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -667,9 +668,22 @@ MonoBehaviour:
   prefabTowerMedian: {fileID: 8991276415801162673, guid: 9215f2686913cdc45aa6fab00fcff581, type: 3}
   prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}
   prefabTowerHeavy: {fileID: 8544740251689827319, guid: 65311828bfcba7d4999338877f98bf6e, type: 3}
-  tilemap: {fileID: 554214137}
   isPlacing: 0
   flagTypeTower: -1
+--- !u!114 &64441740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 64441734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e99998137317e4d8498dd42726f731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  list_grid:
+  - {fileID: 4294950374333966184, guid: 6e2728b7f418e3b4bb3dd49eb9e93401, type: 3}
 --- !u!1 &66280147
 GameObject:
   m_ObjectHideFlags: 0
@@ -11417,7 +11431,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!156049354 &652933495
 Grid:
   m_ObjectHideFlags: 0

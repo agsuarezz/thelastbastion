@@ -10,7 +10,7 @@ public class ConstructionMenu : MonoBehaviour
     public GameObject prefabTowerMedian;
     public GameObject prefabTowerLight;
     public GameObject prefabTowerHeavy;
-    public Tilemap tilemap;
+    Tilemap tilemap;
 
     // Da permiso para que coloque la torre
     [HideInInspector] public bool isPlacing = false;
@@ -19,6 +19,11 @@ public class ConstructionMenu : MonoBehaviour
     private void Start()
     {
         gameManager = FindAnyObjectByType<GameManager>();
+        if (gameManager == null)
+            Debug.LogWarning("GameManager no encontrado");
+        tilemap = FindAnyObjectByType<LineRenderer>(FindObjectsInactive.Include).GetComponent<Tilemap>();
+        if (tilemap == null)
+            Debug.LogWarning("Tilemap no encontrado");
     }
     /// <summary>
     /// Se ejecuta en cada frame. Controla la lógica del "Modo Colocación" de torres:
