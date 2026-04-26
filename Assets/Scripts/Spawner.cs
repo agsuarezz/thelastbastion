@@ -20,7 +20,7 @@ public struct EnemyTypeConfig
 public class Spawner : MonoBehaviour
 {
     [Header("Ruta")]
-    public LevelRoute enemyRoute;
+    private LevelRoute enemyRoute;
 
     [Header("Tipos de Enemigos")]
     [SerializeField] private EnemyTypeConfig[] enemyTypes;
@@ -47,6 +47,7 @@ public class Spawner : MonoBehaviour
 
     private void Start()
     {
+        enemyRoute = FindAnyObjectByType<LevelRoute>();
         PrepareWave();
     }
 
@@ -132,7 +133,7 @@ public class Spawner : MonoBehaviour
 
         if (obj != null)
         {
-            obj.transform.position = enemyRoute.waypoints[0].position;
+            obj.transform.position = enemyRoute.waypoints[0];
 
             Enemy enemy = obj.GetComponent<Enemy>();
             if (enemy != null)

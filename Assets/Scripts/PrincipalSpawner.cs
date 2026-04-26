@@ -19,7 +19,7 @@ public class PrincipalSpawner : MonoBehaviour
 {
     [Header("Ruta")]
     [Tooltip("Ruta que seguirán los enemigos del menú principal.")]
-    public LevelRoute enemyRoute;
+    private LevelRoute enemyRoute;
 
     [Header("Tipos de enemigos")]
     [Tooltip("Tipos de enemigos que pueden aparecer en el menú principal.")]
@@ -63,15 +63,11 @@ public class PrincipalSpawner : MonoBehaviour
         {
             Debug.LogWarning("PrincipalSpawner: no hay enemigos asignados.");
         }
-
-        if (enemyRoute == null || enemyRoute.waypoints == null || enemyRoute.waypoints.Length == 0)
-        {
-            Debug.LogWarning("PrincipalSpawner: no hay ruta asignada o no tiene waypoints.");
-        }
     }
 
     private void Start()
     {
+        enemyRoute = FindAnyObjectByType<LevelRoute>();
         spawnTimer = initialDelay;
         initialDelayFinished = false;
         spawnCounter = 0;
@@ -152,7 +148,7 @@ public class PrincipalSpawner : MonoBehaviour
             return;
         }
 
-        obj.transform.position = enemyRoute.waypoints[0].position;
+        obj.transform.position = enemyRoute.waypoints[0];
         obj.transform.rotation = Quaternion.identity;
 
         Enemy enemyComponent = obj.GetComponent<Enemy>();

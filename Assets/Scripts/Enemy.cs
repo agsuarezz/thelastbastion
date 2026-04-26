@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
     public float currentLife;
     public float currentSpeed;
 
-    private Transform[] pathWaypoints;
+    private Vector3[] pathWaypoints;
     private int currentWaypointIndex = 0;
 
     private bool isDead = false;
@@ -56,7 +56,7 @@ public class Enemy : MonoBehaviour
         MoveAlongPath();
     }
 
-    public void SetPath(Transform[] routeWaypoints)
+    public void SetPath(Vector3[] routeWaypoints)
     {
         pathWaypoints = routeWaypoints;
         currentWaypointIndex = 0;
@@ -98,12 +98,12 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
+        Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
 
-        Vector3 direction = targetWaypoint.position - transform.position;
+        Vector3 direction = targetWaypoint - transform.position;
         transform.Translate(direction.normalized * currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime, Space.World);
 
-        if (Vector2.Distance(transform.position, targetWaypoint.position) <= 0.1f)
+        if (Vector2.Distance(transform.position, targetWaypoint) <= 0.1f)
         {
             currentWaypointIndex++;
         }
@@ -160,13 +160,13 @@ public class Enemy : MonoBehaviour
 
         float progress = currentWaypointIndex;
 
-        Transform targetWaypoint = pathWaypoints[currentWaypointIndex];
-        Transform previousWaypoint = currentWaypointIndex > 0 ? pathWaypoints[currentWaypointIndex - 1] : null;
+        Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
 
-        if (previousWaypoint != null)
+        if (currentWaypointIndex > 0)
         {
-            float segmentLength = Vector2.Distance(previousWaypoint.position, targetWaypoint.position);
-            float distanceFromPrevious = Vector2.Distance(previousWaypoint.position, transform.position);
+            Vector3 previousWaypoint = pathWaypoints[currentWaypointIndex - 1];
+            float segmentLength = Vector2.Distance(previousWaypoint, targetWaypoint);
+            float distanceFromPrevious = Vector2.Distance(previousWaypoint, transform.position);
 
             if (segmentLength > 0f)
             {
