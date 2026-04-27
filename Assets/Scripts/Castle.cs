@@ -88,7 +88,6 @@ public class castleScript : MonoBehaviour
         if (castleSpawnPoint != null)
         {
             transform.position = castleSpawnPoint.CalculatedCenter;
-            Debug.Log("Castillo reubicado con éxito en: " + transform.position);
         }
         else
         {

@@ -4,13 +4,16 @@ using UnityEngine;
 /// </summary>
 public class CastleSpawnPoint : MonoBehaviour
 {
-    [Header("Posición del Castillo")]
+    [Header("Posición del Castillo y Portal")]
     [Tooltip("Coordenada exacta donde debe aparecer el castillo en este mapa")]
     public Vector3 castleSpawnPosition;
+    public Vector3 portalSpawnPosition;
+    public Quaternion portalSpawnRotation;
     /// Propiedad que devuelve la posición real en el mundo, centrada en la casilla.
     /// (Suma +0.5f a X e Y de forma automática).
     /// </summary>
     public Vector3 CalculatedCenter => new Vector3(castleSpawnPosition.x, castleSpawnPosition.y + 0.5f, 0);
+    public Vector3 PortalCalculatedCenter => new Vector3(portalSpawnPosition.x, portalSpawnPosition.y + 0.5f, 0);
     private void OnDrawGizmos()
     {
         // Pintamos un cubo azul semitransparente para representar el castillo
@@ -20,5 +23,14 @@ public class CastleSpawnPoint : MonoBehaviour
         // Y una línea roja pequeñita en el centro para marcar el punto exacto
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(castleSpawnPosition, 0.2f);
+
+        // --- Lógica del Portal ---
+        // Pintamos un cubo verde semitransparente para representar el portal
+        Gizmos.color = new Color(0, 1, 0, 0.5f); // Verde
+        Gizmos.DrawCube(portalSpawnPosition, new Vector3(1f, 1f, 1f));
+
+        // Marcador para el punto exacto del portal
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(portalSpawnPosition, 0.2f);
     }
 }

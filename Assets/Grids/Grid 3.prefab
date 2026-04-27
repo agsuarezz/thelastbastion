@@ -4963,6 +4963,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   castleSpawnPosition: {x: 6.5, y: -3.5, z: 0}
+  portalSpawnPosition: {x: -0.5, y: 5, z: 0}
+  portalSpawnRotation: {x: 0, y: 0, z: -0.70710677, w: 0.70710677}
 --- !u!1 &9063492494792368192
 GameObject:
   m_ObjectHideFlags: 0
