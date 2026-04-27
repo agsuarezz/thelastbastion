@@ -27,6 +27,7 @@ public class castleScript : MonoBehaviour
     public GameObject LogicaGameOver;
     private void Start()
     {
+        StartCoroutine(SearchandMovetotheMap());
         lifeMax = life;
 
         if (lifeSlider != null)
@@ -78,6 +79,20 @@ public class castleScript : MonoBehaviour
 
             
             FindObjectOfType<GameManager>().cargarGameOver();
+        }
+    }
+    public IEnumerator SearchandMovetotheMap()
+    {
+        yield return new WaitForEndOfFrame();
+        CastleSpawnPoint castleSpawnPoint = FindAnyObjectByType<CastleSpawnPoint>();
+        if (castleSpawnPoint != null)
+        {
+            transform.position = castleSpawnPoint.CalculatedCenter;
+            Debug.Log("Castillo reubicado con éxito en: " + transform.position);
+        }
+        else
+        {
+            Debug.LogWarning("El Castillo no encontró ningún MapConfig en la escena.");
         }
     }
 }
