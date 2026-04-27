@@ -19,10 +19,8 @@ public class Enemy : MonoBehaviour
     private bool isDead = false;
     public bool IsDead => isDead;
 
-    // 🔹 MANTENEMOS ESTO (LO USA EL SPAWNER)
     private bool showLifeBar = true;
 
-    // 🔹 NUEVO: ATAQUE AL CASTILLO
     private bool isAttackingCastle = false;
     private float attackTimer = 0f;
 
@@ -62,9 +60,13 @@ public class Enemy : MonoBehaviour
         currentWaypointIndex = 0;
         isAttackingCastle = false;
         attackTimer = 0f;
+
+        if (animator != null)
+        {
+            animator.SetBool("IsAttacking", false);
+        }
     }
 
-    // 🔹 NO LO QUITES (LO USA EL SPAWNER)
     public void SetLifeBarVisible(bool visible)
     {
         showLifeBar = visible;
@@ -77,9 +79,13 @@ public class Enemy : MonoBehaviour
 
     private void MoveAlongPath()
     {
+        if (animator != null)
+        {
+            animator.SetBool("IsAttacking", false);
+        }
+
         if (pathWaypoints == null || pathWaypoints.Length == 0) return;
 
-        // 🔹 CHECK DE RANGO AL CASTILLO
         if (targetCastle != null && targetCastle.castleCollider != null)
         {
             Vector2 closestPoint = targetCastle.castleCollider.ClosestPoint(transform.position);
@@ -123,8 +129,10 @@ public class Enemy : MonoBehaviour
             rb.angularVelocity = 0f;
         }
 
-        // Si luego quieres animación:
-        // animator.SetBool("IsAttacking", true);
+        if (animator != null)
+        {
+            animator.SetBool("IsAttacking", true);
+        }
     }
 
     private void AttackCastle()
@@ -133,6 +141,11 @@ public class Enemy : MonoBehaviour
         {
             targetCastle = FindObjectOfType<castleScript>();
             if (targetCastle == null) return;
+        }
+
+        if (animator != null)
+        {
+            animator.SetBool("IsAttacking", true);
         }
 
         attackTimer -= Time.deltaTime;
@@ -151,7 +164,6 @@ public class Enemy : MonoBehaviour
         if (pathWaypoints == null || pathWaypoints.Length == 0)
             return 0f;
 
-        // 🔹 IMPORTANTE: enemigos atacando tienen prioridad máxima
         if (isAttackingCastle)
             return pathWaypoints.Length + 1f;
 
@@ -224,6 +236,7 @@ public class Enemy : MonoBehaviour
 
         if (animator != null)
         {
+            animator.SetBool("IsAttacking", false);
             animator.SetTrigger("Die");
         }
         else
@@ -284,6 +297,7 @@ public class Enemy : MonoBehaviour
         {
             animator.Rebind();
             animator.Update(0f);
+            animator.SetBool("IsAttacking", false);
         }
     }
 }
