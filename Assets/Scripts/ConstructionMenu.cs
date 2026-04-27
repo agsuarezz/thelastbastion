@@ -24,23 +24,57 @@ public class ConstructionMenu : MonoBehaviour
         tilemap = FindAnyObjectByType<LineRenderer>(FindObjectsInactive.Include).GetComponent<Tilemap>();
     }
     /// <summary>
-    /// Se ejecuta en cada frame. Controla la lógica del "Modo Colocación" de torres:
-    /// Sigue el ratón fijándolo a la cuadrícula, comprueba si el jugador sigue teniendo dinero, 
-    /// valida mediante físicas (OverlapCircle) que la casilla esté libre al hacer clic izquierdo 
-    /// para construir, y permite cancelar la acción con el clic derecho.
+    /// Se ejecuta en cada frame. Controla la lï¿½gica del "Modo Colocaciï¿½n" de torres:
+    /// Sigue el ratï¿½n fijï¿½ndolo a la cuadrï¿½cula, comprueba si el jugador sigue teniendo dinero, 
+    /// valida mediante fï¿½sicas (OverlapCircle) que la casilla estï¿½ libre al hacer clic izquierdo 
+    /// para construir, y permite cancelar la acciï¿½n con el clic derecho.
     /// </summary>
     private void Update()
     {
         if (GameManager.currentState != GameState.Playing) return;
-        // 1. Entramos solo si estamos en modo colocación
+
+        // --- LÃ“GICA: Abrir/Cerrar menÃº con tecla 'Q' ---
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            bool isMenuActive = menuTowerSelect.activeSelf;
+            menuTowerSelect.SetActive(!isMenuActive);
+
+            if (isMenuActive && isPlacing)
+            {
+                isPlacing = false;
+                tilemap.gameObject.SetActive(false);
+            }
+        }
+        // -----------------------------------------------
+
+        // --- NUEVA LÃ“GICA: Atajos 1, 2 y 3 para comprar ---
+        // Solo comprobamos estas teclas si el menÃº de selecciÃ³n ESTÃ ABIERTO
+        if (menuTowerSelect.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1)) // Tecla '1'
+            {
+                BuyTorreMedian();
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2)) // Tecla '2'
+            {
+                BuyTorreLight();
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3)) // Tecla '3'
+            {
+                BuyTorreHeavy();
+            }
+        }
+        // --------------------------------------------------
+
+        // 1. Entramos solo si estamos en modo colocaciÃ³n
         if (isPlacing)
         {
-            // 2. Si pierde dinero a mitad de construcción, abortamos.
+            // 2. Si pierde dinero a mitad de construcciÃ³n, abortamos.
             if (GameManager.countMoney < costTower(flagTypeTower))
             {
                 tilemap.gameObject.SetActive(false);
                 isPlacing = false;
-                Debug.Log("Construcción abortada: Te quedaste sin oro.");
+                Debug.Log("ConstrucciÃ³n abortada: Te quedaste sin oro.");
                 return;
             }
 
@@ -73,7 +107,7 @@ public class ConstructionMenu : MonoBehaviour
                 PlantTowerOnMap(exactPosition);
             }
 
-            // 4. CLIC DERECHO: Cancelar construcción si el jugador se arrepiente
+            // 4. CLIC DERECHO: Cancelar construcciÃ³n si el jugador se arrepiente
             if (Input.GetMouseButtonDown(1))
             {
                 tilemap.gameObject.SetActive(false);
@@ -83,7 +117,7 @@ public class ConstructionMenu : MonoBehaviour
     }
     /// <summary>
     /// Activa el panel de la interfaz de usuario que permite al jugador seleccionar 
-    /// qué tipo de torre desea comprar y construir.
+    /// quï¿½ tipo de torre desea comprar y construir.
     /// </summary>
     public void contructionMenu()
     {
@@ -91,9 +125,9 @@ public class ConstructionMenu : MonoBehaviour
         menuTowerSelect.SetActive(true);
     }
     /// <summary>
-    /// Método asignado al botón de comprar "Torre Mediana".
+    /// Mï¿½todo asignado al botï¿½n de comprar "Torre Mediana".
     /// Comprueba si hay dinero suficiente, asigna el tipo de torre (0), 
-    /// activa el modo de colocación en el mapa y cierra el menú.
+    /// activa el modo de colocaciï¿½n en el mapa y cierra el menï¿½.
     /// </summary>
     public void BuyTorreMedian()
     {
@@ -110,9 +144,9 @@ public class ConstructionMenu : MonoBehaviour
         }
     }
     /// <summary>
-    /// Método asignado al botón de comprar "Torre Ligera".
+    /// Mï¿½todo asignado al botï¿½n de comprar "Torre Ligera".
     /// Comprueba si hay dinero suficiente, asigna el tipo de torre (1), 
-    /// activa el modo de colocación en el mapa y cierra el menú.
+    /// activa el modo de colocaciï¿½n en el mapa y cierra el menï¿½.
     /// </summary>
     public void BuyTorreLight()
     {
@@ -129,9 +163,9 @@ public class ConstructionMenu : MonoBehaviour
         }
     }
     /// <summary>
-    /// Método asignado al botón de comprar "Torre Pesada".
+    /// Mï¿½todo asignado al botï¿½n de comprar "Torre Pesada".
     /// Comprueba si hay dinero suficiente, asigna el tipo de torre (2), 
-    /// activa el modo de colocación en el mapa y cierra el menú.
+    /// activa el modo de colocaciï¿½n en el mapa y cierra el menï¿½.
     /// </summary>
     public void BuyTorreHeavy()
     {
@@ -148,8 +182,8 @@ public class ConstructionMenu : MonoBehaviour
         }
     }
     /// <summary>
-    /// Instancia el prefab de la torre seleccionada en la coordenada exacta de la cuadrícula.
-    /// Oculta la cuadrícula de ayuda (tilemap) y saca al jugador del modo colocación.
+    /// Instancia el prefab de la torre seleccionada en la coordenada exacta de la cuadrï¿½cula.
+    /// Oculta la cuadrï¿½cula de ayuda (tilemap) y saca al jugador del modo colocaciï¿½n.
     /// (El cobro del dinero se realiza posteriormente desde el script de la propia torre).
     /// </summary>
     public void PlantTowerOnMap(Vector2 vector2)
@@ -163,8 +197,8 @@ public class ConstructionMenu : MonoBehaviour
         isPlacing = false;
     }
     /// <summary>
-    /// Prepara el sistema para el modo de construcción: guarda el tipo de torre elegida,
-    /// enciende la cuadrícula visual (tilemap) y activa la bandera (isPlacing) para que el Update empiece a leer el ratón.
+    /// Prepara el sistema para el modo de construcciï¿½n: guarda el tipo de torre elegida,
+    /// enciende la cuadrï¿½cula visual (tilemap) y activa la bandera (isPlacing) para que el Update empiece a leer el ratï¿½n.
     /// </summary>
     public void SetIsPlacingTilemapFlagTypeTower(int type)
     {
@@ -173,14 +207,14 @@ public class ConstructionMenu : MonoBehaviour
         isPlacing = true;
     }
     /// <summary>
-    /// Cierra el menú de selección de torres sin realizar ninguna acción.
+    /// Cierra el menï¿½ de selecciï¿½n de torres sin realizar ninguna acciï¿½n.
     /// </summary>
     public void cancelFunction()
     {
         menuTowerSelect.SetActive(false);
     }
     /// <summary>
-    /// Devuelve la referencia al GameObject (Prefab) correspondiente basándose 
+    /// Devuelve la referencia al GameObject (Prefab) correspondiente basï¿½ndose 
     /// en el tipo de torre seleccionada (flagTypeTower).
     /// </summary>
     public GameObject setPrefabType()
@@ -195,7 +229,7 @@ public class ConstructionMenu : MonoBehaviour
     }
     /// <summary>
     /// Devuelve el coste base en oro necesario para comprar una torre 
-    /// específica según su identificador (0 = Media, 1 = Ligera, 2 = Pesada).
+    /// especï¿½fica segï¿½n su identificador (0 = Media, 1 = Ligera, 2 = Pesada).
     /// </summary>
     public static int costTower(int typeTower = -1)
     {
