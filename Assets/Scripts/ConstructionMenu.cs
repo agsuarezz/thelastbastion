@@ -21,7 +21,19 @@ public class ConstructionMenu : MonoBehaviour
         gameManager = FindAnyObjectByType<GameManager>();
         if (gameManager == null)
             Debug.LogWarning("GameManager no encontrado");
-        tilemap = FindAnyObjectByType<LineRenderer>(FindObjectsInactive.Include).GetComponent<Tilemap>();
+        // Buscamos TODOS los componentes LineRenderer que haya en el juego.
+        // Incluimos los que están apagados (Inactive.Include) y le decimos que no pierda tiempo ordenándolos (SortMode.None).
+        LineRenderer[] listLineRender = FindObjectsByType<LineRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (LineRenderer lineRenderer in listLineRender)
+        {
+            // Le preguntamos al objeto actual si tiene Tilemap
+            this.tilemap = lineRenderer.GetComponent<Tilemap>();
+            if (tilemap != null)
+            {
+                break;
+            }
+        }
+
     }
     /// <summary>
     /// Se ejecuta en cada frame. Controla la l�gica del "Modo Colocaci�n" de torres:

@@ -143,11 +143,9 @@ public class Tower : MonoBehaviour
             refreshButtonUpdate();
         }
         if (!isBuilt) return;
-
         UpdateTarget();
 
         if (currentTarget == null) return;
-
         fireTimer -= Time.deltaTime;
         if (fireTimer <= 0)
         {
@@ -216,6 +214,33 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void UpdateTarget()
     {
+        float realRadius = attackRadius * GameManager.globalRadiusMultiplier;
+        // 1. COMPROBAR EL OBJETIVO FIJADO
+        if (currentTarget != null)
+        {
+            Enemy currentEnemyScript = currentTarget.GetComponent<Enemy>();
+            if(currentEnemyScript == null)
+            {
+                currentTarget = null;
+            }
+            else
+            {
+                float distanceToCurrent = Vector2.Distance(transform.position, currentEnemyScript.transform.position);
+                // Margen de tolerancia para cuando el jugador esta en el limite
+                float dropRadius = realRadius + 0.5f;
+                // Si está apagado, muerto, o se ha salido del círculo rojo...
+                if (!currentTarget.gameObject.activeInHierarchy || currentEnemyScript.IsDead || distanceToCurrent > dropRadius)
+                {
+                    currentTarget = null; // ...lo soltamos.
+                }
+                else
+                {
+                    return;
+                }
+            }
+            
+        }
+        // 2. BUSCAR UN NUEVO OBJETIVO
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
         float bestProgress = -Mathf.Infinity;
@@ -227,7 +252,7 @@ public class Tower : MonoBehaviour
 
             float distanceToEnemy = Vector2.Distance(transform.position, enemy.transform.position);
 
-            if (distanceToEnemy <= (attackRadius * GameManager.globalRadiusMultiplier))
+            if (distanceToEnemy <= realRadius)
             {
                 Enemy enemyScript = enemy.GetComponent<Enemy>();
 
@@ -513,4 +538,5 @@ public class Tower : MonoBehaviour
                 return "Torre Media";
         }
     }
+
 }

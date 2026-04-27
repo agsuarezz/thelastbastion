@@ -8,10 +8,16 @@ public class GridCursor : MonoBehaviour
     [Tooltip("El tamaño de tu casilla. Normalmente es 1.")]
     public float cellSize = 1f;
 
+    public LineRenderer lineRenderer;
+    ConstructionMenu constructionMenu;
+    int circleSegments = 50;
     void Start()
     {
         line = GetComponent<LineRenderer>();
         // Le decimos al LineRenderer que tendrá exactamente 4 esquinas
+        constructionMenu = FindAnyObjectByType<ConstructionMenu>();
+        if (constructionMenu == null)
+            Debug.LogWarning("constructionMenu no encontrado");
         line.positionCount = 4;
     }
 
@@ -30,6 +36,8 @@ public class GridCursor : MonoBehaviour
 
         // 4. Cambiamos el color si el escáner detecta que choca con un obstáculo
         UpdateDynamicColor(cellCenter);
+
+        DrawRangeCircleInGame(cellCenter);
     }
 
     void DrawSquare(Vector2 center)
@@ -74,6 +82,60 @@ public class GridCursor : MonoBehaviour
             line.startColor = Color.green;
             line.endColor = Color.green;
         }
-    
+
     }
+    /// <summary>
+    /// Dibuja de forma dinámica el radio de ataque de la torre que el jugador tiene seleccionada
+    /// para construir. Mueve el círculo a la posición de la casilla actual (el ratón) y calcula
+    /// los puntos matemáticamente para formar un anillo perfecto.
+    /// </summary>
+    /// <param name="center">La coordenada 2D exacta (centro de la casilla) donde está el ratón.</param>
+    public void DrawRangeCircleInGame(Vector2 center)
+    {
+        if (lineRenderer == null) return;
+
+        // Extraemos el radio base del prefab y le aplicamos los multiplicadores globales de la partida
+        float realRadius = setRange() * GameManager.globalRadiusMultiplier;
+
+        // Le decimos al LineRenderer cuántos puntos va a tener la línea
+        lineRenderer.positionCount = circleSegments;
+        lineRenderer.useWorldSpace = false; // Para que siga al ratón, no al mundo
+        lineRenderer.loop = true; // Cierra el círculo perfectamente
+        lineRenderer.transform.position = new Vector3(center.x, center.y, 0f);
+
+        // Matemáticas para dibujar un círculo punto por punto
+        float angle = 0f;
+        for (int i = 0; i < circleSegments; i++)
+        {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * realRadius;
+            float y = Mathf.Cos(Mathf.Deg2Rad * angle) * realRadius;
+
+            // PONEMOS LA Z EN -1 PARA QUE NO SE ESCONDA DETRÁS DEL CÉSPED
+            lineRenderer.SetPosition(i, new Vector3(x, y, -1f));
+
+            angle += (360f / circleSegments);
+        }
+    }
+
+    /// <summary>
+    /// Consulta el menú de construcción para saber qué tipo de torre está intentando poner el jugador.
+    /// Luego, va al Prefab original de esa torre y extrae su atributo 'attackRadius'.
+    /// </summary>
+    /// <returns>El radio de ataque en formato float de la torre seleccionada.</returns>
+    public float setRange()
+    {
+        switch (constructionMenu.flagTypeTower)
+        {
+            case 0:
+                return constructionMenu.prefabTowerMedian.GetComponent<Tower>().attackRadius;
+            case 1:
+                return constructionMenu.prefabTowerLight.GetComponent<Tower>().attackRadius;
+            case 2:
+                return constructionMenu.prefabTowerHeavy.GetComponent<Tower>().attackRadius;
+            default:
+                Debug.LogWarning("¡Cuidado! No se ha encontrado el attackRadius porque el flagTypeTower no es válido.");
+                return 9999;
+        }
+    }
+
 }
