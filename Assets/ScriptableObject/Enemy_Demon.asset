@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   damage: 1
-  speed: 1
+  speed: 10
   money: 1
-  attackRange: 1
+  attackRange: 2
   attackCooldown: 1

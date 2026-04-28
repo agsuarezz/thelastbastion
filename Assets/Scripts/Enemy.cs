@@ -28,12 +28,14 @@ public class Enemy : MonoBehaviour
     private Collider2D enemyCollider;
     private Rigidbody2D rb;
     private castleScript targetCastle;
+    private RangedEnemyAttack rangedAttack;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        rangedAttack = GetComponent<RangedEnemyAttack>();
     }
 
     private void Start()
@@ -47,7 +49,14 @@ public class Enemy : MonoBehaviour
 
         if (isAttackingCastle)
         {
-            AttackCastle();
+            if (rangedAttack != null)
+            {
+                rangedAttack.Tick();
+            } else
+            {
+                AttackCastle();
+            }
+            
             return;
         }
 
@@ -122,6 +131,11 @@ public class Enemy : MonoBehaviour
         isAttackingCastle = true;
         currentSpeed = 0f;
         attackTimer = 0f;
+
+        if (rangedAttack != null)
+        {
+            rangedAttack.ResetTimer();
+        }
 
         if (rb != null)
         {
@@ -298,6 +312,11 @@ public class Enemy : MonoBehaviour
             animator.Rebind();
             animator.Update(0f);
             animator.SetBool("IsAttacking", false);
+        }
+
+        if (rangedAttack != null)
+        {
+            rangedAttack.ResetTimer();
         }
     }
 }
