@@ -13,10 +13,10 @@ public class Tower : MonoBehaviour
 {
     [Header("Atributos de la torre (Algunos son privados).")]
     [Tooltip("Radio de detección de los enemigos.")]
-    public float attackRadius = 1f;
+    public float attackRadius;
 
     //Tiempo de recarga en segundos entre cada disparo.
-    float fireCooldown = 1f;
+    float fireCooldown;
     // ==========================================
     // DICCIONARIO DE MEJORAS (0: Mediana, 1: Ligera, 2: Pesada)
     // ==========================================
@@ -89,10 +89,19 @@ public class Tower : MonoBehaviour
     public LineRenderer lineRenderer;
     // Comprueba SI tiene el menu de Delete y Update activo
     public static Tower towerActiveInMenu;
+
+    public TowerData config;
+
     int circleSegments = 50;
     private void Awake()
     {
         towerActiveInMenu = null;
+        if (config != null)
+        {
+            attackRadius = config.baseAttackRadius;
+            fireCooldown = config.baseFireCooldown;
+            currentDamage = config.baseDamage;
+        }
     }
     /// <summary>
     /// Inicializa las referencias de los componentes, busca el menú global en la escena 
@@ -342,7 +351,6 @@ public class Tower : MonoBehaviour
                 // ES NUEVA (Nivel 0)
                 isBuilt = true;
                 updatetower.levelOfTower = 0;
-                setCurrentDamage(); // Ponemos el daño base inicial
                 updateFireCooldownAndDamage(); // Ponemos la recarga base
                 increaseCountTower();
             }
@@ -375,19 +383,6 @@ public class Tower : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
-    }
-    /// <summary>
-    /// Establece el daño inicial (Nivel 0) de la torre.
-    /// </summary>
-    public void setCurrentDamage()
-    {
-        // Ya no hace falta comprobar el nivel aquí, SetTower solo llama a esto en Nivel 0.
-        if (updatetower.typeOfTower == 0)
-            currentDamage = 25; // Mediana
-        else if (updatetower.typeOfTower == 1)
-            currentDamage = 12; // Ligera
-        else
-            currentDamage = 60; // Pesada
     }
     /// <summary>
     /// Asigna el tipo de torre al script hijo encargado de gestionar las futuras mejoras.
@@ -424,21 +419,14 @@ public class Tower : MonoBehaviour
 
     }
     /// <summary>
-    /// Aplica las estadísticas base en Nivel 0, o suma/resta estadísticas en Nivel 1 y 2.
+    /// Suma/resta estadísticas en Nivel 1 y 2.
     /// </summary>
     public void updateFireCooldownAndDamage()
     {
         if (updatetower.levelOfTower == 0)
         {
-            switch (updatetower.typeOfTower)
-            {
-                case 0: fireCooldown = 1.0f; return; // Mediana
-                case 1: fireCooldown = 0.4f; return; // Ligera
-                case 2: fireCooldown = 2.0f; return; // Pesada
-                default: fireCooldown = 1.0f; return;
-            }
+            return;
         }
-
         // Si el código llega hasta aquí, es porque el nivel es > 0 (es una mejora)
         currentDamage += damageUpgradeAmount[updatetower.typeOfTower];
         fireCooldown -= cooldownUpgradeAmount[updatetower.typeOfTower];
@@ -489,7 +477,7 @@ public class Tower : MonoBehaviour
         {
             if (text.name == "typeLevelText")
             {
-                text.text = nameTypeOfTower() + " (Nivel " + (updatetower.levelOfTower + 1)  + ")";
+                text.text = config.nameOfTower + " (Nivel " + (updatetower.levelOfTower + 1) + ")";
             }
             if (text.name == "currentDamageText")
             {
@@ -527,20 +515,6 @@ public class Tower : MonoBehaviour
                     text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] (MÁXIMO)";
                 }
             }
-        }
-    }
-    public string nameTypeOfTower()
-    {
-        switch (updatetower.typeOfTower)
-        {
-            case 0:
-                return "Torre Media";
-            case 1:
-                return "Torre Ligera";
-            case 2:
-                return "Torre Pesada";
-            default:
-                return "Torre Media";
         }
     }
     /// <summary>

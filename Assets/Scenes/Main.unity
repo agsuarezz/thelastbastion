@@ -6528,15 +6528,15 @@ MonoBehaviour:
   - pooler: {fileID: 1979209788}
     enemyData: {fileID: 11400000, guid: ef6e8e2cbdc866342ba4a1cd9397feff, type: 2}
     cost: 1
-    minRound: 0
+    minRound: 10
   - pooler: {fileID: 1993064750}
     enemyData: {fileID: 11400000, guid: b939b8eccd6494c429098ceea6d11a51, type: 2}
     cost: 4
-    minRound: 5
+    minRound: 0
   - pooler: {fileID: 1605224572}
     enemyData: {fileID: 11400000, guid: af17e433b5b15964f9260e613783d3ba, type: 2}
     cost: 1
-    minRound: 1
+    minRound: 10
   spawnInterval: 1
 --- !u!4 &452400197
 Transform:

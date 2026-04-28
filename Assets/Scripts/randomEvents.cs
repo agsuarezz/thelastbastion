@@ -160,8 +160,7 @@ public class randomEvents : MonoBehaviour
         // 3. BUCLE DE GENERACIÓN: Vamos a crear 3 anuncios
         for (int i = 0; i < 4; i++)
         {
-            // Elegimos un prefab al azar de nuestro array
-            GameObject selectedPrefab = adPrefabs[UnityEngine.Random.Range(0, adPrefabs.Length)];
+            GameObject selectedPrefab = adPrefabs[i];
 
             // Instanciamos el anuncio. El 'false' evita que Unity recalcule escalas 3D innecesarias
             GameObject spawnedAd = Instantiate(selectedPrefab, parentCanvas, false);
@@ -187,14 +186,13 @@ public class randomEvents : MonoBehaviour
     public void loadEventsInList()
     {
         // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
-        eventList.Add(EventSpawnAds);        // Positivo: Lluvia de monedas (minijuego)
-                                              // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
-        //eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
-        //eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
-        //eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
-        //eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
-        //eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
-        //eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
-        //eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
+        eventList.Add(EventSpawnAds);        // Negativo: Lluvia de Anuncios
+        eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
+        eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
+        eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
+        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
+        eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
+        eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
+        eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
     }
 }
