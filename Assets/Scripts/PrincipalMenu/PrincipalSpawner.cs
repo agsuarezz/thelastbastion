@@ -10,7 +10,6 @@ public struct PrincipalEnemyTypeConfig
     [Range(1, 100)]
     public int spawnWeight;
 
-    [Tooltip("Marca esto solo para enemigos tipo Golem, para evitar demasiados seguidos.")]
     public bool isGolem;
 }
 
@@ -23,11 +22,11 @@ public class PrincipalSpawner : MonoBehaviour
     [SerializeField] private PrincipalEnemyTypeConfig[] enemyTypes;
 
     [Header("Spawn aleatorio")]
-    [SerializeField] private float minSpawnInterval = 2f;
-    [SerializeField] private float maxSpawnInterval = 4f;
+    [SerializeField] private float minSpawnInterval = 1f;
+    [SerializeField] private float maxSpawnInterval = 3f;
 
     [Header("Límite en pantalla")]
-    [SerializeField] private int maxEnemiesAlive = 6;
+    [SerializeField] private int maxEnemiesAlive = 7;
 
     [Header("Toque cinemático")]
     [SerializeField] private float initialDelay = 1.5f;
@@ -44,7 +43,6 @@ public class PrincipalSpawner : MonoBehaviour
 
     private float spawnTimer;
     private int spawnCounter;
-
     private int golemsInARow = 0;
 
     private void Start()
@@ -115,20 +113,19 @@ public class PrincipalSpawner : MonoBehaviour
         enemyObject.transform.position = principalRoute.waypoints[0].position;
         enemyObject.transform.rotation = Quaternion.identity;
 
-        Enemy enemy = enemyObject.GetComponent<Enemy>();
+        PrincipalEnemy enemy = enemyObject.GetComponent<PrincipalEnemy>();
 
         if (enemy != null)
         {
             enemy.enemyData = selectedEnemy.enemyData;
             enemy.SetPath(principalRoute.GetPositions());
         }
+        else
+        {
+            Debug.LogWarning("PrincipalSpawner: el prefab del pool no tiene PrincipalEnemy.");
+        }
 
         enemyObject.SetActive(true);
-
-        if (enemy != null)
-        {
-            enemy.SetLifeBarVisible(false);
-        }
 
         UpdateGolemCounter(selectedEnemy);
     }
