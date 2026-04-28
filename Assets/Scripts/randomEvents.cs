@@ -137,15 +137,47 @@ public class randomEvents : MonoBehaviour
         yield return new WaitForSeconds(5f);
         messageEvent.text = "";
     }
+    public IEnumerator EventSpawnNews()
+    {
+        messageEvent.text = "Somos un estudio Indie, danos tu dinero";
+
+        // 1. Cargamos el prefab (Recuerda: El prefab debe ser solo una Imagen/Panel, ¡SIN Canvas!)
+        GameObject anuncioPrefab = Resources.Load<GameObject>("prefabNew");
+
+        // 2. Buscamos el Canvas que YA EXISTE en tu escena para que sea el padre
+        // (Asegúrate de que tu Canvas se llama exactamente "Canvas" en la jerarquía)
+        Transform canvasPadre = GameObject.Find("Canvas_General").transform;
+
+        for (int i = 0; i < 3; i++)
+        {
+            // 3. Instanciamos el anuncio directamente DENTRO del Canvas
+            GameObject nuevoAnuncio = Instantiate(anuncioPrefab, canvasPadre);
+
+            // 4. Cogemos su RectTransform (el motor de posiciones de la UI)
+            RectTransform rect = nuevoAnuncio.GetComponent<RectTransform>();
+
+            // 5. Le damos una posición en píxeles (anchoredPosition)
+            // X aleatoria entre la izquierda y la derecha. Y arriba del todo
+            float xAleatoria = UnityEngine.Random.Range(-600f, 600f);
+            rect.anchoredPosition = new Vector2(xAleatoria, 600f);
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return new WaitForSeconds(5f);
+        messageEvent.text = "";
+    }
     public void loadEventsInList()
     {
         // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
-        eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
-        eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
-        eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
-        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
-        eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
-        eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
-        eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
+        eventList.Add(EventSpawnNews);        // Positivo: Lluvia de monedas (minijuego)
+                                              // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
+        //eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
+        //eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
+        //eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
+        //eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
+        //eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
+        //eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
+        //eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
     }
 }
