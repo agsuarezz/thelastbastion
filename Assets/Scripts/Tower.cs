@@ -86,8 +86,10 @@ public class Tower : MonoBehaviour
 
     ConstructionMenu constructionMenu;
     public static GameObject gameObjectUpdateDeleteTower;
+    public LineRenderer lineRenderer;
     // Comprueba SI tiene el menu de Delete y Update activo
     public static Tower towerActiveInMenu;
+    int circleSegments = 50;
     private void Awake()
     {
         towerActiveInMenu = null;
@@ -126,6 +128,7 @@ public class Tower : MonoBehaviour
             SetTower(proximoSprite, proximoCol, updatetower.typeOfTower);
 
             updatetower.needUpdateTower = false; // Reset de la bandera
+
             return; // Salimos del frame para evitar conflictos
 
         }
@@ -144,7 +147,7 @@ public class Tower : MonoBehaviour
         }
         if (!isBuilt) return;
         UpdateTarget();
-
+        DrawRangeCircleInGame();
         if (currentTarget == null) return;
         fireTimer -= Time.deltaTime;
         if (fireTimer <= 0)
@@ -354,6 +357,7 @@ public class Tower : MonoBehaviour
             if (sprite == null) sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
             if (boxCollider == null) boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
+
         }
         else
         {
@@ -537,6 +541,49 @@ public class Tower : MonoBehaviour
                 return "Torre Pesada";
             default:
                 return "Torre Media";
+        }
+    }
+    /// <summary>
+    /// Dibuja un círculo usando un LineRenderer para que EL JUGADOR lo vea en la pestaña Game.
+    /// Es ultra-óptimo: solo se dibuja si está seleccionada, y solo se borra 1 vez cuando se deselecciona.
+    /// </summary>
+    public void DrawRangeCircleInGame()
+    {
+        if (lineRenderer == null) return;
+
+        // Si esta torre NO es la que está seleccionada en el menú...
+        if (towerActiveInMenu != this)
+        {
+            // Comprobamos si el LineRenderer tiene puntos. Si ya tiene 0, ignoramos todo y salimos.
+            // Preguntar "cuánto vale un int" es gratis para el procesador, pero modificar un componente de Unity no lo es.
+            if (lineRenderer.positionCount > 0)
+            {
+                lineRenderer.positionCount = 0; // Lo borramos solo una vez
+            }
+            return;
+        }
+
+        // --- SI LLEGA HASTA AQUÍ, ES PORQUE SÍ ESTÁ SELECCIONADA ---
+
+        // El radio real con multiplicadores
+        float realRadius = attackRadius * GameManager.globalRadiusMultiplier;
+
+        // Le decimos al LineRenderer cuántos puntos va a tener la línea
+        lineRenderer.positionCount = circleSegments;
+        lineRenderer.useWorldSpace = false; // Para que siga a la torre si se mueve
+        lineRenderer.loop = true; // Cierra el círculo perfectamente
+
+        // Matemáticas para dibujar un círculo punto por punto
+        float angle = 0f;
+        for (int i = 0; i < circleSegments; i++)
+        {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * realRadius;
+            float y = Mathf.Cos(Mathf.Deg2Rad * angle) * realRadius;
+
+            // PONEMOS LA Z EN -1 PARA QUE NO SE ESCONDA DETRÁS DEL CÉSPED
+            lineRenderer.SetPosition(i, new Vector3(x, y, -1f));
+
+            angle += (360f / circleSegments);
         }
     }
 
