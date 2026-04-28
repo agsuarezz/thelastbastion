@@ -6551,7 +6551,7 @@ MonoBehaviour:
   - pooler: {fileID: 1605224572}
     enemyData: {fileID: 11400000, guid: af17e433b5b15964f9260e613783d3ba, type: 2}
     cost: 1
-    minRound: 0
+    minRound: 10
   spawnInterval: 1
 --- !u!4 &452400197
 Transform:
@@ -21301,7 +21301,7 @@ GameObject:
   - component: {fileID: 2079989282}
   - component: {fileID: 2079989281}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Canvas_General
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
