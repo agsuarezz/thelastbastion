@@ -26,11 +26,14 @@ public class Enemy : MonoBehaviour
     private Rigidbody2D rb;
     private castleScript targetCastle;
 
+    private Transform graphics;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        graphics = transform;
     }
 
     private void Start()
@@ -45,6 +48,7 @@ public class Enemy : MonoBehaviour
         if (!isAttackingCastle)
         {
             MoveAlongPath();
+            
         }
     }
 
@@ -87,6 +91,7 @@ public class Enemy : MonoBehaviour
 
         Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
         Vector3 direction = targetWaypoint - transform.position;
+        FlipSprite(direction.x);
 
         transform.Translate(
             direction.normalized * currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime,
@@ -125,7 +130,7 @@ public class Enemy : MonoBehaviour
         SetAttackingAnimation(true);
     }
 
-    // 🔥 Animation Event (meleé)
+   
     public void ApplyCastleAttackDamage()
     {
         if (isDead) return;
@@ -141,7 +146,7 @@ public class Enemy : MonoBehaviour
         int finalDamage = Mathf.RoundToInt(enemyData.damage * GameManager.globalEnemyDamageMultiplier);
         targetCastle.TakeDamage(finalDamage);
 
-        Debug.Log($"{gameObject.name} hizo {finalDamage} de daño al castillo");
+       
     }
 
     
@@ -308,5 +313,23 @@ public class Enemy : MonoBehaviour
             animator.Update(0f);
             animator.SetBool("IsAttacking", false);
         }
+    }
+
+    private void FlipSprite(float directionX)
+    {
+        if (directionX == 0) return;
+
+        Vector3 scale = graphics.localScale;
+
+        if (directionX > 0)
+        {
+            scale.x = Mathf.Abs(scale.x);
+        }
+        else
+        {
+            scale.x = -Mathf.Abs(scale.x);
+        }
+
+        graphics.localScale = scale;
     }
 }
