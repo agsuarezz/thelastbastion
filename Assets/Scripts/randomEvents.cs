@@ -137,41 +137,57 @@ public class randomEvents : MonoBehaviour
         yield return new WaitForSeconds(5f);
         messageEvent.text = "";
     }
-    public IEnumerator EventSpawnNews()
+    /// <summary>
+    /// Evento Caótico: "Spam de Anuncios".
+    /// Carga y genera anuncios aleatorios en la interfaz para distraer al jugador.
+    /// </summary>
+    public IEnumerator EventSpawnAds()
     {
+        // Mensaje irónico en pantalla
         messageEvent.text = "Somos un estudio Indie, danos tu dinero";
 
-        // 1. Cargamos el prefab (Recuerda: El prefab debe ser solo una Imagen/Panel, ¡SIN Canvas!)
-        GameObject anuncioPrefab = Resources.Load<GameObject>("prefabNew");
+        // 1. CARGA OPTIMIZADA: Cargamos los 4 prefabs en un array (arreglo)
+        // Lo hacemos una sola vez aquí fuera para no saturar el procesador
+        GameObject[] adPrefabs = new GameObject[4];
+        adPrefabs[0] = Resources.Load<GameObject>("prefabNew");
+        adPrefabs[1] = Resources.Load<GameObject>("prefabNew1");
+        adPrefabs[2] = Resources.Load<GameObject>("prefabNew2");
+        adPrefabs[3] = Resources.Load<GameObject>("prefabNew3");
 
-        // 2. Buscamos el Canvas que YA EXISTE en tu escena para que sea el padre
-        // (Asegúrate de que tu Canvas se llama exactamente "Canvas" en la jerarquía)
-        Transform canvasPadre = GameObject.Find("Canvas_General").transform;
+        // 2. CACHEO: Buscamos el objeto padre en el Canvas una sola vez
+        Transform parentCanvas = GameObject.Find("Canvas_General").transform;
 
-        for (int i = 0; i < 3; i++)
+        // 3. BUCLE DE GENERACIÓN: Vamos a crear 3 anuncios
+        for (int i = 0; i < 4; i++)
         {
-            // 3. Instanciamos el anuncio directamente DENTRO del Canvas
-            GameObject nuevoAnuncio = Instantiate(anuncioPrefab, canvasPadre);
+            // Elegimos un prefab al azar de nuestro array
+            GameObject selectedPrefab = adPrefabs[UnityEngine.Random.Range(0, adPrefabs.Length)];
 
-            // 4. Cogemos su RectTransform (el motor de posiciones de la UI)
-            RectTransform rect = nuevoAnuncio.GetComponent<RectTransform>();
+            // Instanciamos el anuncio. El 'false' evita que Unity recalcule escalas 3D innecesarias
+            GameObject spawnedAd = Instantiate(selectedPrefab, parentCanvas, false);
 
-            // 5. ¡AQUÍ ESTÁ EL CAMBIO! Aleatorio en X y en Y
-            float xAleatoria = UnityEngine.Random.Range(-800f, 800f);
-            float yAleatoria = UnityEngine.Random.Range(-450f, 450f);
+            // Obtenemos el RectTransform para manipular la posición en la UI
+            RectTransform adRect = spawnedAd.GetComponent<RectTransform>();
 
-            rect.anchoredPosition = new Vector2(xAleatoria, yAleatoria);
+            // Calculamos coordenadas aleatorias dentro de un rango seguro para 1080p
+            float randomX = UnityEngine.Random.Range(-700f, 700f);
+            float randomY = UnityEngine.Random.Range(-200f, 200f);
 
-            yield return new WaitForSeconds(0.1f);
+            // Aplicamos la posición final
+            adRect.anchoredPosition = new Vector2(randomX, randomY);
+
+            // Pequeña espera entre cada spawn para que no salgan todos de golpe
+            yield return new WaitForSeconds(0.15f);
         }
 
+        // Mantenemos el mensaje 5 segundos antes de borrarlo
         yield return new WaitForSeconds(5f);
         messageEvent.text = "";
     }
     public void loadEventsInList()
     {
         // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
-        eventList.Add(EventSpawnNews);        // Positivo: Lluvia de monedas (minijuego)
+        eventList.Add(EventSpawnAds);        // Positivo: Lluvia de monedas (minijuego)
                                               // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
         //eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
         //eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
