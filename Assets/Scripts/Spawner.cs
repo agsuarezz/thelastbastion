@@ -53,6 +53,7 @@ public class Spawner : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.currentState != GameState.Playing) return;
         if (currentWaveIndex < currentWave.Count)
         {
             spawnTimer -= Time.deltaTime;

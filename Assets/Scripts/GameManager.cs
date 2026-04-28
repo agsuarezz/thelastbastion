@@ -30,6 +30,10 @@ public class GameManager : MonoBehaviour
     public static AudioClip soundPause;
     // Efecto de sonido que se reproduce al Restart.
     public static AudioClip soundRestart;
+    // Efecto de sonido de Error.
+    public static AudioClip soundError;
+    // Efecto de sonido de Pagar.
+    public static AudioClip soundPay;
     // Efecto de sonido que se reproduce cuando un enemigo ataca y resta vida.
     public static AudioClip soundTakeLife;
     public TextMeshProUGUI messageErrorText;
@@ -96,6 +100,8 @@ public class GameManager : MonoBehaviour
     public int roundsForCards = 1;
     // Esta es la ÚNICA variable que controlará todo el juego
     public static GameState currentState = GameState.Playing;
+    // Evita que el final de ronda se ejecute 60 veces seguidas 
+    private bool isChangingRound = false;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -109,6 +115,8 @@ public class GameManager : MonoBehaviour
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
         soundPause = Resources.Load<AudioClip>("soundPause");
         soundRestart = Resources.Load<AudioClip>("soundRestart");
+        soundError = Resources.Load<AudioClip>("soundError");
+        soundPay = Resources.Load<AudioClip>("soundPay");
         if (!audioSource)
         {
             Debug.LogWarning("No se ha encontrado audioSource");
@@ -129,7 +137,15 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("No se ha encontrado soundRestart");
         }
-        if(messageRound != null)
+        if (!soundError)
+        {
+            Debug.LogWarning("No se ha encontrado soundError");
+        }
+        if (!soundPay)
+        {
+            Debug.LogWarning("No se ha encontrado soundPay");
+        }
+        if (messageRound != null)
             messageRound.text = "Ronda " + countRound;
     }
     /// <summary>
@@ -154,36 +170,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Update()
     {
+        // Si estamos en pausa o cartas, no hacemos NADA
+        if (GameManager.currentState != GameState.Playing) return;
+        // Si ya estamos gestionando el cambio de ronda, esperamos
+        if (isChangingRound) return;
+        // Si la ronda acaba de terminar, lanzamos la linea de tiempo
         if (spawner != null && spawner.statusRound())
         {
-            waitTime(5f);
-            spawner.restartCountEnemy();
-            messageRound.text = "Ronda " + countRound;
-
-            if (countRound % roundsForCards == 0 && countRound != 0)
-            {
-                if (cardManager != null)
-                {
-                    currentState = GameState.EventOpen;
-                    cardManager.ShowCards();
-                }
-            }
-            
-            if (countRound % 2 == 0 && countRound != 0)
-            {
-                if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
-                {
-                    this.GetComponent<randomEvents>().loadEventsInList();
-                }
-                int random = Random.Range(0, randomEvents.eventList.Count);
-                StartCoroutine(randomEvents.eventList[random]());
-                randomEvents.eventList.RemoveAt(random);
-            
-            }
-
-            globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
-            globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
+            StartCoroutine(endOfRoundRoutine());
         }
+        // El tiempo y el dinero siguen su curso normal
         timeinGame += Time.deltaTime;
         if(countMoneyText != null)
             countMoneyText.text = "Dinero: " + countMoney;
@@ -270,5 +266,45 @@ public class GameManager : MonoBehaviour
         {
             audioSource.PlayOneShot(audioClip);
         }
+    }
+    public IEnumerator endOfRoundRoutine()
+    {
+        isChangingRound = true; // Bloqueamos el Update temporalmente
+        yield return new WaitForSeconds(2f);
+        // Sistema de Cartas
+        if (countRound % roundsForCards == 0 && countRound != 0)
+        {
+            if (cardManager != null)
+            {
+                currentState = GameState.EventOpen;
+                cardManager.ShowCards();
+
+                // Pausamos el codigo hasta que el jugador hasta que el jugador elija carta
+                yield return new WaitUntil(() => currentState == GameState.Playing);
+            }
+        }
+        // Sistema de Eventos Random
+        // Solo se ejecuta cuando el jugador ya ha elegido la carta.
+        if (countRound % 2 == 0 && countRound != 0)
+        {
+            yield return new WaitForSeconds(1f);
+            if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
+            {
+                this.GetComponent<randomEvents>().loadEventsInList();
+            }
+            int random = Random.Range(0, randomEvents.eventList.Count);
+            StartCoroutine(randomEvents.eventList[random]());
+            randomEvents.eventList.RemoveAt(random);
+
+        }
+
+        globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
+        globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
+
+        messageRound.text = "Ronda " + countRound;
+
+        spawner.restartCountEnemy();
+
+        isChangingRound = false; // Desbloqueamos el Update para la nueva ronda
     }
 }

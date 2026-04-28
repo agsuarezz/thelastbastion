@@ -358,6 +358,7 @@ public class Tower : MonoBehaviour
         else
         {
             StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+            GameManager.sound(GameManager.soundError);
         }
     }
 

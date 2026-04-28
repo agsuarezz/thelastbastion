@@ -152,7 +152,7 @@ public class ConstructionMenu : MonoBehaviour
         }
         else
         {
-            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+            dontHaveMoney();
         }
     }
     /// <summary>
@@ -171,7 +171,7 @@ public class ConstructionMenu : MonoBehaviour
         }
         else
         {
-            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+            dontHaveMoney();
         }
     }
     /// <summary>
@@ -190,7 +190,7 @@ public class ConstructionMenu : MonoBehaviour
         }
         else
         {
-            StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+            dontHaveMoney();
         }
     }
     /// <summary>
@@ -252,5 +252,10 @@ public class ConstructionMenu : MonoBehaviour
             case 2: return Tower.upgradeCosts[2][0];
             default: return Tower.upgradeCosts[0][0];
         }
+    }
+    public void dontHaveMoney()
+    {
+        StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        GameManager.sound(GameManager.soundError);
     }
 }

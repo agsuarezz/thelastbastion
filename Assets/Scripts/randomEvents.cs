@@ -84,7 +84,7 @@ public class randomEvents : MonoBehaviour
         int taxes = (int)(GameManager.countMoney * 0.40f); // Calcula el 40%
         GameManager.countMoney -= taxes;
         messageEvent.text = $"El inspector de Hacienda te ha confiscado {taxes} de Oro por no declarar las torres.";
-
+        GameManager.sound(GameManager.soundPay);
         yield return new WaitForSeconds(5f);
         messageEvent.text = "";
     }
@@ -139,12 +139,6 @@ public class randomEvents : MonoBehaviour
     public void loadEventsInList()
     {
         // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
-        eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
-        eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
-        eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
-        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
-        eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
-        eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
-        eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
+        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 40%
     }
 }
