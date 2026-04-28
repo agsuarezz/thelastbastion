@@ -268,7 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waypoints:
   - {x: -12, y: -0.5, z: 0}
-  - {x: 8, y: -0.5, z: 0}
+  - {x: 9, y: -0.5, z: 0}
 --- !u!1 &6949204289593434200
 GameObject:
   m_ObjectHideFlags: 0
@@ -2475,8 +2475,8 @@ Tilemap:
   - first: {x: 10, y: -1, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileIndex: 1
+      m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4264,10 +4264,10 @@ Tilemap:
       m_AllTileFlags: 1073741825
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 355
+  - m_RefCount: 354
     m_Data: {fileID: 11400000, guid: 2e262dc244d782749a746adf2164607b, type: 2}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 7d10fd905b9ba2e468a6a3945c54180e, type: 2}
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 20
@@ -4275,12 +4275,12 @@ Tilemap:
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 3a2da8aef93dd9248a197106c3387c62, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 355
+  - m_RefCount: 354
     m_Data: {fileID: -1790308563, guid: 8e6ef27698d8e074184841706a6cdcdd, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 769303072, guid: 8e6ef27698d8e074184841706a6cdcdd, type: 3}
   - m_RefCount: 20
     m_Data: {fileID: -1741723609, guid: 8e6ef27698d8e074184841706a6cdcdd, type: 3}
   - m_RefCount: 2
