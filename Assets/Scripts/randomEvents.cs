@@ -156,10 +156,11 @@ public class randomEvents : MonoBehaviour
             // 4. Cogemos su RectTransform (el motor de posiciones de la UI)
             RectTransform rect = nuevoAnuncio.GetComponent<RectTransform>();
 
-            // 5. Le damos una posición en píxeles (anchoredPosition)
-            // X aleatoria entre la izquierda y la derecha. Y arriba del todo
-            float xAleatoria = UnityEngine.Random.Range(-600f, 600f);
-            rect.anchoredPosition = new Vector2(xAleatoria, 600f);
+            // 5. ¡AQUÍ ESTÁ EL CAMBIO! Aleatorio en X y en Y
+            float xAleatoria = UnityEngine.Random.Range(-800f, 800f);
+            float yAleatoria = UnityEngine.Random.Range(-450f, 450f);
+
+            rect.anchoredPosition = new Vector2(xAleatoria, yAleatoria);
 
             yield return new WaitForSeconds(0.1f);
         }
