@@ -11000,6 +11000,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellSize: 1
+  lineRenderer: {fileID: 0}
 --- !u!1 &559636816
 GameObject:
   m_ObjectHideFlags: 0
