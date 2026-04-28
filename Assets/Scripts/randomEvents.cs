@@ -38,7 +38,7 @@ public class randomEvents : MonoBehaviour
     {
         GameManager.globalMoneyMultiplier *= 2;
         messageEvent.text = "Los duendes acaban de cobrar la nómina y traen los bolsillos llenos. ¡A por ellos!";
-
+        GameManager.sound(GameManager.soundHappy);
         yield return new WaitForSeconds(10f);
 
         GameManager.globalMoneyMultiplier /= 2;
@@ -56,7 +56,7 @@ public class randomEvents : MonoBehaviour
         GameObject[] torresConstruidas = GameObject.FindGameObjectsWithTag("tower");
 
         messageEvent.text = "¡Black Friday en la herrería! Torres a mitad de precio.";
-
+        GameManager.sound(GameManager.soundHappy);
         yield return new WaitForSeconds(10f);
 
         GameManager.globalCostMultiplier /= 0.5f;
@@ -69,10 +69,11 @@ public class randomEvents : MonoBehaviour
     /// </summary>
     public IEnumerator EventArcherStrike()
     {
-        GameManager.globalAttackSpeedMultiplier *= 2f;
+        GameManager.globalAttackSpeedMultiplier *= 4f;
         messageEvent.text = "Sindicato de tiradores en huelga. Disparos más lentos.";
-        yield return new WaitForSeconds(10f);
-        GameManager.globalAttackSpeedMultiplier /= 2f;
+        GameManager.sound(GameManager.soundSad);
+        yield return new WaitForSeconds(7f);
+        GameManager.globalAttackSpeedMultiplier /= 4f;
         messageEvent.text = "";
     }
     /// <summary>
@@ -96,7 +97,7 @@ public class randomEvents : MonoBehaviour
     {
         GameManager.globalMoneyMultiplier *= -2;
         messageEvent.text = "Tasa ecológica activa. Ahora PAGAS tú por limpiar los cadáveres de duende.";
-
+        GameManager.sound(GameManager.soundEventCleanUpCosts);
         yield return new WaitForSeconds(10f);
 
         GameManager.globalMoneyMultiplier /= -2;
@@ -112,7 +113,7 @@ public class randomEvents : MonoBehaviour
         GameManager.globalSpeedMultiplier *= 2.5f;
         GameManager.globalDamageTakenMultiplier *= 2f;
         messageEvent.text = "¡Alguien les dio bebida energética! Corren como locos pero son de cristal.";
-
+        GameManager.sound(GameManager.soundSad);
         yield return new WaitForSeconds(10f);
 
         GameManager.globalSpeedMultiplier /= 2.5f;
@@ -139,6 +140,12 @@ public class randomEvents : MonoBehaviour
     public void loadEventsInList()
     {
         // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
-        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 40%
+        eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
+        eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
+        eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
+        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
+        eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
+        eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
+        eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
     }
 }

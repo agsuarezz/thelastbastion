@@ -34,6 +34,14 @@ public class GameManager : MonoBehaviour
     public static AudioClip soundError;
     // Efecto de sonido de Pagar.
     public static AudioClip soundPay;
+    // Efecto de sonido de Ganar Dinero.
+    public static AudioClip soundMoney;
+    // Efecto de sonido para un Evento Especifico (EventCleanUpCosts).
+    public static AudioClip soundEventCleanUpCosts;
+    // Efecto de sonido Triste
+    public static AudioClip soundSad;
+    // Efecto de sonido Para eventos donde salga ganando el Usuario (no es lo normal)
+    public static AudioClip soundHappy;
     // Efecto de sonido que se reproduce cuando un enemigo ataca y resta vida.
     public static AudioClip soundTakeLife;
     public TextMeshProUGUI messageErrorText;
@@ -117,6 +125,10 @@ public class GameManager : MonoBehaviour
         soundRestart = Resources.Load<AudioClip>("soundRestart");
         soundError = Resources.Load<AudioClip>("soundError");
         soundPay = Resources.Load<AudioClip>("soundPay");
+        soundMoney = Resources.Load<AudioClip>("soundMoney");
+        soundEventCleanUpCosts = Resources.Load<AudioClip>("soundEventCleanUpCosts");
+        soundSad = Resources.Load<AudioClip>("soundSad");
+        soundHappy = Resources.Load<AudioClip>("soundHappy");
         if (!audioSource)
         {
             Debug.LogWarning("No se ha encontrado audioSource");
@@ -144,6 +156,22 @@ public class GameManager : MonoBehaviour
         if (!soundPay)
         {
             Debug.LogWarning("No se ha encontrado soundPay");
+        }
+        if (!soundMoney)
+        {
+            Debug.LogWarning("No se ha encontrado soundMoney");
+        }
+        if (!soundEventCleanUpCosts)
+        {
+            Debug.LogWarning("No se ha encontrado soundEventCleanUpCosts");
+        }
+        if (!soundSad)
+        {
+            Debug.LogWarning("No se ha encontrado soundSad");
+        }
+        if (!soundHappy)
+        {
+            Debug.LogWarning("No se ha encontrado soundHappy");
         }
         if (messageRound != null)
             messageRound.text = "Ronda " + countRound;

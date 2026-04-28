@@ -114,6 +114,7 @@ public class ConstructionMenu : MonoBehaviour
                 if (hasObstacle)
                 {
                     StartCoroutine(gameManager.messageError("Casilla bloqueada"));
+                    GameManager.sound(GameManager.soundError);
                     return;
                 }
                 PlantTowerOnMap(exactPosition);

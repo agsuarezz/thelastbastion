@@ -14,6 +14,7 @@ public class coinScript : MonoBehaviour
     private void OnMouseDown()
     {
         GameManager.countMoney += 10;
+        GameManager.sound(GameManager.soundMoney);
         Destroy(gameObject);
     }
     IEnumerator destroyCoin()
