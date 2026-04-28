@@ -1,83 +1,89 @@
 using UnityEngine;
 
-/// <summary>
-/// Proyectil lanzado por un enemigo a distancia hacia el castillo.
-/// Responsabilidad única: viajar hacia su objetivo y aplicar daño al impactar.
-/// 
-/// Espejo de Projectile.cs pero en la dirección contraria (enemigo → castillo).
-/// </summary>
 public class EnemyProjectile : MonoBehaviour
 {
-    [Header("Atributos del Proyectil")]
-    [Tooltip("Velocidad de vuelo.")]
-    [HideInInspector] public float speed = 8f;
+    [Header("Atributos")]
+    public float speed = 8f;
 
-    // ── Estado interno ─────────────────────────────────────────────
-    private Transform target;
+    private castleScript targetCastle;
     private int damage;
-    private bool hasHit = false; // Evita doble impacto (Update + OnTrigger)
+    private bool hasHit;
 
-    // ── API pública ────────────────────────────────────────────────
-    /// <summary>
-    /// Inicializa el proyectil con destino y daño. Llamar justo tras Instantiate.
-    /// </summary>
-    public void Launch(Transform castleTransform, int damageAmount)
+    public void Launch(castleScript castle, int damageAmount)
     {
-        target = castleTransform;
+        targetCastle = castle;
         damage = damageAmount;
+        hasHit = false;
     }
 
-    // ── Unity lifecycle ────────────────────────────────────────────
     private void Update()
     {
-        if (target == null || !target.gameObject.activeInHierarchy)
+        if (targetCastle == null || !targetCastle.gameObject.activeInHierarchy)
         {
             Destroy(gameObject);
             return;
         }
 
-        MoveTowardsTarget();
+        MoveTowardsCastle();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void MoveTowardsCastle()
     {
-        if (collision.CompareTag("castle"))
+        Vector3 targetPosition = GetTargetPosition();
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            targetPosition,
+            speed * Time.deltaTime
+        );
+
+        RotateTowards(targetPosition);
+
+        if (Vector2.Distance(transform.position, targetPosition) <= 0.05f)
         {
-            HitCastle(collision.GetComponent<castleScript>());
+            HitCastle();
         }
     }
 
-    // ── Lógica privada ─────────────────────────────────────────────
-    private void MoveTowardsTarget()
+    private Vector3 GetTargetPosition()
     {
-        float step = speed * Time.deltaTime;
-
-        transform.position = Vector3.MoveTowards(transform.position, target.position, step);
-
-        OrientTowardsTarget();
-
-        if (Vector3.Distance(transform.position, target.position) < 0.05f)
+        if (targetCastle.castleCollider != null)
         {
-            HitCastle(target.GetComponent<castleScript>());
+            return targetCastle.castleCollider.ClosestPoint(transform.position);
         }
+
+        return targetCastle.transform.position;
     }
 
-    /// <summary>Rota el sprite para que apunte hacia el castillo durante el vuelo.</summary>
-    private void OrientTowardsTarget()
+    private void RotateTowards(Vector3 targetPosition)
     {
-        Vector2 direction = (target.position - transform.position).normalized;
+        Vector2 direction = targetPosition - transform.position;
+
+        if (direction.sqrMagnitude <= 0.001f) return;
+
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
-    private void HitCastle(castleScript castle)
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        castleScript castle = collision.GetComponent<castleScript>();
+
+        if (castle != null && castle == targetCastle)
+        {
+            HitCastle();
+        }
+    }
+
+    private void HitCastle()
     {
         if (hasHit) return;
+
         hasHit = true;
 
-        if (castle != null)
+        if (targetCastle != null)
         {
-            castle.TakeDamage(damage);
+            targetCastle.TakeDamage(damage);
         }
 
         Destroy(gameObject);
