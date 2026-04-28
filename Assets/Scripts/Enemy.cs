@@ -1,10 +1,9 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    [Header("Datos (Inyectados por el Spawner)")]
+    [Header("Datos")]
     public EnemyData enemyData;
 
     [Header("UI")]
@@ -14,53 +13,39 @@ public class Enemy : MonoBehaviour
     public float currentSpeed;
 
     private Vector3[] pathWaypoints;
-    private int currentWaypointIndex = 0;
+    private int currentWaypointIndex;
 
-    private bool isDead = false;
+    private bool isDead;
     public bool IsDead => isDead;
 
     private bool showLifeBar = true;
-
-    private bool isAttackingCastle = false;
-    private float attackTimer = 0f;
+    private bool isAttackingCastle;
 
     private Animator animator;
     private Collider2D enemyCollider;
     private Rigidbody2D rb;
     private castleScript targetCastle;
-    private RangedEnemyAttack rangedAttack;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
-        rangedAttack = GetComponent<RangedEnemyAttack>();
     }
 
     private void Start()
     {
-        targetCastle = FindObjectOfType<castleScript>();
+        FindCastle();
     }
 
     private void Update()
     {
         if (isDead) return;
 
-        if (isAttackingCastle)
+        if (!isAttackingCastle)
         {
-            if (rangedAttack != null)
-            {
-                rangedAttack.Tick();
-            } else
-            {
-                AttackCastle();
-            }
-            
-            return;
+            MoveAlongPath();
         }
-
-        MoveAlongPath();
     }
 
     public void SetPath(Vector3[] routeWaypoints)
@@ -68,12 +53,8 @@ public class Enemy : MonoBehaviour
         pathWaypoints = routeWaypoints;
         currentWaypointIndex = 0;
         isAttackingCastle = false;
-        attackTimer = 0f;
 
-        if (animator != null)
-        {
-            animator.SetBool("IsAttacking", false);
-        }
+        SetAttackingAnimation(false);
     }
 
     public void SetLifeBarVisible(bool visible)
@@ -88,23 +69,14 @@ public class Enemy : MonoBehaviour
 
     private void MoveAlongPath()
     {
-        if (animator != null)
-        {
-            animator.SetBool("IsAttacking", false);
-        }
+        SetAttackingAnimation(false);
 
         if (pathWaypoints == null || pathWaypoints.Length == 0) return;
 
-        if (targetCastle != null && targetCastle.castleCollider != null)
+        if (IsCastleInAttackRange())
         {
-            Vector2 closestPoint = targetCastle.castleCollider.ClosestPoint(transform.position);
-            float distance = Vector2.Distance(transform.position, closestPoint);
-
-            if (distance <= enemyData.attackRange)
-            {
-                StartAttackingCastle();
-                return;
-            }
+            StartAttackingCastle();
+            return;
         }
 
         if (currentWaypointIndex >= pathWaypoints.Length)
@@ -114,14 +86,32 @@ public class Enemy : MonoBehaviour
         }
 
         Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
-
         Vector3 direction = targetWaypoint - transform.position;
-        transform.Translate(direction.normalized * currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime, Space.World);
+
+        transform.Translate(
+            direction.normalized * currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime,
+            Space.World
+        );
 
         if (Vector2.Distance(transform.position, targetWaypoint) <= 0.1f)
         {
             currentWaypointIndex++;
         }
+    }
+
+    private bool IsCastleInAttackRange()
+    {
+        if (targetCastle == null)
+        {
+            FindCastle();
+        }
+
+        if (targetCastle == null || targetCastle.castleCollider == null) return false;
+
+        Vector2 closestPoint = targetCastle.castleCollider.ClosestPoint(transform.position);
+        float distance = Vector2.Distance(transform.position, closestPoint);
+
+        return distance <= enemyData.attackRange;
     }
 
     private void StartAttackingCastle()
@@ -130,84 +120,59 @@ public class Enemy : MonoBehaviour
 
         isAttackingCastle = true;
         currentSpeed = 0f;
-        attackTimer = 0f;
 
-        if (rangedAttack != null)
-        {
-            rangedAttack.ResetTimer();
-        }
-
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.angularVelocity = 0f;
-        }
-
-        if (animator != null)
-        {
-            animator.SetBool("IsAttacking", true);
-        }
+        StopMovement();
+        SetAttackingAnimation(true);
     }
 
-    private void AttackCastle()
+    // 🔥 Animation Event (meleé)
+    public void ApplyCastleAttackDamage()
     {
+        if (isDead) return;
+        if (!isAttackingCastle) return;
+
         if (targetCastle == null)
         {
-            targetCastle = FindObjectOfType<castleScript>();
-            if (targetCastle == null) return;
+            FindCastle();
         }
 
+        if (targetCastle == null) return;
+
+        int finalDamage = Mathf.RoundToInt(enemyData.damage * GameManager.globalEnemyDamageMultiplier);
+        targetCastle.TakeDamage(finalDamage);
+
+        Debug.Log($"{gameObject.name} hizo {finalDamage} de daño al castillo");
+    }
+
+    
+
+
+    private void SetAttackingAnimation(bool value)
+    {
         if (animator != null)
         {
-            animator.SetBool("IsAttacking", true);
-        }
-
-        attackTimer -= Time.deltaTime;
-
-        if (attackTimer <= 0f)
-        {
-            float damage = enemyData.damage * GameManager.globalEnemyDamageMultiplier;
-            targetCastle.TakeDamage(Mathf.RoundToInt(damage));
-
-            attackTimer = enemyData.attackCooldown;
+            animator.SetBool("IsAttacking", value);
         }
     }
 
-    public float GetPathProgress()
+    private void StopMovement()
     {
-        if (pathWaypoints == null || pathWaypoints.Length == 0)
-            return 0f;
+        if (rb == null) return;
 
-        if (isAttackingCastle)
-            return pathWaypoints.Length + 1f;
+        rb.linearVelocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+    }
 
-        if (currentWaypointIndex >= pathWaypoints.Length)
-            return pathWaypoints.Length;
-
-        float progress = currentWaypointIndex;
-
-        Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
-
-        if (currentWaypointIndex > 0)
-        {
-            Vector3 previousWaypoint = pathWaypoints[currentWaypointIndex - 1];
-            float segmentLength = Vector2.Distance(previousWaypoint, targetWaypoint);
-            float distanceFromPrevious = Vector2.Distance(previousWaypoint, transform.position);
-
-            if (segmentLength > 0f)
-            {
-                progress += Mathf.Clamp01(distanceFromPrevious / segmentLength);
-            }
-        }
-
-        return progress;
+    private void FindCastle()
+    {
+        targetCastle = FindObjectOfType<castleScript>();
     }
 
     public void TakeDamage(int damageAmount)
     {
         if (isDead) return;
 
-        currentLife -= (damageAmount * GameManager.globalDamageTakenMultiplier).ConvertTo<int>();
+        currentLife -= damageAmount * GameManager.globalDamageTakenMultiplier;
 
         if (lifeSlider != null)
         {
@@ -227,7 +192,7 @@ public class Enemy : MonoBehaviour
         isDead = true;
         isAttackingCastle = false;
 
-        GameManager.enemiesDestroyed += 1;
+        GameManager.enemiesDestroyed++;
 
         if (enemyData != null)
         {
@@ -265,6 +230,37 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    public float GetPathProgress()
+{
+    if (pathWaypoints == null || pathWaypoints.Length == 0)
+        return 0f;
+
+    if (isAttackingCastle)
+        return pathWaypoints.Length + 1f;
+
+    if (currentWaypointIndex >= pathWaypoints.Length)
+        return pathWaypoints.Length;
+
+    float progress = currentWaypointIndex;
+
+    Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
+
+    if (currentWaypointIndex > 0)
+    {
+        Vector3 previousWaypoint = pathWaypoints[currentWaypointIndex - 1];
+
+        float segmentLength = Vector2.Distance(previousWaypoint, targetWaypoint);
+        float distanceFromPrevious = Vector2.Distance(previousWaypoint, transform.position);
+
+        if (segmentLength > 0f)
+        {
+            progress += Mathf.Clamp01(distanceFromPrevious / segmentLength);
+        }
+    }
+
+    return progress;
+}
+
     public void OnDeathAnimationFinished()
     {
         DestroyEnemy();
@@ -275,7 +271,6 @@ public class Enemy : MonoBehaviour
         isDead = false;
         isAttackingCastle = false;
         currentWaypointIndex = 0;
-        attackTimer = 0f;
 
         if (enemyCollider != null)
         {
@@ -312,11 +307,6 @@ public class Enemy : MonoBehaviour
             animator.Rebind();
             animator.Update(0f);
             animator.SetBool("IsAttacking", false);
-        }
-
-        if (rangedAttack != null)
-        {
-            rangedAttack.ResetTimer();
         }
     }
 }
