@@ -284,7 +284,7 @@ public class Tower : MonoBehaviour
     public void refreshButtonUpdate()
     {
         Button btnUpdate = null;
-        // 2. Buscamos TODOS los botones que haya dentro del menú (el 'true' incluye los apagados)
+        // Buscamos TODOS los botones que haya dentro del menú (el 'true' incluye los apagados)
         Button[] todosLosBotones = gameObjectUpdateDeleteTower.GetComponentsInChildren<Button>(true);
         foreach (Button btn in todosLosBotones)
         {
@@ -295,18 +295,38 @@ public class Tower : MonoBehaviour
             Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonUpdateTower en la jerarquía.");
             return;
         }
-        int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
-        if (indexToLook > 2) indexToLook = 2;
-        int costTower = config.upgradeCosts[indexToLook];
-        if (updatetower.levelOfTower < 2 && GameManager.countMoney >= costTower)
+        // 1. Si la torre ya está al NIVEL MÁXIMO, aquí sí ocultamos el botón por completo.
+        if (updatetower.levelOfTower >= 2)
         {
-            btnUpdate.gameObject.SetActive(true);
-            btnUpdate.GetComponentInChildren<TextMeshProUGUI>().text = "MEJORAR\n" + "(Coste: " + costTower + ")";
+            btnUpdate.gameObject.SetActive(false);
+            return; // Salimos de la función, no hay nada más que hacer
+        }
+        // 2. Si NO es nivel máximo, el botón SIEMPRE debe estar visible en pantalla.
+        btnUpdate.gameObject.SetActive(true);
+        int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
+        int costTower = config.upgradeCosts[indexToLook];
+
+        TextMeshProUGUI textBoton = btnUpdate.GetComponentInChildren<TextMeshProUGUI>();
+
+        // 3. Comprobamos la cartera del jugador
+        if (GameManager.countMoney >= costTower)
+        {
+            // TIENE DINERO: Botón clicable, coste en verde
+            btnUpdate.interactable = true;
+            textBoton.text = "MEJORAR\n(Coste: <color=#2ECC71>" + costTower + "</color>)";
+
             btnUpdate.onClick.RemoveAllListeners();
             btnUpdate.onClick.AddListener(() => updatetower.onClickPlayer());
         }
         else
-            btnUpdate.gameObject.SetActive(false);
+        {
+            // NO TIENE DINERO: Botón bloqueado (gris), coste en rojo
+            btnUpdate.interactable = false;
+            textBoton.text = "MEJORAR\n(Coste: <color=#E74C3C>" + costTower + "</color>)";
+
+            // Quitamos los listeners por seguridad
+            btnUpdate.onClick.RemoveAllListeners();
+        }
     }
     /// <summary>
     /// Instancia un proyectil en la posición actual de la torre y le asigna el objetivo fijado.
