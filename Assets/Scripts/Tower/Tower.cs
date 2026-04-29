@@ -17,21 +17,11 @@ public class Tower : MonoBehaviour
 
     //Tiempo de recarga en segundos entre cada disparo.
     float fireCooldown;
-    // ==========================================
-    // DICCIONARIO DE MEJORAS (0: Mediana, 1: Ligera, 2: Pesada)
-    // ==========================================
-    // Cuánto daño gana cada torre al subir de nivel:
-    public static readonly int[] damageUpgradeAmount = { 15, 8, 40 };
+    // Cuanto daño gana cada torre al subir de nivels
+    int upgradeDamageStep;
+    // Cuánto tiempo de recarga se reduce al subir de nivel:    
+    float upgradeCooldownStep;
 
-    // Cuánto tiempo de recarga se reduce al subir de nivel:
-    public static readonly float[] cooldownUpgradeAmount = { 0.2f, 0.05f, 0.25f };
-
-    public static readonly Dictionary<int, int[]> upgradeCosts = new Dictionary<int, int[]>()
-    {
-        { 0, new int[] { 40, 90, 150 } }, // Media: [Compra, Niv1, Niv2]
-        { 1, new int[] { 50, 75, 130 } }, // Ligera: [Compra, Niv1, Niv2]
-        { 2, new int[] { 70, 120, 200 } }  // Pesada: [Compra, Niv1, Niv2]
-    };
     [HideInInspector] public int totalGoldInvested = 0;
     [Header("Referencias.")]
     [Tooltip("EL prefab del proyectile que se va a instanciar.")]
@@ -96,12 +86,6 @@ public class Tower : MonoBehaviour
     private void Awake()
     {
         towerActiveInMenu = null;
-        if (config != null)
-        {
-            attackRadius = config.baseAttackRadius;
-            fireCooldown = config.baseFireCooldown;
-            currentDamage = config.baseDamage;
-        }
     }
     /// <summary>
     /// Inicializa las referencias de los componentes, busca el menú global en la escena 
@@ -117,6 +101,14 @@ public class Tower : MonoBehaviour
         if (gameObjectUpdateDeleteTower == null)
             Debug.LogWarning("No se ha podido dectectar ");
         constructionMenu = FindAnyObjectByType<ConstructionMenu>();
+        if (config != null)
+        {
+            attackRadius = config.baseAttackRadius;
+            fireCooldown = config.baseFireCooldown;
+            currentDamage = config.baseDamage;
+            upgradeDamageStep = config.damageUpgradeAmount;
+            upgradeCooldownStep = config.cooldownUpgradeAmount;
+        }
         SetTower(null, null, constructionMenu.flagTypeTower);
     }
     /// <summary>
@@ -301,7 +293,7 @@ public class Tower : MonoBehaviour
         }
         int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
         if (indexToLook > 2) indexToLook = 2;
-        int costTower = upgradeCosts[updatetower.typeOfTower][indexToLook];
+        int costTower = config.upgradeCosts[indexToLook];
         if (updatetower.levelOfTower < 2 && GameManager.countMoney >= costTower)
         {
             btnUpdate.gameObject.SetActive(true);
@@ -336,7 +328,7 @@ public class Tower : MonoBehaviour
 
         // 1. Calculamos el nivel al que vamos y el coste
         int nextLevel = !isBuilt ? 0 : updatetower.levelOfTower + 1;
-        int costTower = Mathf.RoundToInt(upgradeCosts[type][nextLevel] * GameManager.globalCostMultiplier);
+        int costTower = Mathf.RoundToInt(config.upgradeCosts[nextLevel] * GameManager.globalCostMultiplier);
 
         if (GameManager.countMoney >= costTower)
         {
@@ -428,8 +420,8 @@ public class Tower : MonoBehaviour
             return;
         }
         // Si el código llega hasta aquí, es porque el nivel es > 0 (es una mejora)
-        currentDamage += damageUpgradeAmount[updatetower.typeOfTower];
-        fireCooldown -= cooldownUpgradeAmount[updatetower.typeOfTower];
+        currentDamage += upgradeDamageStep;
+        fireCooldown -= upgradeCooldownStep;
         fireCooldown = Mathf.Max(fireCooldown, 0.1f); // Límite de seguridad
     }
     /// <summary>
@@ -483,7 +475,7 @@ public class Tower : MonoBehaviour
             {
                 if (updatetower.levelOfTower < 2)
                 {
-                    int increaseCurrentDamage = currentDamage + damageUpgradeAmount[updatetower.typeOfTower];
+                    int increaseCurrentDamage = currentDamage + upgradeDamageStep;
                     text.text = "Daño: [" + currentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
                 }
                 else
@@ -499,7 +491,7 @@ public class Tower : MonoBehaviour
                     float realCurrentCooldown = fireCooldown * GameManager.globalAttackSpeedMultiplier;
 
                     // 2. Simulamos cuál será la Base si la mejoramos
-                    float baseNextCooldown = fireCooldown - cooldownUpgradeAmount[updatetower.typeOfTower];
+                    float baseNextCooldown = fireCooldown - upgradeCooldownStep;
                     baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); // Seguridad para la base
 
                     // 3. Recarga REAL futura (Nueva Base * Cartas)
@@ -560,5 +552,4 @@ public class Tower : MonoBehaviour
             angle += (360f / circleSegments);
         }
     }
-
 }

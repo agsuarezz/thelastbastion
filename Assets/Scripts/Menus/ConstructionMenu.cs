@@ -248,14 +248,14 @@ public class ConstructionMenu : MonoBehaviour
     /// Devuelve el coste base en oro necesario para comprar una torre 
     /// espec�fica seg�n su identificador (0 = Media, 1 = Ligera, 2 = Pesada).
     /// </summary>
-    public static int costTower(int typeTower = -1)
+    public int costTower(int typeTower = -1)
     {
         switch (typeTower)
         {
-            case 0: return Tower.upgradeCosts[0][0];
-            case 1: return Tower.upgradeCosts[1][0];
-            case 2: return Tower.upgradeCosts[2][0];
-            default: return Tower.upgradeCosts[0][0];
+            case 0: return prefabTowerMedian.GetComponent<Tower>().config.upgradeCosts[0];
+            case 1: return prefabTowerLight.GetComponent<Tower>().config.upgradeCosts[0];
+            case 2: return prefabTowerHeavy.GetComponent<Tower>().config.upgradeCosts[0];
+            default: return prefabTowerMedian.GetComponent<Tower>().config.upgradeCosts[0];
         }
     }
     public void dontHaveMoney()

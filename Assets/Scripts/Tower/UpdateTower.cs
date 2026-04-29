@@ -29,7 +29,8 @@ public class UpdateTower : MonoBehaviour
         // 3. typeOfTower != -1: Confirma que realmente hay una torre construida en esta casilla antes de intentar mejorarla.
         // 4. sprite != null
         int nextLevel = levelOfTower + 1;
-        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= Tower.upgradeCosts[typeOfTower][nextLevel])
+        Tower tower = this.GetComponentInParent<Tower>();
+        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= tower.config.upgradeCosts[nextLevel])
         {
             // Activamos la bandera para que el Tower.cs lo lea en su Update() y subimos el nivel
             Tower.setGameObjectUpDeleStatus(false);

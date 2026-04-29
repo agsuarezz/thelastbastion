@@ -16,3 +16,6 @@ MonoBehaviour:
   baseAttackRadius: 3
   baseFireCooldown: 0.4
   baseDamage: 12
+  damageUpgradeAmount: 8
+  cooldownUpgradeAmount: 0.05
+  upgradeCosts: 320000004b00000082000000
