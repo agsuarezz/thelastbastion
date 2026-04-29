@@ -1838,11 +1838,11 @@ MonoBehaviour:
   principalRoute: {fileID: 557467129}
   enemyTypes:
   - pooler: {fileID: 1979209788}
-    enemyData: {fileID: 11400000, guid: ef6e8e2cbdc866342ba4a1cd9397feff, type: 2}
+    enemyData: {fileID: 11400000, guid: 3248eda63fd5d1f459f155d605d730ed, type: 2}
     spawnWeight: 70
     isGolem: 0
   - pooler: {fileID: 1993064750}
-    enemyData: {fileID: 11400000, guid: b939b8eccd6494c429098ceea6d11a51, type: 2}
+    enemyData: {fileID: 11400000, guid: b5db4707d5c97134291f821418dfba4d, type: 2}
     spawnWeight: 30
     isGolem: 1
   minSpawnInterval: 1
