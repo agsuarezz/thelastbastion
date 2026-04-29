@@ -86,9 +86,8 @@ GameObject:
   - component: {fileID: 2640421778265141489}
   - component: {fileID: -4977746142303864419}
   - component: {fileID: -8967741245338066784}
-  - component: {fileID: -9071349787218149170}
   m_Layer: 0
-  m_Name: EnemyDemon
+  m_Name: EnemyBoss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,7 +103,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 858791913837529593}
@@ -154,9 +153,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -8056351438460881029, guid: 63d806dd4bfb36c4b89ed9235732e02e, type: 3}
+  m_Sprite: {fileID: -8804577451312863447, guid: bf3b84dbca9c4b746aa77b3723d5742d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 1
+  m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 0.625, y: 0.875}
@@ -203,7 +202,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.5, y: 1.84375}
+    oldSize: {x: 1.15625, y: 0.96875}
     newSize: {x: 0.625, y: 0.875}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -250,7 +249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6265b332be243f44ca43c958e7f591e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyData: {fileID: 11400000, guid: af17e433b5b15964f9260e613783d3ba, type: 2}
+  enemyData: {fileID: 11400000, guid: 5e140b83b01bc23449b83cc5a6021ba6, type: 2}
   lifeSlider: {fileID: 8856403064977849420}
   currentLife: 0
   currentSpeed: 0
@@ -264,7 +263,7 @@ Animator:
   m_GameObject: {fileID: 3934873377327053164}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a5063c54f57fcfa4ca122bf66de2a5ee, type: 2}
+  m_Controller: {fileID: 9100000, guid: ed799e6a01c51334c9cfe5286f404dea, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -276,20 +275,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-9071349787218149170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3934873377327053164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d85fce367d77dc0439654fd57bd64d22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 1965068138658133014, guid: 164b10242bd799a419125b355e548ef0, type: 3}
-  firePoint: {fileID: 0}
 --- !u!1 &4049809416180203725
 GameObject:
   m_ObjectHideFlags: 0
