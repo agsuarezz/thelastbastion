@@ -149,6 +149,9 @@ public class Tower : MonoBehaviour
         if (!isBuilt) return;
         UpdateTarget();
         DrawRangeCircleInGame();
+
+        if (EnemyTimeStopAbility.IsTimeStopped) return;
+        
         if (currentTarget == null) return;
         fireTimer -= Time.deltaTime;
         if (fireTimer <= 0)

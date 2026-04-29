@@ -25,6 +25,8 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
+        if (EnemyTimeStopAbility.IsTimeStopped) return;
+        
         if (target == null || !target.gameObject.activeInHierarchy)
         {
             Destroy(gameObject);
