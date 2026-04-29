@@ -167,6 +167,7 @@ public class Tower : MonoBehaviour
 
         towerActiveInMenu = this;
         setGameObjectUpDeleStatus(true);
+        constructionMenu.cancelFunction();
         assignInformationImage();
         assignInformationText();
 
