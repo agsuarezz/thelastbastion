@@ -7,41 +7,39 @@ public class TurnoMagos : MonoBehaviour
     public Animator mago2;
     public Animator mago3;
 
-    [Tooltip("Segundos que dura cada mago moviéndose")]
+    [Tooltip("Pon aquí los segundos exactos que dura tu animación Action")]
     public float tiempoPorTurno = 1.5f;
-
-    void Start()
-    {
-        // Empezamos la corrutina que hará los turnos infinitamente
-        StartCoroutine(AnimarPorTurnos());
-    }
 
     void OnEnable()
     {
-        // OnEnable se ejecuta SIEMPRE que el panel se hace visible.
-        // Así nos aseguramos de que la rutina empiece de nuevo cada vez que sale una mejora.
+        // Esto evita que se congelen si pausas el juego
+        mago1.updateMode = AnimatorUpdateMode.UnscaledTime;
+        mago2.updateMode = AnimatorUpdateMode.UnscaledTime;
+        mago3.updateMode = AnimatorUpdateMode.UnscaledTime;
+
         StartCoroutine(AnimarPorTurnos());
     }
+
     IEnumerator AnimarPorTurnos()
     {
         while (true)
         {
-            // Turno del Mago 1 (Se mueve 1, paran 2 y 3)
-            mago1.speed = 1f;
-            mago2.speed = 0f;
-            mago3.speed = 0f;
+            // TURNO 1: El Mago 1 ataca, el 2 y el 3 esperan
+            mago1.Play("Action");
+            mago2.Play("Idle");
+            mago3.Play("Idle");
             yield return new WaitForSecondsRealtime(tiempoPorTurno);
 
-            // Turno del Mago 2 (Se mueve 2, paran 1 y 3)
-            mago1.speed = 0f;
-            mago2.speed = 1f;
-            mago3.speed = 0f;
+            // TURNO 2: El Mago 2 ataca, el 1 y el 3 esperan
+            mago1.Play("Idle");
+            mago2.Play("Action");
+            mago3.Play("Idle");
             yield return new WaitForSecondsRealtime(tiempoPorTurno);
 
-            // Turno del Mago 3 (Se mueve 3, paran 1 y 2)
-            mago1.speed = 0f;
-            mago2.speed = 0f;
-            mago3.speed = 1f;
+            // TURNO 3: El Mago 3 ataca, el 1 y el 2 esperan
+            mago1.Play("Idle");
+            mago2.Play("Idle");
+            mago3.Play("Action");
             yield return new WaitForSecondsRealtime(tiempoPorTurno);
         }
     }
