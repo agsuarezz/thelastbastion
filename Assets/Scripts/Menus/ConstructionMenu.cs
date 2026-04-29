@@ -58,7 +58,7 @@ public class ConstructionMenu : MonoBehaviour
             }
         }
         // -----------------------------------------------
-
+        
         // --- NUEVA LÓGICA: Atajos 1, 2 y 3 para comprar ---
         // Solo comprobamos estas teclas si el menú de selección ESTÁ ABIERTO
         if (menuTowerSelect.activeSelf)
@@ -136,6 +136,10 @@ public class ConstructionMenu : MonoBehaviour
     {
         if (GameManager.currentState != GameState.Playing) return;
         menuTowerSelect.SetActive(true);
+        if(Tower.towerActiveInMenu != null)
+        {
+            Tower.setGameObjectUpDeleStatus(false);
+        }
     }
     /// <summary>
     /// M�todo asignado al bot�n de comprar "Torre Mediana".
