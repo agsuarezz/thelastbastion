@@ -1,5 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PrincipalEnemy : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class PrincipalEnemy : MonoBehaviour
     private int currentPointIndex = 0;
 
     private bool isActive = false;
+    private bool isDying = false;
 
     private Animator animator;
     private Collider2D enemyCollider;
@@ -31,6 +33,7 @@ public class PrincipalEnemy : MonoBehaviour
     {
         currentPointIndex = 0;
         isActive = true;
+        isDying = false;
 
         if (enemyData != null)
         {
@@ -67,7 +70,7 @@ public class PrincipalEnemy : MonoBehaviour
 
     private void Update()
     {
-        if (!isActive)
+        if (!isActive || isDying)
             return;
 
         MoveAlongPath();
@@ -101,9 +104,50 @@ public class PrincipalEnemy : MonoBehaviour
         }
     }
 
+    // 🔥 NUEVO: morir con animación
+    public void Die()
+    {
+        if (isDying)
+            return;
+
+        StartCoroutine(DieRoutine());
+    }
+
+    private IEnumerator DieRoutine()
+    {
+        isDying = true;
+        isActive = false;
+
+        if (enemyCollider != null)
+        {
+            enemyCollider.enabled = false;
+        }
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+
+        // ⏳ espera duración animación (ajusta si quieres)
+        yield return new WaitForSeconds(0.6f);
+
+        gameObject.SetActive(false);
+    }
+
     public void DisableEnemy()
     {
         isActive = false;
         gameObject.SetActive(false);
+    }
+
+    public void OnDeathAnimationFinished()
+    {
+        // En el menú no hacemos nada aquí.
     }
 }

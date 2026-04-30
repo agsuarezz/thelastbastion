@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Sprites/Animations/Boss_ability.anim.meta
-guid: 6269cf57c0401ae4db2011875889164f
-========
-guid: 99bf444805aa7c24e96f69ad245b7e92
->>>>>>>> dc73615 (Aislamiento Menu Principal: animators, animaciones y enemy data propios):Assets/Sprites/Animations/PrincipalGoblin_walk.anim.meta
+guid: d41ed91b1ccce3b4da12d810e52a3d46
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 7400000

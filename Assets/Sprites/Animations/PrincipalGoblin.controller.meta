@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Sprites/Animations/Boss.controller.meta
-guid: 25743756cd889754d84cedb81888b067
-========
-guid: febb4f8c3e3b95c40b6b52cb2654fbd9
->>>>>>>> dc73615 (Aislamiento Menu Principal: animators, animaciones y enemy data propios):Assets/Sprites/Animations/PrincipalGoblin.controller.meta
+guid: 8bbf2a5b7fce13443aa9dc823c216ffd
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 9100000

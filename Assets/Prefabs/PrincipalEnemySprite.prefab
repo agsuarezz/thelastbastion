@@ -218,7 +218,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3934873377327053164}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -247,7 +247,7 @@ Animator:
   m_GameObject: {fileID: 3934873377327053164}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: febb4f8c3e3b95c40b6b52cb2654fbd9, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8bbf2a5b7fce13443aa9dc823c216ffd, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
