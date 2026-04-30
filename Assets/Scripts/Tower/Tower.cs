@@ -545,27 +545,7 @@ public class Tower : MonoBehaviour
             }
             if (text.name == "cadenceText")
             {
-                if (updatetower.levelOfTower < 2)
-                {
-                    // 1. Recarga REAL actual (Base * Cartas)
-                    float realCurrentCooldown = fireCooldown * GameManager.globalAttackSpeedMultiplier;
-
-                    // 2. Simulamos cuál será la Base si la mejoramos
-                    float baseNextCooldown = fireCooldown - upgradeCooldownStep;
-                    baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); // Seguridad para la base
-
-                    // 3. Recarga REAL futura (Nueva Base * Cartas)
-                    float realNextCooldown = baseNextCooldown * GameManager.globalAttackSpeedMultiplier;
-                    realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); // Seguridad final
-
-                    text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextCooldown.ToString("F2") + "s] </color>";
-                }
-                else
-                {
-                    // Si ya es nivel máximo, calculamos su recarga real actual para mostrarla
-                    float realCurrentCooldown = fireCooldown * GameManager.globalAttackSpeedMultiplier;
-                    text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] (MÁXIMO)";
-                }
+                cadenceFunction(text);
             }
         }
     }
@@ -610,6 +590,31 @@ public class Tower : MonoBehaviour
             lineRenderer.SetPosition(i, new Vector3(x, y, -1f));
 
             angle += (360f / circleSegments);
+        }
+    }
+    public void cadenceFunction(TextMeshProUGUI text)
+    {
+        float currentBaseCooldown = config is LaserTowerData ? currentRestDuration : fireCooldown;
+        if (updatetower.levelOfTower < 2)
+        {
+            // 1. Recarga REAL actual (Base * Cartas)
+            float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
+
+            // 2. Simulamos cuál será la Base si la mejoramos
+            float baseNextCooldown = currentBaseCooldown - upgradeCooldownStep;
+            baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); // Seguridad para la base
+
+            // 3. Recarga REAL futura (Nueva Base * Cartas)
+            float realNextCooldown = baseNextCooldown * GameManager.globalAttackSpeedMultiplier;
+            realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); // Seguridad final
+
+            text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextCooldown.ToString("F2") + "s] </color>";
+        }
+        else
+        {
+            // Si ya es nivel máximo, calculamos su recarga real actual para mostrarla
+            float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
+            text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] (MÁXIMO)";
         }
     }
 }
