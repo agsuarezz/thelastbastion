@@ -10,6 +10,7 @@ public class ConstructionMenu : MonoBehaviour
     public GameObject prefabTowerMedian;
     public GameObject prefabTowerLight;
     public GameObject prefabTowerHeavy;
+    public GameObject prefabTowerInfernal;
     public Tilemap tilemap;
 
     // Da permiso para que coloque la torre
@@ -74,6 +75,10 @@ public class ConstructionMenu : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Alpha3)) // Tecla '3'
             {
                 BuyTorreHeavy();
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4)) // Tecla '4'
+            {
+                BuyTorreInfernal();
             }
         }
         // --------------------------------------------------
@@ -199,6 +204,25 @@ public class ConstructionMenu : MonoBehaviour
         }
     }
     /// <summary>
+    /// M�todo asignado al bot�n de comprar "Torre Infernal".
+    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (3), 
+    /// activa el modo de colocaci�n en el mapa y cierra el men�.
+    /// </summary>
+    public void BuyTorreInfernal()
+    {
+        int costTowerToInt = costTower(3);
+
+        if (GameManager.countMoney >= costTowerToInt)
+        {
+            SetIsPlacingTilemapFlagTypeTower(3);
+            cancelFunction();
+        }
+        else
+        {
+            dontHaveMoney();
+        }
+    }
+    /// <summary>
     /// Instancia el prefab de la torre seleccionada en la coordenada exacta de la cuadr�cula.
     /// Oculta la cuadr�cula de ayuda (tilemap) y saca al jugador del modo colocaci�n.
     /// (El cobro del dinero se realiza posteriormente desde el script de la propia torre).
@@ -241,12 +265,13 @@ public class ConstructionMenu : MonoBehaviour
             case 0: return prefabTowerMedian;
             case 1: return prefabTowerLight;
             case 2: return prefabTowerHeavy;
+            case 3: return prefabTowerInfernal;
             default: return null;
         }
     }
     /// <summary>
     /// Devuelve el coste base en oro necesario para comprar una torre 
-    /// espec�fica seg�n su identificador (0 = Media, 1 = Ligera, 2 = Pesada).
+    /// espec�fica seg�n su identificador (0 = Media, 1 = Ligera, 2 = Pesada, 3 = Infernal).
     /// </summary>
     public int costTower(int typeTower = -1)
     {
@@ -255,6 +280,7 @@ public class ConstructionMenu : MonoBehaviour
             case 0: return prefabTowerMedian.GetComponent<Tower>().config.upgradeCosts[0];
             case 1: return prefabTowerLight.GetComponent<Tower>().config.upgradeCosts[0];
             case 2: return prefabTowerHeavy.GetComponent<Tower>().config.upgradeCosts[0];
+            case 3: return prefabTowerInfernal.GetComponent<Tower>().config.upgradeCosts[0];
             default: return prefabTowerMedian.GetComponent<Tower>().config.upgradeCosts[0];
         }
     }

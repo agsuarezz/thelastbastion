@@ -79,10 +79,11 @@ public class Tower : MonoBehaviour
     public LineRenderer lineRenderer;
     // Comprueba SI tiene el menu de Delete y Update activo
     public static Tower towerActiveInMenu;
-
     public TowerData config;
 
     int circleSegments = 50;
+
+    private float damageAccrued = 0f; // La "hucha" de daño para el láser
     private void Awake()
     {
         towerActiveInMenu = null;
@@ -153,12 +154,56 @@ public class Tower : MonoBehaviour
         if (EnemyTimeStopAbility.IsTimeStopped) return;
         
         if (currentTarget == null) return;
-        fireTimer -= Time.deltaTime;
-        if (fireTimer <= 0)
+        // 1. Buscamos el LineRenderer del láser EXACTO por su nombre (para no pisar el círculo de rango)
+        LineRenderer lightningLase = null;
+        if (config.isLaserTower)
         {
-            Shoot();
-            fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+            Transform laserObject = transform.Find("towerInfernalLineRender");
+            if (laserObject != null) lightningLase = laserObject.GetComponent<LineRenderer>();
         }
+
+        // 2. Comprobación del objetivo
+        if (currentTarget == null)
+        {
+            // Si el enemigo muere o se va, ¡apagamos el láser antes de salir!
+            if (lightningLase != null) lightningLase.enabled = false;
+            return;
+        }
+
+        // 3. Lógica de ataque
+        if (config.isLaserTower && lightningLase != null)
+        {
+            // Modo Láser
+            lightningLase.enabled = true;
+
+            // Le decimos que tiene exactamente 2 puntos
+            lightningLase.positionCount = 2;
+
+            // Punto 0: La torre. Punto 1: El enemigo
+            lightningLase.SetPosition(0, transform.position);
+            lightningLase.SetPosition(1, currentTarget.position);
+
+            // Calculo del daño
+            // Vamos llenando la hucha poco a poco
+            damageAccrued += config.damagePerSecond * Time.deltaTime;
+            if(damageAccrued >= 1f)
+            {
+                int damageToDeal = Mathf.FloorToInt(damageAccrued); // Sacamos los puntos enteros
+                currentTarget.GetComponent<Enemy>().TakeDamage(damageToDeal);
+                damageAccrued -= damageToDeal; // Dejamos el resto en la hucha
+            }
+        }
+        else
+        {
+            // Modo Normal
+            fireTimer -= Time.deltaTime;
+            if (fireTimer <= 0)
+            {
+                Shoot();
+                fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+            }
+        }
+       
     }
     /// <summary>
     /// Se ejecuta al hacer clic sobre la torre. Muestra el menú global de la interfaz 

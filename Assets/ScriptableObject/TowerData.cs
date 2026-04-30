@@ -5,8 +5,6 @@ public class TowerData : ScriptableObject
 {
     public string nameOfTower;
     public float baseAttackRadius;
-    public float baseFireCooldown;
-    public int baseDamage;
     // ==========================================
     // DICCIONARIO DE MEJORAS (0: Mediana, 1: Ligera, 2: Pesada)
     // ==========================================
@@ -14,4 +12,10 @@ public class TowerData : ScriptableObject
     public int damageUpgradeAmount;
     public float cooldownUpgradeAmount;
     public int[] upgradeCosts;
+    [Header("--- Configuración de Proyectiles ---")]
+    public int baseDamage;
+    public float baseFireCooldown;
+    [Header("--- Configuración de Láser ---")]
+    public bool isLaserTower;
+    public float damagePerSecond;
 }
