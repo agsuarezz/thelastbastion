@@ -9,13 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd99970fb9067e24dac475edfb4fbe5b, type: 3}
-  m_Name: TowerHeavy
+  m_Script: {fileID: 11500000, guid: ee7446e0fe88ae64ab63c9f8e5bcd72b, type: 3}
+  m_Name: ConfigHeavy
   m_EditorClassIdentifier: 
-  nameOfTower: Torre Pesada
+  nameOfTower: Torre Heavy
   baseAttackRadius: 3
-  baseFireCooldown: 2
-  baseDamage: 60
   damageUpgradeAmount: 40
   cooldownUpgradeAmount: 0.25
-  upgradeCosts: 4600000078000000c8000000
+  upgradeCosts: 000000000000000000000000
+  projectilePrefab: {fileID: 4912671896811190522, guid: aaded907281ab0d4b8efb79b0b57cb57, type: 3}
+  baseDamage: 60
+  baseFireRate: 2

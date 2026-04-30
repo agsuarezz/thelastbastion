@@ -11,83 +11,40 @@ using UnityEngine.UI;
 /// </summary>
 public class Tower : MonoBehaviour
 {
-    [Header("Atributos de la torre (Algunos son privados).")]
-    [Tooltip("Radio de detección de los enemigos.")]
-    public float attackRadius;
-
-    //Tiempo de recarga en segundos entre cada disparo.
-    float fireCooldown;
-    // Cuanto daño gana cada torre al subir de nivels
-    int upgradeDamageStep;
-    // Cuánto tiempo de recarga se reduce al subir de nivel:    
-    float upgradeCooldownStep;
-
-    [HideInInspector] public int totalGoldInvested = 0;
-    [Header("Referencias.")]
-    [Tooltip("EL prefab del proyectile que se va a instanciar.")]
-    public GameObject projectilePrefab;
-
-    [Tooltip("GameObject que contiene el Sprite y BoxCollider2D base de la torre.")]
-    public List<GameObject> towerImagen;
-    [Tooltip("Referencia al GameManager principal de la escena.")]
-    GameManager gameManager;
-    // ==========================================
-    // ESTADO INTERNO DE LA TORRE
-    // ==========================================
-
-    /// <summary>
-    /// El enemigo actual al que la torre está apuntando y disparando.
-    /// </summary>
-    private Transform currentTarget;
-    /// <summary>
-    /// Temporizador interno que cuenta el tiempo restante (en segundos) hasta el próximo disparo.
-    /// </summary>
-    private float fireTimer = 0f;
-    /// <summary>
-    /// Indica si la torre ya ha sido comprada y construida en esta casilla.
-    /// </summary>
-    [HideInInspector] public bool isBuilt = false;
-    // ==========================================
-    // INTERFAZ DE USUARIO Y COMPONENTES HIJOS
-    // ==========================================
-
-    /// <summary>
-    /// Referencia al componente visual principal de la torre (su dibujo).
-    /// </summary>
-    SpriteRenderer spriteRenderer;
-    /// <summary>
-    /// Referencia al script hijo encargado de detectar si el jugador quiere vender/borrar esta torre.
-    /// </summary>
-    DeleteTower deletetower;
-    /// <summary>
-    /// Referencia al script hijo encargado de detectar si el jugador quiere mejorar (upgrade) esta torre.
-    /// </summary>
-    UpdateTower updatetower;
-    /// <summary>
-    /// El GameObject visual  que contiene el script de borrado y el sprite.
-    /// </summary>
-    public GameObject deleteTowerGameObject;
-    /// <summary>
-    /// El GameObject visualque contiene el script de mejora y el sprite.
-    /// </summary>
-    public GameObject updateTowerGameObject;
-    [Tooltip("El daño actual de ESTA torre específica.")]
-    public int currentDamage;
-
-    ConstructionMenu constructionMenu;
-    public static GameObject gameObjectUpdateDeleteTower;
-    public LineRenderer lineRenderer;
-    // Comprueba SI tiene el menu de Delete y Update activo
-    public static Tower towerActiveInMenu;
+    [Header("Referencias y Config")]
     public TowerData config;
+    public List<GameObject> towerImagen;
+    public LineRenderer lineRenderer;
+    [Header("Botones Interfaz")]
+    public GameObject deleteTowerGameObject;
+    public GameObject updateTowerGameObject;
+    // Variables de Estado
+    private float laserActiveTimer;    // Contador para los 5s
+    private float laserRestTimer;      // Contador para los 2s
+    private float currentRestDuration; // Cuánto dura el descanso (se reduce al mejorar)
+    private bool isOverheated = false;
+    private float damageAccrued = 0f;
+    private GameObject projectilePrefab; // Se llena en el Start
+    private float fireCooldown;          // Tiempo entre balas
+    private float fireTimer = 0f;
 
+    [HideInInspector] public float attackRadius;
+    [HideInInspector] public int currentDamage;
+    [HideInInspector] public int upgradeDamageStep;
+    [HideInInspector] public float upgradeCooldownStep;
+    [HideInInspector] public int totalGoldInvested = 0;
+    [HideInInspector] public bool isBuilt = false;
+
+    private Transform currentTarget;
+    private SpriteRenderer spriteRenderer;
+    private DeleteTower deletetower;
+    private UpdateTower updatetower;
+    private GameManager gameManager;
+    private ConstructionMenu constructionMenu;
+    public static GameObject gameObjectUpdateDeleteTower;
+    public static Tower towerActiveInMenu;
     int circleSegments = 50;
-
-    private float damageAccrued = 0f; // La "hucha" de daño para el láser
-    private void Awake()
-    {
-        towerActiveInMenu = null;
-    }
+    private void Awake() => towerActiveInMenu = null;
     /// <summary>
     /// Inicializa las referencias de los componentes, busca el menú global en la escena 
     /// y autoconstruye la torre base basándose en la elección del jugador en el menú de construcción.
@@ -99,16 +56,27 @@ public class Tower : MonoBehaviour
         updatetower = this.GetComponentInChildren<UpdateTower>(true);
         gameManager = FindAnyObjectByType<GameManager>();
         gameObjectUpdateDeleteTower = GameObject.Find("gameObjectUpdateDeleteTower");
-        if (gameObjectUpdateDeleteTower == null)
-            Debug.LogWarning("No se ha podido dectectar ");
         constructionMenu = FindAnyObjectByType<ConstructionMenu>();
+
         if (config != null)
         {
             attackRadius = config.baseAttackRadius;
-            fireCooldown = config.baseFireCooldown;
-            currentDamage = config.baseDamage;
             upgradeDamageStep = config.damageUpgradeAmount;
             upgradeCooldownStep = config.cooldownUpgradeAmount;
+
+            // CARGA SEGÚN EL TIPO DE DATA
+            if (config is LaserTowerData laserData)
+            {
+                currentDamage = (int)laserData.damagePerSecond;
+                laserActiveTimer = laserData.onTime;
+                currentRestDuration = laserData.offTime;
+            }
+            else if (config is ProjectileTowerData projData)
+            {
+                currentDamage = projData.baseDamage;
+                fireCooldown = projData.baseFireRate;
+                projectilePrefab = projData.projectilePrefab;
+            }
         }
         SetTower(null, null, constructionMenu.flagTypeTower);
     }
@@ -152,58 +120,73 @@ public class Tower : MonoBehaviour
         DrawRangeCircleInGame();
 
         if (EnemyTimeStopAbility.IsTimeStopped) return;
-        
-        if (currentTarget == null) return;
-        // 1. Buscamos el LineRenderer del láser EXACTO por su nombre (para no pisar el círculo de rango)
+
+        if (config is LaserTowerData)
+            HandleLaserAttack();
+        else
+            HandleProjectileAttack();
+
+    }
+    private void HandleLaserAttack()
+    {
         LineRenderer lightningLase = null;
-        if (config.isLaserTower)
+        Transform laserObj = transform.Find("towerInfernalLineRender");
+        if (laserObj != null) lightningLase = laserObj.GetComponent<LineRenderer>();
+
+        if (lightningLase == null) return;
+
+        if (!isOverheated)
         {
-            Transform laserObject = transform.Find("towerInfernalLineRender");
-            if (laserObject != null) lightningLase = laserObject.GetComponent<LineRenderer>();
-        }
-
-        // 2. Comprobación del objetivo
-        if (currentTarget == null)
-        {
-            // Si el enemigo muere o se va, ¡apagamos el láser antes de salir!
-            if (lightningLase != null) lightningLase.enabled = false;
-            return;
-        }
-
-        // 3. Lógica de ataque
-        if (config.isLaserTower && lightningLase != null)
-        {
-            // Modo Láser
-            lightningLase.enabled = true;
-
-            // Le decimos que tiene exactamente 2 puntos
-            lightningLase.positionCount = 2;
-
-            // Punto 0: La torre. Punto 1: El enemigo
-            lightningLase.SetPosition(0, transform.position);
-            lightningLase.SetPosition(1, currentTarget.position);
-
-            // Calculo del daño
-            // Vamos llenando la hucha poco a poco
-            damageAccrued += config.damagePerSecond * Time.deltaTime;
-            if(damageAccrued >= 1f)
+            if (currentTarget != null)
             {
-                int damageToDeal = Mathf.FloorToInt(damageAccrued); // Sacamos los puntos enteros
-                currentTarget.GetComponent<Enemy>().TakeDamage(damageToDeal);
-                damageAccrued -= damageToDeal; // Dejamos el resto en la hucha
+                lightningLase.enabled = true;
+                lightningLase.positionCount = 2;
+                lightningLase.SetPosition(0, transform.position);
+                lightningLase.SetPosition(1, currentTarget.position);
+
+                // Gasta batería
+                laserActiveTimer -= Time.deltaTime;
+
+                // Daño
+                damageAccrued += currentDamage * Time.deltaTime;
+                if (damageAccrued >= 1f)
+                {
+                    int dmg = Mathf.FloorToInt(damageAccrued);
+                    currentTarget.GetComponent<Enemy>().TakeDamage(dmg);
+                    damageAccrued -= dmg;
+                }
+
+                if (laserActiveTimer <= 0)
+                {
+                    isOverheated = true;
+                    laserRestTimer = currentRestDuration;
+                    lightningLase.enabled = false;
+                }
             }
+            else { lightningLase.enabled = false; }
         }
         else
         {
-            // Modo Normal
-            fireTimer -= Time.deltaTime;
-            if (fireTimer <= 0)
+            // Descansando
+            lightningLase.enabled = false;
+            laserRestTimer -= Time.deltaTime;
+            if (laserRestTimer <= 0)
             {
-                Shoot();
-                fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+                isOverheated = false;
+                laserActiveTimer = ((LaserTowerData)config).onTime;
             }
         }
-       
+    }
+
+    private void HandleProjectileAttack()
+    {
+        if (currentTarget == null) return;
+        fireTimer -= Time.deltaTime;
+        if (fireTimer <= 0)
+        {
+            Shoot();
+            fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+        }
     }
     /// <summary>
     /// Se ejecuta al hacer clic sobre la torre. Muestra el menú global de la interfaz 
@@ -484,14 +467,22 @@ public class Tower : MonoBehaviour
     /// </summary>
     public void updateFireCooldownAndDamage()
     {
-        if (updatetower.levelOfTower == 0)
-        {
-            return;
-        }
-        // Si el código llega hasta aquí, es porque el nivel es > 0 (es una mejora)
+        if (updatetower.levelOfTower == 0) return;
+
         currentDamage += upgradeDamageStep;
-        fireCooldown -= upgradeCooldownStep;
-        fireCooldown = Mathf.Max(fireCooldown, 0.1f); // Límite de seguridad
+
+        if (config is LaserTowerData)
+        {
+            // Mejora reduce el tiempo de espera de 2s
+            currentRestDuration -= upgradeCooldownStep;
+            currentRestDuration = Mathf.Max(currentRestDuration, 0.2f);
+        }
+        else
+        {
+            // Mejora reduce el tiempo entre balas
+            fireCooldown -= upgradeCooldownStep;
+            fireCooldown = Mathf.Max(fireCooldown, 0.1f);
+        }
     }
     /// <summary>
     /// Suma 1 al contador global de torres del GameManager, asegurándose de hacerlo 

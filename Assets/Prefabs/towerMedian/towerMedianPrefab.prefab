@@ -402,19 +402,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7cbf7afe5cc8c540ae8a628c320651f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 3
-  totalGoldInvested: 0
-  projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
+  config: {fileID: 11400000, guid: 51db0feb5655a16419af0f41d4dddeb7, type: 2}
   towerImagen:
   - {fileID: 355259134026802573, guid: 1f37fdc36bdb33449b0d6a528561fbb9, type: 3}
   - {fileID: 355259134026802573, guid: c076a2d0bc8fead40ac6143dff0ec025, type: 3}
   - {fileID: 355259134026802573, guid: 03eb588c0f2f96947a159e024f3a9289, type: 3}
-  isBuilt: 0
+  lineRenderer: {fileID: 8083430394679794732}
   deleteTowerGameObject: {fileID: 7155540323294341243}
   updateTowerGameObject: {fileID: 2450186932230054679}
+  attackRadius: 3
   currentDamage: 0
-  lineRenderer: {fileID: 8083430394679794732}
-  config: {fileID: 11400000, guid: f0fdda2d6fe2a7b43aeb1acd4df35abc, type: 2}
+  upgradeDamageStep: 0
+  upgradeCooldownStep: 0
+  totalGoldInvested: 0
+  isBuilt: 0
 --- !u!61 &8031449627140255153
 BoxCollider2D:
   m_ObjectHideFlags: 0

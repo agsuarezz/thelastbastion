@@ -9,15 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd99970fb9067e24dac475edfb4fbe5b, type: 3}
-  m_Name: TowerInfernal
+  m_Script: {fileID: 11500000, guid: ee7446e0fe88ae64ab63c9f8e5bcd72b, type: 3}
+  m_Name: ConfigMedian
   m_EditorClassIdentifier: 
-  nameOfTower: Torre Media
+  nameOfTower: Tower Median
   baseAttackRadius: 3
-  damageUpgradeAmount: 15
+  damageUpgradeAmount: 8
   cooldownUpgradeAmount: 0.2
-  upgradeCosts: 280000005a00000096000000
-  baseDamage: 0
-  baseFireCooldown: 0
-  isLaserTower: 1
-  damagePerSecond: 10
+  upgradeCosts: 000000000000000000000000
+  projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
+  baseDamage: 25
+  baseFireRate: 1

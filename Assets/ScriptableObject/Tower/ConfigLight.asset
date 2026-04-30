@@ -9,13 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd99970fb9067e24dac475edfb4fbe5b, type: 3}
-  m_Name: TowerLight
+  m_Script: {fileID: 11500000, guid: ee7446e0fe88ae64ab63c9f8e5bcd72b, type: 3}
+  m_Name: ConfigLight
   m_EditorClassIdentifier: 
-  nameOfTower: Torre Ligera
+  nameOfTower: Tower Light
   baseAttackRadius: 3
-  baseFireCooldown: 0.4
-  baseDamage: 12
   damageUpgradeAmount: 8
   cooldownUpgradeAmount: 0.05
-  upgradeCosts: 320000004b00000082000000
+  upgradeCosts: 000000000000000000000000
+  projectilePrefab: {fileID: 4912671896811190522, guid: dc6c3ad41a696ba4fa26870e596b1a83, type: 3}
+  baseDamage: 12
+  baseFireRate: 0.4
