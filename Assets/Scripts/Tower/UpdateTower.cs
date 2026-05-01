@@ -30,7 +30,7 @@ public class UpdateTower : MonoBehaviour
         // 4. sprite != null
         int nextLevel = levelOfTower + 1;
         Tower tower = this.GetComponentInParent<Tower>();
-        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= tower.config.upgradeCosts[nextLevel])
+        if (levelOfTower < 2 && !needUpdateTower && typeOfTower != -1 && GameManager.countMoney >= (tower.config.upgradeCosts[nextLevel] * GameManager.globalCostMultiplier))
         {
             // Activamos la bandera para que el Tower.cs lo lea en su Update() y subimos el nivel
             Tower.setGameObjectUpDeleStatus(false);

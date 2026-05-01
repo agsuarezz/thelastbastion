@@ -337,11 +337,11 @@ public class Tower : MonoBehaviour
         TextMeshProUGUI textBoton = btnUpdate.GetComponentInChildren<TextMeshProUGUI>();
 
         // 3. Comprobamos la cartera del jugador
-        if (GameManager.countMoney >= costTower)
+        if (GameManager.countMoney >= costTower * GameManager.globalCostMultiplier)
         {
             // TIENE DINERO: Botón clicable, coste en verde
             btnUpdate.interactable = true;
-            textBoton.text = "MEJORAR\n(Coste: <color=#2ECC71>" + costTower + "</color>)";
+            textBoton.text = "MEJORAR\n(Coste: <color=#2ECC71>" + (costTower * GameManager.globalCostMultiplier) + "</color>)";
 
             btnUpdate.onClick.RemoveAllListeners();
             btnUpdate.onClick.AddListener(() => updatetower.onClickPlayer());
@@ -350,7 +350,7 @@ public class Tower : MonoBehaviour
         {
             // NO TIENE DINERO: Botón bloqueado (gris), coste en rojo
             btnUpdate.interactable = false;
-            textBoton.text = "MEJORAR\n(Coste: <color=#E74C3C>" + costTower + "</color>)";
+            textBoton.text = "MEJORAR\n(Coste: <color=#E74C3C>" + (costTower * GameManager.globalCostMultiplier) + "</color>)";
 
             // Quitamos los listeners por seguridad
             btnUpdate.onClick.RemoveAllListeners();

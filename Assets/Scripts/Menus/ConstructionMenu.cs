@@ -87,7 +87,7 @@ public class ConstructionMenu : MonoBehaviour
         if (isPlacing)
         {
             // 2. Si pierde dinero a mitad de construcción, abortamos.
-            if (GameManager.countMoney < costTower(flagTypeTower))
+            if (GameManager.countMoney < costTower(flagTypeTower) * GameManager.globalCostMultiplier)
             {
                 tilemap.gameObject.SetActive(false);
                 isPlacing = false;
@@ -155,7 +155,7 @@ public class ConstructionMenu : MonoBehaviour
     {
         int costTowerToInt = costTower(0);
 
-        if (GameManager.countMoney >= costTowerToInt)
+        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
         {
             SetIsPlacingTilemapFlagTypeTower(0);
             cancelFunction();
@@ -174,7 +174,7 @@ public class ConstructionMenu : MonoBehaviour
     {
         int costTowerToInt = costTower(1);
 
-        if (GameManager.countMoney >= costTowerToInt)
+        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
         {
             SetIsPlacingTilemapFlagTypeTower(1);
             cancelFunction();
@@ -193,7 +193,7 @@ public class ConstructionMenu : MonoBehaviour
     {
         int costTowerToInt = costTower(2);
 
-        if (GameManager.countMoney >= costTowerToInt)
+        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
         {
             SetIsPlacingTilemapFlagTypeTower(2);
             cancelFunction();
@@ -212,7 +212,7 @@ public class ConstructionMenu : MonoBehaviour
     {
         int costTowerToInt = costTower(3);
 
-        if (GameManager.countMoney >= costTowerToInt)
+        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
         {
             SetIsPlacingTilemapFlagTypeTower(3);
             cancelFunction();
