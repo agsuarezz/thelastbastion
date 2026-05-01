@@ -110,6 +110,9 @@ public class GameManager : MonoBehaviour
     public static GameState currentState = GameState.Playing;
     // Evita que el final de ronda se ejecute 60 veces seguidas 
     private bool isChangingRound = false;
+    // Botón para continuar de ronda
+    Button playButton;
+    public Sprite playSprite;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -119,6 +122,9 @@ public class GameManager : MonoBehaviour
     {
         audioSource = this.GetComponent<AudioSource>();
         Time.timeScale = 1f;
+        playButton = GameObject.Find("PlayButton").GetComponent<Button>();
+        playButton.interactable = false;
+        Debug.Log(playButton.GetComponent<Button>());
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
         soundPause = Resources.Load<AudioClip>("soundPause");
@@ -203,9 +209,15 @@ public class GameManager : MonoBehaviour
         // Si ya estamos gestionando el cambio de ronda, esperamos
         if (isChangingRound) return;
         // Si la ronda acaba de terminar, lanzamos la linea de tiempo
-        if (spawner != null && spawner.statusRound())
+        if (spawner != null && spawner.statusRound() && playButton.interactable == false)
         {
-            StartCoroutine(endOfRoundRoutine());
+            playButton.interactable = true;
+            Image spriteRenderer = playButton.GetComponent<Image>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = playSprite;
+                spriteRenderer.color = Color.white;
+            }
         }
         // El tiempo y el dinero siguen su curso normal
         timeinGame += Time.deltaTime;
@@ -334,5 +346,18 @@ public class GameManager : MonoBehaviour
         spawner.restartCountEnemy();
 
         isChangingRound = false; // Desbloqueamos el Update para la nueva ronda
+    }
+
+    public void playRound()
+    {
+        if (isChangingRound == true) return;
+        countRound++;
+        playButton.interactable = false;
+        Image spriteRenderer = playButton.GetComponent<Image>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = new Color32(255, 255, 255, 0);
+        }
+        StartCoroutine(endOfRoundRoutine());
     }
 }

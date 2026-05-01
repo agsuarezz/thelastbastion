@@ -158,7 +158,6 @@ public class Spawner : MonoBehaviour
     {
         if (enemiesAlive <= 0 && currentWaveIndex >= currentWave.Count)
         {
-            GameManager.countRound += 1;
             return true;
         }
 
