@@ -668,6 +668,7 @@ MonoBehaviour:
   prefabTowerMedian: {fileID: 8991276415801162673, guid: 9215f2686913cdc45aa6fab00fcff581, type: 3}
   prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}
   prefabTowerHeavy: {fileID: 8544740251689827319, guid: 65311828bfcba7d4999338877f98bf6e, type: 3}
+  prefabTowerInfernal: {fileID: 0}
   tilemap: {fileID: 554214137}
   isPlacing: 0
   flagTypeTower: -1

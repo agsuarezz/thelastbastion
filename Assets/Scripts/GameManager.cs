@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public Image imagenBotonMusica;
     public Sprite iconoMusicaOn;
     public Sprite iconoMusicaOff;
-    private bool musicaActiva = true;
+    public static bool musicaActiva = true;
 
     // SpriteRenderer de referencia para asignar el gráfico correcto a las nuevas torres construidas.
     [Tooltip("SpriteRenderer base del cual se copiará el sprite para las torres.")]
@@ -122,6 +122,17 @@ public class GameManager : MonoBehaviour
     {
         audioSource = this.GetComponent<AudioSource>();
         Time.timeScale = 1f;
+        Time.timeScale = 1f;
+        if (AudioListener.volume == 0f)
+        {
+            musicaActiva = false;
+            if (imagenBotonMusica != null) imagenBotonMusica.sprite = iconoMusicaOff;
+        }
+        else
+        {
+            musicaActiva = true;
+            if (imagenBotonMusica != null) imagenBotonMusica.sprite = iconoMusicaOn;
+        }
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         playButton.interactable = false;
         Debug.Log(playButton.GetComponent<Button>());

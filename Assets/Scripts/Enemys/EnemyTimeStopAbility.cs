@@ -40,6 +40,13 @@ public class EnemyTimeStopAbility : MonoBehaviour
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
+
+        // 🌟 EL TRUCO ESTRELLA: Le decimos al AudioSource de ESTE enemigo 
+        // que ignore las pausas globales de Unity. ¡Es inmune al silencio!
+        if (audioSource != null)
+        {
+            audioSource.ignoreListenerPause = true;
+        }
     }
 
     private void OnEnable()
@@ -69,22 +76,23 @@ public class EnemyTimeStopAbility : MonoBehaviour
     }
 
     private void StartCasting()
-{
-    isCasting = true;
-
-    if (enemy != null)
     {
-        originalSpeed = enemy.currentSpeed;
+        isCasting = true;
 
-        if (originalSpeed <= 0f && enemy.enemyData != null)
-            originalSpeed = enemy.enemyData.speed;
+        if (enemy != null)
+        {
+            originalSpeed = enemy.currentSpeed;
 
-        enemy.currentSpeed = 0f;
+            if (originalSpeed <= 0f && enemy.enemyData != null)
+                originalSpeed = enemy.enemyData.speed;
+
+            enemy.currentSpeed = 0f;
+        }
+
+        // Si tu GameManager dice que hay música, lanzamos el sonido (que es inmune a pausas)
+        if (audioSource != null && castSound != null && GameManager.musicaActiva)
+            audioSource.PlayOneShot(castSound);
     }
-
-    if (audioSource != null && castSound != null)
-        audioSource.PlayOneShot(castSound);
-}
 
     public void ExecuteTimeStop()
     {
@@ -96,6 +104,10 @@ public class EnemyTimeStopAbility : MonoBehaviour
 
     private IEnumerator TimeStopSequence()
     {
+        // ⏸️ 1. Pausamos absolutamente TODO el sonido del juego (música, ataques, explosiones)
+        // (Pero el sonido de ESTE enemigo se seguirá escuchando gracias al Awake)
+        AudioListener.pause = true;
+
         yield return StartCoroutine(FadeSaturation(normalSaturation, desaturatedSaturation));
 
         IsTimeStopped = true;
@@ -106,21 +118,20 @@ public class EnemyTimeStopAbility : MonoBehaviour
 
         yield return StartCoroutine(FadeSaturation(desaturatedSaturation, normalSaturation));
 
-        
+        // ▶️ 2. Reanudamos el audio de todo el juego 
+        AudioListener.pause = false;
     }
 
-public void FinishCasting()
-{
-    isCasting = false;
+    public void FinishCasting()
+    {
+        isCasting = false;
 
-    if (enemy != null)
-        enemy.currentSpeed = enemy.enemyData.speed;
+        if (enemy != null)
+            enemy.currentSpeed = enemy.enemyData.speed;
 
-    if (animator != null)
-        animator.SetTrigger(castEndTriggerName);
-
-    
-}
+        if (animator != null)
+            animator.SetTrigger(castEndTriggerName);
+    }
 
     private IEnumerator FadeSaturation(float start, float end)
     {
@@ -141,6 +152,9 @@ public void FinishCasting()
     private void OnDisable()
     {
         IsTimeStopped = false;
+
+        // Seguridad: Si este mago muere de repente, quitamos la pausa global sí o sí
+        AudioListener.pause = false;
 
         if (enemy != null && isCasting)
             enemy.currentSpeed = originalSpeed;
