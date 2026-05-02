@@ -5,126 +5,112 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// Gestor principal de los eventos aleatorios del juego.
-/// Mantiene el catálogo de eventos (positivos y negativos) que pueden alterar temporalmente las reglas de la partida.
+/// Main manager for random game events.
+/// Handles the event catalog (positive and negative) that temporarily alters gameplay rules.
 /// </summary>
 public class randomEvents : MonoBehaviour
 {
-    [Header("Configuración de Eventos")]
-
-    /// <summary>
-    /// Lista global que almacena las referencias a las funciones de los eventos disponibles.
-    /// Permite disparar eventos al azar eligiendo un índice aleatorio de esta colección.
-    /// </summary>
+    [Header("Event Configuration")]
     public static List<System.Func<IEnumerator>> eventList;
 
-    /// <summary>
-    /// Referencia al componente de texto en la interfaz gráfica (UI) donde se mostrarán los mensajes irónicos.
-    /// </summary>
-    public TextMeshProUGUI messageEvent;
+    [Tooltip("UI Text component for displaying event messages.")]
+    public TextMeshProUGUI messageEventText;
+
+    [Tooltip("Background panel/image for the event messages.")]
+    public GameObject eventBackgroundUI;
 
     private void Start()
     {
-        // Inicializamos la lista vacía para evitar errores de referencia nula
         eventList = new List<System.Func<IEnumerator>>();
-        loadEventsInList();
+        LoadEvents();
+        HideEventUI(); // Ensure UI is clean at start
     }
 
-    /// <summary>
-    /// Evento Positivo: "Frenesí Capitalista".
-    /// Duplica la recompensa de oro obtenida por cada enemigo derrotado durante 10 segundos.
-    /// </summary>
+    // 🌟 HELPER FUNCTIONS (The "Don't Repeat Yourself" part)
+
+    private void ShowEventUI(string message, AudioClip soundEffect)
+    {
+        if (messageEventText != null) messageEventText.text = message;
+        if (eventBackgroundUI != null) eventBackgroundUI.SetActive(true);
+        if (soundEffect != null) GameManager.sound(soundEffect);
+    }
+
+    private void HideEventUI()
+    {
+        if (messageEventText != null) messageEventText.text = "";
+        if (eventBackgroundUI != null) eventBackgroundUI.SetActive(false);
+    }
+
+    // --- RANDOM EVENTS ---
+
     public IEnumerator EventLuckyGold()
     {
         GameManager.globalMoneyMultiplier *= 2;
-        messageEvent.text = "Los duendes acaban de cobrar la nómina y traen los bolsillos llenos. ¡A por ellos!";
-        GameManager.sound(GameManager.soundHappy);
+        ShowEventUI("The goblins just got paid and their pockets are full. Get them!", GameManager.soundHappy);
+
         yield return new WaitForSeconds(10f);
 
         GameManager.globalMoneyMultiplier /= 2;
-        messageEvent.text = "";
+        HideEventUI();
     }
-    /// <summary>
-    /// Evento Positivo: "Rebajas del Black Friday".
-    /// Torres a mitad de precio. Además, te devuelve dinero por las torres que ya tengas.
-    /// </summary>
+
     public IEnumerator EventTowerDiscount()
     {
         GameManager.globalCostMultiplier *= 0.5f;
+        ShowEventUI("Black Friday at the smithy! Towers are half price.", GameManager.soundHappy);
 
-        // Buscamos cuántas torres hay ya construidas
-        GameObject[] torresConstruidas = GameObject.FindGameObjectsWithTag("tower");
-
-        messageEvent.text = "¡Black Friday en la herrería! Torres a mitad de precio.";
-        GameManager.sound(GameManager.soundHappy);
         yield return new WaitForSeconds(10f);
 
         GameManager.globalCostMultiplier /= 0.5f;
-        messageEvent.text = "";
+        HideEventUI();
     }
-    /// <summary>
-    /// Evento Caótico: "Huelga de Arqueros".
-    /// Las torres tardan el doble en disparar durante 10 segundos.
-    /// Requiere aplicar la variable en el temporizador de disparo del script de la Torre.
-    /// </summary>
+
     public IEnumerator EventArcherStrike()
     {
         GameManager.globalAttackSpeedMultiplier *= 4f;
-        messageEvent.text = "Sindicato de tiradores en huelga. Disparos más lentos.";
-        GameManager.sound(GameManager.soundSad);
+        ShowEventUI("Archer union on strike. Attack speed significantly reduced.", GameManager.soundSad);
+
         yield return new WaitForSeconds(7f);
+
         GameManager.globalAttackSpeedMultiplier /= 4f;
-        messageEvent.text = "";
+        HideEventUI();
     }
-    /// <summary>
-    /// Evento Negativo: "El Cobrador".
-    /// Hacienda se lleva el 40% de tus ahorros actuales. ¡Duele más cuanto más rico eres!
-    /// </summary>
+
     public IEnumerator EventTaxCollector()
     {
-        int taxes = (int)(GameManager.countMoney * 0.40f); // Calcula el 40%
+        int taxes = (int)(GameManager.countMoney * 0.40f);
         GameManager.countMoney -= taxes;
-        messageEvent.text = $"El inspector de Hacienda te ha confiscado {taxes} de Oro por no declarar las torres.";
-        GameManager.sound(GameManager.soundPay);
+        ShowEventUI($"Tax inspector confiscated {taxes} Gold for undeclared defensive structures.", GameManager.soundPay);
+
         yield return new WaitForSeconds(5f);
-        messageEvent.text = "";
+
+        HideEventUI();
     }
-    /// <summary>
-    /// Evento Negativo (Cruel): "Tasa de Limpieza".
-    /// El multiplicador de dinero pasa a negativo. ¡Pagas por cada baja!
-    /// </summary>
+
     public IEnumerator EventCleanUpCosts()
     {
         GameManager.globalMoneyMultiplier *= -2;
-        messageEvent.text = "Tasa ecológica activa. Ahora PAGAS tú por limpiar los cadáveres de duende.";
-        GameManager.sound(GameManager.soundEventCleanUpCosts);
+        ShowEventUI("Ecological tax active. You now PAY to clean up goblin corpses.", GameManager.soundEventCleanUpCosts);
+
         yield return new WaitForSeconds(10f);
 
         GameManager.globalMoneyMultiplier /= -2;
-        messageEvent.text = "";
+        HideEventUI();
     }
-    /// <summary>
-    /// Evento Caótico: "Subidón de Azúcar".
-    /// Los enemigos corren casi al triple de velocidad, pero reciben el DOBLE de daño.
-    /// </summary>
+
     public IEnumerator EventSugarRush()
     {
-
         GameManager.globalSpeedMultiplier *= 2.5f;
         GameManager.globalDamageTakenMultiplier *= 2f;
-        messageEvent.text = "¡Alguien les dio bebida energética! Corren como locos pero son de cristal.";
-        GameManager.sound(GameManager.soundSad);
+        ShowEventUI("Sugar rush! Enemies are sprinting but they're fragile as glass.", GameManager.soundSad);
+
         yield return new WaitForSeconds(10f);
 
         GameManager.globalSpeedMultiplier /= 2.5f;
         GameManager.globalDamageTakenMultiplier /= 2f;
-        messageEvent.text = "";
+        HideEventUI();
     }
 
-    /// <summary>
-    /// Evento Positivo: "Lluvia de Inversiones".
-    /// Hace llover 5 monedas del cielo en posiciones aleatorias para que el jugador las recoja.
-    /// </summary>
     public IEnumerator EventCoinRain()
     {
         for (int i = 0; i < 5; i++)
@@ -133,66 +119,53 @@ public class randomEvents : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             Instantiate(Resources.Load<GameObject>("prefabCoins"), spawnPos, Quaternion.identity);
         }
-        messageEvent.text = "Bug detectado: Lluvia de monedas. ¡Aprovecha antes del parche!";
+
+        ShowEventUI("Bug detected: Raining gold. Profit before the patch!", null);
+
         yield return new WaitForSeconds(5f);
-        messageEvent.text = "";
+
+        HideEventUI();
     }
-    /// <summary>
-    /// Evento Caótico: "Spam de Anuncios".
-    /// Carga y genera anuncios aleatorios en la interfaz para distraer al jugador.
-    /// </summary>
+
     public IEnumerator EventSpawnAds()
     {
-        // Mensaje irónico en pantalla
-        messageEvent.text = "Somos un estudio Indie, danos tu dinero";
+        ShowEventUI("We are an Indie studio, please give us your money.", null);
 
-        // 1. CARGA OPTIMIZADA: Cargamos los 4 prefabs en un array (arreglo)
-        // Lo hacemos una sola vez aquí fuera para no saturar el procesador
         GameObject[] adPrefabs = new GameObject[4];
         adPrefabs[0] = Resources.Load<GameObject>("prefabNew");
         adPrefabs[1] = Resources.Load<GameObject>("prefabNew1");
         adPrefabs[2] = Resources.Load<GameObject>("prefabNew2");
         adPrefabs[3] = Resources.Load<GameObject>("prefabNew3");
 
-        // 2. CACHEO: Buscamos el objeto padre en el Canvas una sola vez
         Transform parentCanvas = GameObject.Find("Canvas_General").transform;
 
-        // 3. BUCLE DE GENERACIÓN: Vamos a crear 3 anuncios
         for (int i = 0; i < 4; i++)
         {
             GameObject selectedPrefab = adPrefabs[i];
-
-            // Instanciamos el anuncio. El 'false' evita que Unity recalcule escalas 3D innecesarias
             GameObject spawnedAd = Instantiate(selectedPrefab, parentCanvas, false);
-
-            // Obtenemos el RectTransform para manipular la posición en la UI
             RectTransform adRect = spawnedAd.GetComponent<RectTransform>();
 
-            // Calculamos coordenadas aleatorias dentro de un rango seguro para 1080p
             float randomX = UnityEngine.Random.Range(-700f, 700f);
             float randomY = UnityEngine.Random.Range(-200f, 200f);
 
-            // Aplicamos la posición final
             adRect.anchoredPosition = new Vector2(randomX, randomY);
-
-            // Pequeña espera entre cada spawn para que no salgan todos de golpe
             yield return new WaitForSeconds(0.15f);
         }
 
-        // Mantenemos el mensaje 5 segundos antes de borrarlo
         yield return new WaitForSeconds(5f);
-        messageEvent.text = "";
+
+        HideEventUI();
     }
-    public void loadEventsInList()
+
+    public void LoadEvents()
     {
-        // Cargamos el catálogo COMPLETO de eventos disponibles en el juego
-        eventList.Add(EventSpawnAds);        // Negativo: Lluvia de Anuncios
-        eventList.Add(EventLuckyGold);       // Positivo: Doble de oro
-        eventList.Add(EventTowerDiscount);   // Positivo: Torres a mitad de precio
-        eventList.Add(EventArcherStrike);    // Negativo: Torres disparan lento
-        eventList.Add(EventTaxCollector);    // Negativo: Hacienda te roba el 20%
-        eventList.Add(EventCleanUpCosts);    // Negativo/Cruel: Pagas por matar
-        eventList.Add(EventSugarRush);       // Caótico: Enemigos rápidos pero frágiles
-        eventList.Add(EventCoinRain);        // Positivo: Lluvia de monedas (minijuego)
+        eventList.Add(EventSpawnAds);
+        eventList.Add(EventLuckyGold);
+        eventList.Add(EventTowerDiscount);
+        eventList.Add(EventArcherStrike);
+        eventList.Add(EventTaxCollector);
+        eventList.Add(EventCleanUpCosts);
+        eventList.Add(EventSugarRush);
+        eventList.Add(EventCoinRain);
     }
 }

@@ -341,7 +341,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
             {
-                this.GetComponent<randomEvents>().loadEventsInList();
+                this.GetComponent<randomEvents>().LoadEvents();
             }
             int random = Random.Range(0, randomEvents.eventList.Count);
             StartCoroutine(randomEvents.eventList[random]());
