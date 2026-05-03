@@ -311,6 +311,7 @@ GameObject:
   - component: {fileID: 6840414977188604949}
   - component: {fileID: 8031449627140255153}
   - component: {fileID: 8083430394679794732}
+  - component: {fileID: -4356438931308279770}
   m_Layer: 0
   m_Name: towerMedianPrefab
   m_TagString: tower
@@ -569,3 +570,15 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &-4356438931308279770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8991276415801162673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde6755914dd7a94a88a0827e2706a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

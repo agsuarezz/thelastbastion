@@ -311,6 +311,7 @@ GameObject:
   - component: {fileID: 6445625292807902630}
   - component: {fileID: 2644344469074054056}
   - component: {fileID: 4111219072411582069}
+  - component: {fileID: 623036335753968185}
   m_Layer: 0
   m_Name: towerHeavyPrefab
   m_TagString: tower
@@ -569,3 +570,15 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &623036335753968185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8544740251689827319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde6755914dd7a94a88a0827e2706a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

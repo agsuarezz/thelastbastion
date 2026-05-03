@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: -4977746142303864419}
   - component: {fileID: -8967741245338066784}
   - component: {fileID: -9071349787218149170}
+  - component: {fileID: 4818602498445802036}
   m_Layer: 0
   m_Name: EnemyDemon
   m_TagString: Enemy
@@ -290,6 +291,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 1965068138658133014, guid: 164b10242bd799a419125b355e548ef0, type: 3}
   firePoint: {fileID: 0}
+--- !u!114 &4818602498445802036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3934873377327053164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde6755914dd7a94a88a0827e2706a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4049809416180203725
 GameObject:
   m_ObjectHideFlags: 0
