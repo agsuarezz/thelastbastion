@@ -269,6 +269,7 @@ public class GameManager : MonoBehaviour
         _hasSavedGame         = true;
         loadedFromSave = true;
         waitingBetweenRounds = true;
+        GridGenerator.selectedGridIndex = saved.gridIndex;
     }
     else
     {
@@ -283,6 +284,7 @@ public class GameManager : MonoBehaviour
         globalEnemyHealthMultiplier = 1f;
         loadedFromSave = false;
         waitingBetweenRounds = false;
+        GridGenerator.selectedGridIndex = -1;
     }
     }
     /// <summary>
@@ -525,6 +527,7 @@ private IEnumerator StartNextRoundRoutine()
             globalRadiusMultiplier      = globalRadiusMultiplier,
             globalEnemyHealthMultiplier = globalEnemyHealthMultiplier,
             globalEnemyDamageMultiplier = globalEnemyDamageMultiplier,
+            gridIndex = GridGenerator.selectedGridIndex,
         };
     
         Tower[] torres = FindObjectsByType<Tower>(FindObjectsSortMode.None);

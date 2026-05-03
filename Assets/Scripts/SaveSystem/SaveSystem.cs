@@ -27,6 +27,7 @@ public class GameSaveData
     public int   enemiesDestroyed;
     public int   countTower;
 
+
     // ── Castillo ──────────────────────────────────────────────────────────
     public int castleLife;
     public int castleLifeMax;
@@ -40,6 +41,7 @@ public class GameSaveData
     public float globalRadiusMultiplier;
     public float globalEnemyHealthMultiplier;
     public float globalEnemyDamageMultiplier;
+    public int gridIndex = -1;
 
     // ── Torres ────────────────────────────────────────────────────────────
     public List<TowerSaveData> towers = new List<TowerSaveData>();

@@ -1,20 +1,39 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
 {
-    // Lista donde se guardan los prefabs de los mapas y sus puntos de ruta
+    public static int selectedGridIndex = -1;
+
     public List<GameObject> list_grid;
+
     private void Start()
     {
-        // Genera un número entero aleatorio
-        int indexRandom = Random.Range(0, list_grid.Count);
-        // Encuentra al padre
+        if (list_grid == null || list_grid.Count == 0)
+        {
+            Debug.LogWarning("No hay grids asignados.");
+            return;
+        }
+
+        int indexToUse;
+
+        if (selectedGridIndex >= 0 && selectedGridIndex < list_grid.Count)
+        {
+            indexToUse = selectedGridIndex;
+        }
+        else
+        {
+            indexToUse = Random.Range(0, list_grid.Count);
+            selectedGridIndex = indexToUse;
+        }
+
         GameObject father = GameObject.Find("Grid");
-        // Crea una instancia en la escena del objeto seleccionado aleatoriamente de la lista
-        GameObject son = Instantiate(list_grid[indexRandom]);
-        // Lo metes dentro del padre
-        son.transform.SetParent(father.transform);
+
+        GameObject son = Instantiate(list_grid[indexToUse]);
+
+        if (father != null)
+        {
+            son.transform.SetParent(father.transform);
+        }
     }
 }
