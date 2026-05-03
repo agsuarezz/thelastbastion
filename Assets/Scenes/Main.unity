@@ -526,7 +526,7 @@ MonoBehaviour:
   countMoneyText: {fileID: 1781555234}
   randomEvent: {fileID: 64441738}
   cardManager: {fileID: 626184129}
-  roundsForCards: 4
+  roundsForCards: 3
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
   prefabTowerMedian: {fileID: 8991276415801162673, guid: 9215f2686913cdc45aa6fab00fcff581, type: 3}
   prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}

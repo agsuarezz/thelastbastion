@@ -116,6 +116,8 @@ public class GameManager : MonoBehaviour
     // Botón para continuar de ronda
     Button playButton;
     public Sprite playSprite;
+    public static bool loadedFromSave = false;
+    private bool waitingBetweenRounds = false;
 
     [Header("Prefabs de Torres (para cargar partida)")]
     public GameObject prefabTowerMedian;    // mismo prefab que usa ConstructionMenu
@@ -147,11 +149,19 @@ public class GameManager : MonoBehaviour
             musicaActiva = true;
             if (imagenBotonMusica != null) imagenBotonMusica.sprite = iconoMusicaOn;
         }
-        if (GameObject.Find("PlayButton"))
-        {
-            playButton = GameObject.Find("PlayButton").GetComponent<Button>();
-            playButton.interactable = false;
-        }
+      if (GameObject.Find("PlayButton"))
+{
+    playButton = GameObject.Find("PlayButton").GetComponent<Button>();
+
+    if (loadedFromSave)
+    {
+        ShowPlayButton();
+    }
+    else
+    {
+        HidePlayButton();
+    }
+}
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
         soundPause = Resources.Load<AudioClip>("soundPause");
@@ -257,6 +267,8 @@ public class GameManager : MonoBehaviour
         _pendingCastleLifeMax = saved.castleLifeMax;
         _pendingTowers        = saved.towers;
         _hasSavedGame         = true;
+        loadedFromSave = true;
+        waitingBetweenRounds = true;
     }
     else
     {
@@ -269,6 +281,8 @@ public class GameManager : MonoBehaviour
         globalSpeedMultiplier       = 1f;
         globalEnemyDamageMultiplier = 1f;
         globalEnemyHealthMultiplier = 1f;
+        loadedFromSave = false;
+        waitingBetweenRounds = false;
     }
     }
     /// <summary>
@@ -283,16 +297,10 @@ public class GameManager : MonoBehaviour
         // Si ya estamos gestionando el cambio de ronda, esperamos
         if (isChangingRound) return;
         // Si la ronda acaba de terminar, lanzamos la linea de tiempo
-        if (spawner != null && spawner.statusRound() && playButton != null && playButton.interactable == false)
-        {
-            playButton.interactable = true;
-            Image spriteRenderer = playButton.GetComponent<Image>();
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.sprite = playSprite;
-                spriteRenderer.color = Color.white;
-            }
-        }
+        if (spawner != null && spawner.statusRound() && !waitingBetweenRounds)
+{
+    StartCoroutine(endOfRoundRoutine());
+}
         // El tiempo y el dinero siguen su curso normal
         timeinGame += Time.deltaTime;
         if(countMoneyText != null)
@@ -336,6 +344,33 @@ public class GameManager : MonoBehaviour
             AudioListener.volume = 0f; // Silencia el sonido global
         }
     }
+
+    private void ShowPlayButton()
+{
+    if (playButton == null) return;
+
+    playButton.interactable = true;
+
+    Image spriteRenderer = playButton.GetComponent<Image>();
+    if (spriteRenderer != null)
+    {
+        spriteRenderer.sprite = playSprite;
+        spriteRenderer.color = Color.white;
+    }
+}
+
+private void HidePlayButton()
+{
+    if (playButton == null) return;
+
+    playButton.interactable = false;
+
+    Image spriteRenderer = playButton.GetComponent<Image>();
+    if (spriteRenderer != null)
+    {
+        spriteRenderer.color = new Color32(255, 255, 255, 0);
+    }
+}
     public void mainMenuButton()
     {
         Time.timeScale = 1f;
@@ -383,72 +418,93 @@ public class GameManager : MonoBehaviour
             audioSource.PlayOneShot(audioClip);
         }
     }
-    public IEnumerator endOfRoundRoutine()
+   public IEnumerator endOfRoundRoutine()
+{
+    isChangingRound = true;
+
+    yield return new WaitForSeconds(2f);
+
+    int nextRound = countRound + 1;
+
+    // Cartas ANTES de parar entre rondas
+    if (roundsForCards > 0 && nextRound % roundsForCards == 0)
     {
-        isChangingRound = true; // Bloqueamos el Update temporalmente
-        yield return new WaitForSeconds(2f);
-        // Sistema de Cartas
-        if (countRound % roundsForCards == 0 && countRound != 0)
+        if (cardManager != null)
         {
-            if (cardManager != null)
-            {
-                currentState = GameState.EventOpen;
-                cardManager.ShowCards();
+            currentState = GameState.EventOpen;
+            cardManager.ShowCards();
 
-                // Pausamos el codigo hasta que el jugador hasta que el jugador elija carta
-                yield return new WaitUntil(() => currentState == GameState.Playing);
-            }
+            yield return new WaitUntil(() => currentState == GameState.Playing);
         }
-        // Sistema de Eventos Random
-// Solo se ejecuta cuando el jugador ya ha elegido la carta.
-if (countRound == 10)
-{
-    yield return new WaitForSeconds(1f);
-
-    randomEvents eventsScript = this.GetComponent<randomEvents>();
-    if (eventsScript != null)
-    {
-        StartCoroutine(eventsScript.EventBossRound());
     }
+
+    waitingBetweenRounds = true;
+
+    ShowPlayButton();
+
+    SaveGame();
+
+    isChangingRound = false;
 }
-else if (countRound % 2 == 0 && countRound != 0)
-{
-    yield return new WaitForSeconds(1f);
-
-    if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
-    {
-        this.GetComponent<randomEvents>().LoadEvents();
-    }
-
-    int random = Random.Range(0, randomEvents.eventList.Count);
-    StartCoroutine(randomEvents.eventList[random]());
-    randomEvents.eventList.RemoveAt(random);
-}
-
-        globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
-        globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
-
-        messageRound.text = "Ronda " + countRound;
-
-        spawner.restartCountEnemy();
-
-        SaveGame();
-
-        isChangingRound = false; // Desbloqueamos el Update para la nueva ronda
-    }
 
     public void playRound()
+{
+    if (isChangingRound) return;
+    if (!waitingBetweenRounds) return;
+
+    StartCoroutine(StartNextRoundRoutine());
+}
+
+private IEnumerator StartNextRoundRoutine()
+{
+    isChangingRound = true;
+
+    HidePlayButton();
+
+    waitingBetweenRounds = false;
+
+    countRound++;
+
+    globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
+    globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
+
+    if (messageRound != null)
+        messageRound.text = "Ronda " + countRound;
+
+    // Evento especial boss en ronda 10
+    if (countRound == 10)
     {
-        if (isChangingRound == true) return;
-        countRound++;
-        playButton.interactable = false;
-        Image spriteRenderer = playButton.GetComponent<Image>();
-        if (spriteRenderer != null)
+        yield return new WaitForSeconds(1f);
+
+        randomEvents eventsScript = GetComponent<randomEvents>();
+        if (eventsScript != null)
         {
-            spriteRenderer.color = new Color32(255, 255, 255, 0);
+            StartCoroutine(eventsScript.EventBossRound());
+           
         }
-        StartCoroutine(endOfRoundRoutine());
     }
+    // Eventos normales
+    else if (countRound % 2 == 0 && countRound != 0)
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
+        {
+            GetComponent<randomEvents>().LoadEvents();
+        }
+
+        int random = Random.Range(0, randomEvents.eventList.Count);
+        StartCoroutine(randomEvents.eventList[random]());
+        randomEvents.eventList.RemoveAt(random);
+
+        
+    }
+
+    if (spawner != null)
+        spawner.restartCountEnemy();
+
+    isChangingRound = false;
+}
 
     public void SaveGame()
     {

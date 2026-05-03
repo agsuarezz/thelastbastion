@@ -48,11 +48,15 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    private void Start()
+   private void Start()
+{
+    enemyRoute = FindAnyObjectByType<LevelRoute>();
+
+    if (!GameManager.loadedFromSave)
     {
-        enemyRoute = FindAnyObjectByType<LevelRoute>();
         PrepareWave();
     }
+}
 
     private void Update()
     {
