@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
     public static AudioClip soundEventCleanUpCosts;
     // Efecto de sonido Triste
     public static AudioClip soundSad;
+      // Efecto de sonido Triste
+    public static AudioClip soundBoss;
     // Efecto de sonido Para eventos donde salga ganando el Usuario (no es lo normal)
     public static AudioClip soundHappy;
     // Efecto de sonido que se reproduce cuando un enemigo ataca y resta vida.
@@ -159,6 +161,7 @@ public class GameManager : MonoBehaviour
         soundMoney = Resources.Load<AudioClip>("soundMoney");
         soundEventCleanUpCosts = Resources.Load<AudioClip>("soundEventCleanUpCosts");
         soundSad = Resources.Load<AudioClip>("soundSad");
+        soundBoss= Resources.Load<AudioClip>("soundBoss");
         soundHappy = Resources.Load<AudioClip>("soundHappy");
         if (!audioSource)
         {
@@ -199,6 +202,10 @@ public class GameManager : MonoBehaviour
         if (!soundSad)
         {
             Debug.LogWarning("No se ha encontrado soundSad");
+        }
+        if (!soundBoss)
+        {
+            Debug.LogWarning("No se ha encontrado soundBoss");
         }
         if (!soundHappy)
         {
@@ -393,19 +400,30 @@ public class GameManager : MonoBehaviour
             }
         }
         // Sistema de Eventos Random
-        // Solo se ejecuta cuando el jugador ya ha elegido la carta.
-        if (countRound % 2 == 0 && countRound != 0)
-        {
-            yield return new WaitForSeconds(1f);
-            if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
-            {
-                this.GetComponent<randomEvents>().LoadEvents();
-            }
-            int random = Random.Range(0, randomEvents.eventList.Count);
-            StartCoroutine(randomEvents.eventList[random]());
-            randomEvents.eventList.RemoveAt(random);
+// Solo se ejecuta cuando el jugador ya ha elegido la carta.
+if (countRound == 10)
+{
+    yield return new WaitForSeconds(1f);
 
-        }
+    randomEvents eventsScript = this.GetComponent<randomEvents>();
+    if (eventsScript != null)
+    {
+        StartCoroutine(eventsScript.EventBossRound());
+    }
+}
+else if (countRound % 2 == 0 && countRound != 0)
+{
+    yield return new WaitForSeconds(1f);
+
+    if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
+    {
+        this.GetComponent<randomEvents>().LoadEvents();
+    }
+
+    int random = Random.Range(0, randomEvents.eventList.Count);
+    StartCoroutine(randomEvents.eventList[random]());
+    randomEvents.eventList.RemoveAt(random);
+}
 
         globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
         globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);

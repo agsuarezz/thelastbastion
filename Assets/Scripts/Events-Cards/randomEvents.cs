@@ -26,12 +26,28 @@ public class randomEvents : MonoBehaviour
         HideEventUI();
     }
 
-    private void ShowEventUI(string message, AudioClip soundEffect)
-    {
-        if (messageEventText != null) messageEventText.text = message;
-        if (eventBackgroundUI != null) eventBackgroundUI.SetActive(true);
-        if (soundEffect != null) GameManager.sound(soundEffect);
-    }
+ [Tooltip("Duración del texto y fondo del evento en pantalla.")]
+public float eventUIDuration = 5f;
+
+private Coroutine hideUICoroutine;
+
+private void ShowEventUI(string message, AudioClip soundEffect)
+{
+    if (messageEventText != null) messageEventText.text = message;
+    if (eventBackgroundUI != null) eventBackgroundUI.SetActive(true);
+    if (soundEffect != null) GameManager.sound(soundEffect);
+
+    if (hideUICoroutine != null)
+        StopCoroutine(hideUICoroutine);
+
+    hideUICoroutine = StartCoroutine(HideEventUIAfterSeconds());
+}
+
+private IEnumerator HideEventUIAfterSeconds()
+{
+    yield return new WaitForSeconds(eventUIDuration);
+    HideEventUI();
+}
 
     private void HideEventUI()
     {
@@ -108,6 +124,15 @@ public class randomEvents : MonoBehaviour
         GameManager.globalDamageTakenMultiplier /= 2f;
         HideEventUI();
     }
+
+    public IEnumerator EventBossRound()
+{
+    ShowEventUI("Ha llegado el jefe final... bueno, final final no, que aún queda presupuesto.", GameManager.soundSad);
+
+    yield return new WaitForSeconds(5f);
+
+    HideEventUI();
+}
 
     public IEnumerator EventCoinRain()
     {
