@@ -155,7 +155,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10073
   m_Sprite: {fileID: -8804577451312863447, guid: bf3b84dbca9c4b746aa77b3723d5742d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -268,8 +268,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6053778fdf666846a75d7ac9827db5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicSource: {fileID: 0}
+  normalMusicPitch: 1
+  stoppedMusicPitch: 0.35
   delayBeforeAnimation: 3
-  timeStopDuration: 5
+  timeStopDuration: 7
   fadeDuration: 0.5
   castTriggerName: Cast
   castEndTriggerName: CastEnd
@@ -409,6 +412,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde6755914dd7a94a88a0827e2706a47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseOrder: 10000
+  multiplier: 100
+  minOrder: 0
+  maxOrder: 20000
 --- !u!1 &4049809416180203725
 GameObject:
   m_ObjectHideFlags: 0
