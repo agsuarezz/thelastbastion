@@ -145,9 +145,11 @@ public class GameManager : MonoBehaviour
             musicaActiva = true;
             if (imagenBotonMusica != null) imagenBotonMusica.sprite = iconoMusicaOn;
         }
-        playButton = GameObject.Find("PlayButton").GetComponent<Button>();
-        playButton.interactable = false;
-        Debug.Log(playButton.GetComponent<Button>());
+        if (GameObject.Find("PlayButton"))
+        {
+            playButton = GameObject.Find("PlayButton").GetComponent<Button>();
+            playButton.interactable = false;
+        }
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
         soundPause = Resources.Load<AudioClip>("soundPause");
@@ -274,7 +276,7 @@ public class GameManager : MonoBehaviour
         // Si ya estamos gestionando el cambio de ronda, esperamos
         if (isChangingRound) return;
         // Si la ronda acaba de terminar, lanzamos la linea de tiempo
-        if (spawner != null && spawner.statusRound() && playButton.interactable == false)
+        if (spawner != null && spawner.statusRound() && playButton != null && playButton.interactable == false)
         {
             playButton.interactable = true;
             Image spriteRenderer = playButton.GetComponent<Image>();
