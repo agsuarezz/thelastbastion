@@ -47,17 +47,24 @@ public class ConstructionMenu : MonoBehaviour
         if (GameManager.currentState != GameState.Playing) return;
 
         // --- LÓGICA: Abrir/Cerrar menú con tecla 'Q' ---
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            bool isMenuActive = menuTowerSelect.activeSelf;
-            menuTowerSelect.SetActive(!isMenuActive);
+       if (Input.GetKeyDown(KeyCode.Q))
+{
+    bool isMenuActive = menuTowerSelect.activeSelf;
 
-            if (isMenuActive && isPlacing)
-            {
-                isPlacing = false;
-                tilemap.gameObject.SetActive(false);
-            }
-        }
+    // Cierra el menú de mejora si hay una torre seleccionada
+    if (Tower.towerActiveInMenu != null)
+    {
+        Tower.setGameObjectUpDeleStatus(false);
+    }
+
+    menuTowerSelect.SetActive(!isMenuActive);
+
+    if (isMenuActive && isPlacing)
+    {
+        isPlacing = false;
+        tilemap.gameObject.SetActive(false);
+    }
+}
         // -----------------------------------------------
         
         // --- NUEVA LÓGICA: Atajos 1, 2 y 3 para comprar ---
