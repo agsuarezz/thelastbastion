@@ -60,6 +60,7 @@ public class Enemy : MonoBehaviour
 
         SetAttackingAnimation(false);
     }
+    
 
     public void SetLifeBarVisible(bool visible)
     {

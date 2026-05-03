@@ -127,7 +127,7 @@ private IEnumerator HideEventUIAfterSeconds()
 
     public IEnumerator EventBossRound()
 {
-    ShowEventUI("Ha llegado el jefe final... bueno, final final no, que aún queda presupuesto.", GameManager.soundBoss);
+    ShowEventUI("Ha llegado el jefe final... el de prueba, el bueno es DLC.", GameManager.soundBoss);
 
     yield return new WaitForSeconds(5f);
 
