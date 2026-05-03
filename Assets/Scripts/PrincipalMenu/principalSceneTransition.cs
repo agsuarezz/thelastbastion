@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +10,10 @@ public class principalSceneTransition : MonoBehaviour
 
     [Header("Escena a cargar")]
     public string sceneToLoad = "Main";
+
+    [Header("Audio")]
+    public AudioSource sfxSource;
+    public AudioClip fadeSound;
 
     private bool isTransitioning = false;
 
@@ -27,6 +31,13 @@ public class principalSceneTransition : MonoBehaviour
     {
         if (!isTransitioning)
         {
+            // 🔊 sonido sincronizado con el fade
+            if (sfxSource != null && fadeSound != null)
+            {
+                sfxSource.pitch = Random.Range(0.95f, 1.05f); // opcional, queda más natural
+                sfxSource.PlayOneShot(fadeSound);
+            }
+
             StartCoroutine(FadeAndLoadScene());
         }
     }
