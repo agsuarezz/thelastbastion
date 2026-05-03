@@ -12,12 +12,13 @@ public class PantallaGameOver : MonoBehaviour
         // Al empezar la escena de GameOver, leemos los datos estáticos del GameManager
         durationText.text = "Duracion: " + (int)GameManager.timeinGame + " s";
         enemiesText.text = "Enemigos Derrotados: " + GameManager.enemiesDestroyed;
-        towersText.text = "Torres Colocadas: " + GameManager.countTower;
+        towersText.text = "Torres Construidas: " + GameManager.countTower;
         GameManager.sound(GameManager.soundLostGame);
     }
 
     public void VolverAlMenu()
     {
+        GameManager.ResetAllStaticVariables();
         UnityEngine.SceneManagement.SceneManager.LoadScene("PrincipalMenu");
     }
 }

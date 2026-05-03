@@ -129,6 +129,7 @@ public class GameManager : MonoBehaviour
     private int  _pendingCastleLifeMax = -1;
     private bool _hasSavedGame         = false;
     private List<TowerSaveData> _pendingTowers = null;
+    
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -245,47 +246,50 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Awake()
     {
- GameSaveData saved = SaveSystem.Load();
+        GameSaveData saved = SaveSystem.Load();
  
-    if (saved != null)
-    {
-        countRound                  = saved.countRound;
-        countMoney                  = saved.countMoney;
-        timeinGame                  = saved.timeinGame;
-        enemiesDestroyed            = saved.enemiesDestroyed;
-        countTower                  = saved.countTower;
-        globalMoneyMultiplier       = saved.globalMoneyMultiplier;
-        globalCostMultiplier        = saved.globalCostMultiplier;
-        globalDamageTakenMultiplier = saved.globalDamageTakenMultiplier;
-        globalAttackSpeedMultiplier = saved.globalAttackSpeedMultiplier;
-        globalSpeedMultiplier       = saved.globalSpeedMultiplier;
-        globalRadiusMultiplier      = saved.globalRadiusMultiplier;
-        globalEnemyHealthMultiplier = saved.globalEnemyHealthMultiplier;
-        globalEnemyDamageMultiplier = saved.globalEnemyDamageMultiplier;
+        if (saved != null)
+        {
+            countRound                  = saved.countRound;
+            countMoney                  = saved.countMoney;
+            timeinGame                  = saved.timeinGame;
+            enemiesDestroyed            = saved.enemiesDestroyed;
+            countTower                  = saved.countTower;
+            globalMoneyMultiplier       = saved.globalMoneyMultiplier;
+            globalCostMultiplier        = saved.globalCostMultiplier;
+            globalDamageTakenMultiplier = saved.globalDamageTakenMultiplier;
+            globalAttackSpeedMultiplier = saved.globalAttackSpeedMultiplier;
+            globalSpeedMultiplier       = saved.globalSpeedMultiplier;
+            globalRadiusMultiplier      = saved.globalRadiusMultiplier;
+            globalEnemyHealthMultiplier = saved.globalEnemyHealthMultiplier;
+            globalEnemyDamageMultiplier = saved.globalEnemyDamageMultiplier;
  
-        _pendingCastleLife    = saved.castleLife;
-        _pendingCastleLifeMax = saved.castleLifeMax;
-        _pendingTowers        = saved.towers;
-        _hasSavedGame         = true;
-        loadedFromSave = true;
-        waitingBetweenRounds = true;
-        GridGenerator.selectedGridIndex = saved.gridIndex;
-    }
-    else
-    {
-        countRound                  = 0;
-        countMoney                  = 200;
-        globalMoneyMultiplier       = 1;
-        globalCostMultiplier        = 1f;
-        globalAttackSpeedMultiplier = 1f;
-        globalDamageTakenMultiplier = 1f;
-        globalSpeedMultiplier       = 1f;
-        globalEnemyDamageMultiplier = 1f;
-        globalEnemyHealthMultiplier = 1f;
-        loadedFromSave = false;
-        waitingBetweenRounds = false;
-        GridGenerator.selectedGridIndex = -1;
-    }
+            _pendingCastleLife    = saved.castleLife;
+            _pendingCastleLifeMax = saved.castleLifeMax;
+            _pendingTowers        = saved.towers;
+            _hasSavedGame         = true;
+            loadedFromSave = true;
+            waitingBetweenRounds = true;
+            GridGenerator.selectedGridIndex = saved.gridIndex;
+        }
+        else
+        {
+            countRound                  = 0;
+            countMoney                  = 200;
+            timeinGame = 0f;
+            enemiesDestroyed = 0;
+            countTower = 0;
+            globalMoneyMultiplier       = 1;
+            globalCostMultiplier        = 1f;
+            globalAttackSpeedMultiplier = 1f;
+            globalDamageTakenMultiplier = 1f;
+            globalSpeedMultiplier       = 1f;
+            globalEnemyDamageMultiplier = 1f;
+            globalEnemyHealthMultiplier = 1f;
+            loadedFromSave = false;
+            waitingBetweenRounds = false;
+            GridGenerator.selectedGridIndex = -1;
+        }
     }
     /// <summary>
     /// Comprueba en cada frame si el Spawner indica que la ronda ha finalizado.
@@ -384,12 +388,14 @@ private void HidePlayButton()
     public void restartGame()
     {
         SaveSystem.DeleteSave();
+        ResetAllStaticVariables();
         Time.timeScale = 1f;
         SceneManager.LoadScene("Main");
     }
     public void cargarGameOver()
     {
         SaveSystem.DeleteSave();
+        Debug.Log(GameManager.timeinGame);
         Time.timeScale = 1f;
         SceneManager.LoadScene("GameOver");
     }
@@ -562,8 +568,8 @@ private IEnumerator StartNextRoundRoutine()
         
         // Guardamos el dinero real y damos infinito temporalmente
         int realMoney = GameManager.countMoney;
-        GameManager.countMoney = 9999999; 
- 
+        GameManager.countMoney = 9999999;
+        GameManager.countTower = 0;
         foreach (TowerSaveData td in savedTowers)
         {
             GameObject prefab = td.towerType switch
@@ -615,5 +621,31 @@ private IEnumerator StartNextRoundRoutine()
 
         // 6. Al terminar de cargar todas las torres con éxito, devolvemos el dinero real
         GameManager.countMoney = realMoney;
+    }
+    /// <summary>
+    /// Limpia de memoria todos los datos estáticos de la partida anterior.
+    /// Se debe llamar antes de cargar una partida nueva limpia.
+    /// </summary>
+    public static void ResetAllStaticVariables()
+    {
+        countRound = 0;
+        timeinGame = 0f;
+        enemiesDestroyed = 0;
+        countTower = 0;
+        countMoney = 200; // El oro inicial que quieres darle al jugador
+
+        // Multiplicadores
+        globalMoneyMultiplier = 1;
+        globalCostMultiplier = 1f;
+        globalDamageTakenMultiplier = 1f;
+        globalAttackSpeedMultiplier = 1f;
+        globalSpeedMultiplier = 1f;
+        globalRadiusMultiplier = 1f;
+        globalEnemyHealthMultiplier = 1f;
+        globalEnemyDamageMultiplier = 1f;
+
+        // Estado del juego
+        currentState = GameState.Playing;
+        loadedFromSave = false;
     }
 }
