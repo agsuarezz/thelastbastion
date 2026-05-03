@@ -15,7 +15,7 @@ public class castleScript : MonoBehaviour
     [Tooltip("Cantidad inicial de vida del jugador o la base.")]
     public int life = 100;
 
-    private int lifeMax;
+    public int lifeMax;
 
     [Tooltip("Panel de Game Over o Victoria que se mostrará al final.")]
     public GameObject EndPanel;

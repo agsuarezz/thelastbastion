@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7adb479f1fc33764b9ae165b07728445, type: 3}
   m_Name: Enemy_Boss
   m_EditorClassIdentifier: 
-  health: 1
-  damage: 1
-  speed: 1
-  money: 1
+  health: 1000
+  damage: 50
+  speed: 2
+  money: 100
   attackRange: 1

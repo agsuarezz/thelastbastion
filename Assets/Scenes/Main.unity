@@ -526,8 +526,12 @@ MonoBehaviour:
   countMoneyText: {fileID: 1781555234}
   randomEvent: {fileID: 64441738}
   cardManager: {fileID: 626184129}
-  roundsForCards: 1
+  roundsForCards: 3
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
+  prefabTowerMedian: {fileID: 8991276415801162673, guid: 9215f2686913cdc45aa6fab00fcff581, type: 3}
+  prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}
+  prefabTowerHeavy: {fileID: 8544740251689827319, guid: 65311828bfcba7d4999338877f98bf6e, type: 3}
+  prefabTowerInfernal: {fileID: 8544740251689827319, guid: 9a324c408fd1b6249bd3463156a9a76d, type: 3}
 --- !u!4 &64441736
 Transform:
   m_ObjectHideFlags: 0
@@ -654,6 +658,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   messageEventText: {fileID: 1944678644}
   eventBackgroundUI: {fileID: 1310106337}
+  eventUIDuration: 5
 --- !u!114 &64441739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -687,7 +692,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   list_grid:
+  - {fileID: 4294950374333966184, guid: fe49ac1ed1a47c544b6f462447627bc9, type: 3}
+  - {fileID: 4294950374333966184, guid: c1c277ddd72004b4da213c64494b154c, type: 3}
   - {fileID: 4294950374333966184, guid: 5d6c533e393b0904bbe4efc38f54e37d, type: 3}
+  - {fileID: 4294950374333966184, guid: ae3f165b48914c740a189a0306abdf5d, type: 3}
 --- !u!1 &66280147
 GameObject:
   m_ObjectHideFlags: 0
@@ -1582,6 +1590,7 @@ MonoBehaviour:
   lifeText: {fileID: 437871344}
   lifeSlider: {fileID: 404870901}
   life: 100
+  lifeMax: 0
   EndPanel: {fileID: 1426347630}
   castleCollider: {fileID: 196915346}
   LogicaGameOver: {fileID: 1339451479}
@@ -7096,18 +7105,22 @@ MonoBehaviour:
     enemyData: {fileID: 11400000, guid: ef6e8e2cbdc866342ba4a1cd9397feff, type: 2}
     cost: 1
     minRound: 0
+    isBoss: 0
   - pooler: {fileID: 1993064750}
     enemyData: {fileID: 11400000, guid: b939b8eccd6494c429098ceea6d11a51, type: 2}
-    cost: 4
-    minRound: 5
+    cost: 5
+    minRound: 3
+    isBoss: 0
   - pooler: {fileID: 1605224572}
     enemyData: {fileID: 11400000, guid: af17e433b5b15964f9260e613783d3ba, type: 2}
-    cost: 1
-    minRound: 1
+    cost: 3
+    minRound: 0
+    isBoss: 0
   - pooler: {fileID: 1613140447}
     enemyData: {fileID: 11400000, guid: 5e140b83b01bc23449b83cc5a6021ba6, type: 2}
     cost: 5
-    minRound: 100
+    minRound: 10
+    isBoss: 1
   spawnInterval: 1
 --- !u!4 &452400197
 Transform:
@@ -18038,7 +18051,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -850, y: 234}
-  m_SizeDelta: {x: 50, y: 50}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1398918194
 MonoBehaviour:
@@ -22010,8 +22023,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

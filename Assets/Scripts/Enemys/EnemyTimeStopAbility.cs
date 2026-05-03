@@ -3,9 +3,14 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
+
 public class EnemyTimeStopAbility : MonoBehaviour
 {
     public static bool IsTimeStopped;
+    [Header("Música durante Time Stop")]
+public AudioSource musicSource;
+public float normalMusicPitch = 1f;
+public float stoppedMusicPitch = 0.35f;
 
     [Header("Configuración de Tiempos")]
     public float delayBeforeAnimation = 3f;
@@ -47,6 +52,10 @@ public class EnemyTimeStopAbility : MonoBehaviour
         {
             audioSource.ignoreListenerPause = true;
         }
+         if (musicSource == null)
+    {
+        musicSource = GameObject.Find("MusicMenuMain").GetComponent<AudioSource>();
+    }
     }
 
     private void OnEnable()
@@ -106,20 +115,22 @@ public class EnemyTimeStopAbility : MonoBehaviour
     {
         // ⏸️ 1. Pausamos absolutamente TODO el sonido del juego (música, ataques, explosiones)
         // (Pero el sonido de ESTE enemigo se seguirá escuchando gracias al Awake)
-        AudioListener.pause = true;
+       if (musicSource != null)
+    musicSource.pitch = stoppedMusicPitch;
 
         yield return StartCoroutine(FadeSaturation(normalSaturation, desaturatedSaturation));
 
         IsTimeStopped = true;
 
-        yield return new WaitForSeconds(timeStopDuration);
+       yield return new WaitForSecondsRealtime(timeStopDuration);
 
         IsTimeStopped = false;
 
         yield return StartCoroutine(FadeSaturation(desaturatedSaturation, normalSaturation));
 
         // ▶️ 2. Reanudamos el audio de todo el juego 
-        AudioListener.pause = false;
+        if (musicSource != null)
+    musicSource.pitch = normalMusicPitch;
     }
 
     public void FinishCasting()
@@ -154,7 +165,8 @@ public class EnemyTimeStopAbility : MonoBehaviour
         IsTimeStopped = false;
 
         // Seguridad: Si este mago muere de repente, quitamos la pausa global sí o sí
-        AudioListener.pause = false;
+        if (musicSource != null)
+    musicSource.pitch = normalMusicPitch;
 
         if (enemy != null && isCasting)
             enemy.currentSpeed = originalSpeed;

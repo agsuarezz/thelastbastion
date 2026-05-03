@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
 // Las de VisualScripting y UnityEditor han sido eliminadas
 
 /// <summary>
@@ -40,6 +41,8 @@ public class GameManager : MonoBehaviour
     public static AudioClip soundEventCleanUpCosts;
     // Efecto de sonido Triste
     public static AudioClip soundSad;
+      // Efecto de sonido Triste
+    public static AudioClip soundBoss;
     // Efecto de sonido Para eventos donde salga ganando el Usuario (no es lo normal)
     public static AudioClip soundHappy;
     // Efecto de sonido que se reproduce cuando un enemigo ataca y resta vida.
@@ -113,6 +116,19 @@ public class GameManager : MonoBehaviour
     // Botón para continuar de ronda
     Button playButton;
     public Sprite playSprite;
+    public static bool loadedFromSave = false;
+    private bool waitingBetweenRounds = false;
+
+    [Header("Prefabs de Torres (para cargar partida)")]
+    public GameObject prefabTowerMedian;    // mismo prefab que usa ConstructionMenu
+    public GameObject prefabTowerLight;
+    public GameObject prefabTowerHeavy;
+    public GameObject prefabTowerInfernal;
+
+    private int  _pendingCastleLife    = -1;
+    private int  _pendingCastleLifeMax = -1;
+    private bool _hasSavedGame         = false;
+    private List<TowerSaveData> _pendingTowers = null;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -133,9 +149,19 @@ public class GameManager : MonoBehaviour
             musicaActiva = true;
             if (imagenBotonMusica != null) imagenBotonMusica.sprite = iconoMusicaOn;
         }
-        playButton = GameObject.Find("PlayButton").GetComponent<Button>();
-        playButton.interactable = false;
-        Debug.Log(playButton.GetComponent<Button>());
+      if (GameObject.Find("PlayButton"))
+{
+    playButton = GameObject.Find("PlayButton").GetComponent<Button>();
+
+    if (loadedFromSave)
+    {
+        ShowPlayButton();
+    }
+    else
+    {
+        HidePlayButton();
+    }
+}
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
         soundPause = Resources.Load<AudioClip>("soundPause");
@@ -145,6 +171,7 @@ public class GameManager : MonoBehaviour
         soundMoney = Resources.Load<AudioClip>("soundMoney");
         soundEventCleanUpCosts = Resources.Load<AudioClip>("soundEventCleanUpCosts");
         soundSad = Resources.Load<AudioClip>("soundSad");
+        soundBoss= Resources.Load<AudioClip>("soundBoss");
         soundHappy = Resources.Load<AudioClip>("soundHappy");
         if (!audioSource)
         {
@@ -186,27 +213,79 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("No se ha encontrado soundSad");
         }
+        if (!soundBoss)
+        {
+            Debug.LogWarning("No se ha encontrado soundBoss");
+        }
         if (!soundHappy)
         {
             Debug.LogWarning("No se ha encontrado soundHappy");
         }
         if (messageRound != null)
             messageRound.text = "Ronda " + countRound;
+        if (_hasSavedGame)
+{
+        // Restaurar vida del castillo
+        if (castlescript != null && _pendingCastleLife >= 0)
+        {
+            castlescript.life    = _pendingCastleLife;
+            castlescript.lifeMax = _pendingCastleLifeMax;
+        }
+    
+        // Restaurar torres
+        if (_pendingTowers != null)
+            RestoreTowers(_pendingTowers);
+    }
+    
+    if (messageRound != null)
+        messageRound.text = "Ronda " + countRound;
     }
     /// <summary>
     /// Se ejecuta antes que el Start. Ideal para limpiar variables estáticas 
     /// </summary>
     private void Awake()
     {
-        countRound = 0;
-        countMoney = 200;
-        globalMoneyMultiplier = 1;
-        globalCostMultiplier = 1;
-        globalAttackSpeedMultiplier = 1;
+ GameSaveData saved = SaveSystem.Load();
+ 
+    if (saved != null)
+    {
+        countRound                  = saved.countRound;
+        countMoney                  = saved.countMoney;
+        timeinGame                  = saved.timeinGame;
+        enemiesDestroyed            = saved.enemiesDestroyed;
+        countTower                  = saved.countTower;
+        globalMoneyMultiplier       = saved.globalMoneyMultiplier;
+        globalCostMultiplier        = saved.globalCostMultiplier;
+        globalDamageTakenMultiplier = saved.globalDamageTakenMultiplier;
+        globalAttackSpeedMultiplier = saved.globalAttackSpeedMultiplier;
+        globalSpeedMultiplier       = saved.globalSpeedMultiplier;
+        globalRadiusMultiplier      = saved.globalRadiusMultiplier;
+        globalEnemyHealthMultiplier = saved.globalEnemyHealthMultiplier;
+        globalEnemyDamageMultiplier = saved.globalEnemyDamageMultiplier;
+ 
+        _pendingCastleLife    = saved.castleLife;
+        _pendingCastleLifeMax = saved.castleLifeMax;
+        _pendingTowers        = saved.towers;
+        _hasSavedGame         = true;
+        loadedFromSave = true;
+        waitingBetweenRounds = true;
+        GridGenerator.selectedGridIndex = saved.gridIndex;
+    }
+    else
+    {
+        countRound                  = 0;
+        countMoney                  = 200;
+        globalMoneyMultiplier       = 1;
+        globalCostMultiplier        = 1f;
+        globalAttackSpeedMultiplier = 1f;
         globalDamageTakenMultiplier = 1f;
-        globalSpeedMultiplier = 1f;
+        globalSpeedMultiplier       = 1f;
         globalEnemyDamageMultiplier = 1f;
         globalEnemyHealthMultiplier = 1f;
+        loadedFromSave = false;
+        waitingBetweenRounds = false;
+        GridGenerator.selectedGridIndex = -1;
+    }
     }
     /// <summary>
     /// Comprueba en cada frame si el Spawner indica que la ronda ha finalizado.
@@ -220,16 +299,10 @@ public class GameManager : MonoBehaviour
         // Si ya estamos gestionando el cambio de ronda, esperamos
         if (isChangingRound) return;
         // Si la ronda acaba de terminar, lanzamos la linea de tiempo
-        if (spawner != null && spawner.statusRound() && playButton.interactable == false)
-        {
-            playButton.interactable = true;
-            Image spriteRenderer = playButton.GetComponent<Image>();
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.sprite = playSprite;
-                spriteRenderer.color = Color.white;
-            }
-        }
+        if (spawner != null && spawner.statusRound() && !waitingBetweenRounds)
+{
+    StartCoroutine(endOfRoundRoutine());
+}
         // El tiempo y el dinero siguen su curso normal
         timeinGame += Time.deltaTime;
         if(countMoneyText != null)
@@ -273,6 +346,33 @@ public class GameManager : MonoBehaviour
             AudioListener.volume = 0f; // Silencia el sonido global
         }
     }
+
+    private void ShowPlayButton()
+{
+    if (playButton == null) return;
+
+    playButton.interactable = true;
+
+    Image spriteRenderer = playButton.GetComponent<Image>();
+    if (spriteRenderer != null)
+    {
+        spriteRenderer.sprite = playSprite;
+        spriteRenderer.color = Color.white;
+    }
+}
+
+private void HidePlayButton()
+{
+    if (playButton == null) return;
+
+    playButton.interactable = false;
+
+    Image spriteRenderer = playButton.GetComponent<Image>();
+    if (spriteRenderer != null)
+    {
+        spriteRenderer.color = new Color32(255, 255, 255, 0);
+    }
+}
     public void mainMenuButton()
     {
         Time.timeScale = 1f;
@@ -283,11 +383,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void restartGame()
     {
+        SaveSystem.DeleteSave();
         Time.timeScale = 1f;
         SceneManager.LoadScene("Main");
     }
     public void cargarGameOver()
     {
+        SaveSystem.DeleteSave();
         Time.timeScale = 1f;
         SceneManager.LoadScene("GameOver");
     }
@@ -318,57 +420,200 @@ public class GameManager : MonoBehaviour
             audioSource.PlayOneShot(audioClip);
         }
     }
-    public IEnumerator endOfRoundRoutine()
+   public IEnumerator endOfRoundRoutine()
+{
+    isChangingRound = true;
+
+    yield return new WaitForSeconds(2f);
+
+    int nextRound = countRound + 1;
+
+    // Cartas ANTES de parar entre rondas
+    if (roundsForCards > 0 && nextRound % roundsForCards == 0)
     {
-        isChangingRound = true; // Bloqueamos el Update temporalmente
-        yield return new WaitForSeconds(2f);
-        // Sistema de Cartas
-        if (countRound % roundsForCards == 0 && countRound != 0)
+        if (cardManager != null)
         {
-            if (cardManager != null)
-            {
-                currentState = GameState.EventOpen;
-                cardManager.ShowCards();
+            currentState = GameState.EventOpen;
+            cardManager.ShowCards();
 
-                // Pausamos el codigo hasta que el jugador hasta que el jugador elija carta
-                yield return new WaitUntil(() => currentState == GameState.Playing);
-            }
+            yield return new WaitUntil(() => currentState == GameState.Playing);
         }
-        // Sistema de Eventos Random
-        // Solo se ejecuta cuando el jugador ya ha elegido la carta.
-        if (countRound % 2 == 0 && countRound != 0)
-        {
-            yield return new WaitForSeconds(1f);
-            if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
-            {
-                this.GetComponent<randomEvents>().LoadEvents();
-            }
-            int random = Random.Range(0, randomEvents.eventList.Count);
-            StartCoroutine(randomEvents.eventList[random]());
-            randomEvents.eventList.RemoveAt(random);
-
-        }
-
-        globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
-        globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
-
-        messageRound.text = "Ronda " + countRound;
-
-        spawner.restartCountEnemy();
-
-        isChangingRound = false; // Desbloqueamos el Update para la nueva ronda
     }
 
+    waitingBetweenRounds = true;
+
+    ShowPlayButton();
+
+    SaveGame();
+
+    isChangingRound = false;
+}
+
     public void playRound()
+{
+    if (isChangingRound) return;
+    if (!waitingBetweenRounds) return;
+
+    StartCoroutine(StartNextRoundRoutine());
+}
+
+private IEnumerator StartNextRoundRoutine()
+{
+    isChangingRound = true;
+
+    HidePlayButton();
+
+    waitingBetweenRounds = false;
+
+    countRound++;
+
+    globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
+    globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
+
+    if (messageRound != null)
+        messageRound.text = "Ronda " + countRound;
+
+    // Evento especial boss en ronda 10
+    if (countRound == 10)
     {
-        if (isChangingRound == true) return;
-        countRound++;
-        playButton.interactable = false;
-        Image spriteRenderer = playButton.GetComponent<Image>();
-        if (spriteRenderer != null)
+        yield return new WaitForSeconds(1f);
+
+        randomEvents eventsScript = GetComponent<randomEvents>();
+        if (eventsScript != null)
         {
-            spriteRenderer.color = new Color32(255, 255, 255, 0);
+            StartCoroutine(eventsScript.EventBossRound());
+           
         }
-        StartCoroutine(endOfRoundRoutine());
+    }
+    // Eventos normales
+    else if (countRound % 2 == 0 && countRound != 0)
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
+        {
+            GetComponent<randomEvents>().LoadEvents();
+        }
+
+        int random = Random.Range(0, randomEvents.eventList.Count);
+        StartCoroutine(randomEvents.eventList[random]());
+        randomEvents.eventList.RemoveAt(random);
+
+        
+    }
+
+    if (spawner != null)
+        spawner.restartCountEnemy();
+
+    isChangingRound = false;
+}
+
+    public void SaveGame()
+    {
+        var data = new GameSaveData
+        {
+            countRound                  = countRound,
+            countMoney                  = countMoney,
+            timeinGame                  = timeinGame,
+            enemiesDestroyed            = enemiesDestroyed,
+            countTower                  = countTower,
+            castleLife                  = castlescript != null ? castlescript.life    : 100,
+            castleLifeMax               = castlescript != null ? castlescript.lifeMax : 100,
+            globalMoneyMultiplier       = globalMoneyMultiplier,
+            globalCostMultiplier        = globalCostMultiplier,
+            globalDamageTakenMultiplier = globalDamageTakenMultiplier,
+            globalAttackSpeedMultiplier = globalAttackSpeedMultiplier,
+            globalSpeedMultiplier       = globalSpeedMultiplier,
+            globalRadiusMultiplier      = globalRadiusMultiplier,
+            globalEnemyHealthMultiplier = globalEnemyHealthMultiplier,
+            globalEnemyDamageMultiplier = globalEnemyDamageMultiplier,
+            gridIndex = GridGenerator.selectedGridIndex,
+        };
+    
+        Tower[] torres = FindObjectsByType<Tower>(FindObjectsSortMode.None);
+        foreach (Tower t in torres)
+        {
+            if (!t.isBuilt) continue;
+    
+            // CORRECCIÓN: Buscamos correctamente en los hijos
+            UpdateTower upTower = t.GetComponentInChildren<UpdateTower>(true);
+            
+            data.towers.Add(new TowerSaveData
+            {
+                posX              = t.transform.position.x,
+                posY              = t.transform.position.y,
+                towerType         = upTower != null ? upTower.typeOfTower : 0,
+                level             = upTower != null ? upTower.levelOfTower : 0,
+                totalGoldInvested = t.totalGoldInvested,
+            });
+        }
+    
+        SaveSystem.Save(data);
+    }
+    private void RestoreTowers(List<TowerSaveData> savedTowers)
+    {
+        // Iniciamos la rutina paso a paso
+        StartCoroutine(RestoreTowersCoroutine(savedTowers));
+    }
+
+    private System.Collections.IEnumerator RestoreTowersCoroutine(List<TowerSaveData> savedTowers)
+    {
+        ConstructionMenu menu = FindAnyObjectByType<ConstructionMenu>();
+        
+        // Guardamos el dinero real y damos infinito temporalmente
+        int realMoney = GameManager.countMoney;
+        GameManager.countMoney = 9999999; 
+ 
+        foreach (TowerSaveData td in savedTowers)
+        {
+            GameObject prefab = td.towerType switch
+            {
+                0 => prefabTowerMedian,
+                1 => prefabTowerLight,
+                2 => prefabTowerHeavy,
+                3 => prefabTowerInfernal,
+                _ => null
+            };
+            if (prefab == null) continue;
+ 
+            // 1. Asignamos el tipo para que esta torre concreta lo lea al nacer
+            menu.flagTypeTower = td.towerType;
+
+            // 2. Instanciamos la torre
+            Vector3 pos = new Vector3(td.posX, td.posY, 0f);
+            GameObject go = Instantiate(prefab, pos, Quaternion.identity);
+            Tower tower = go.GetComponent<Tower>();
+            
+            if (tower != null)
+            {
+                // 3. ¡LA MAGIA! Esperamos 1 frame entero.
+                // Esto permite que ESTA torre ejecute tranquilamente su Start() y se autoconstruya
+                // antes de que el bucle avance e instancie la siguiente.
+                yield return null; 
+                
+                // 4. Tras haberse construido sola, le aplicamos los niveles guardados
+                UpdateTower updateTower = tower.GetComponentInChildren<UpdateTower>(true);
+                if (updateTower != null)
+                {
+                    updateTower.typeOfTower = td.towerType;
+                    for (int i = 0; i < td.level; i++)
+                    {
+                        int nextLevel = updateTower.levelOfTower + 1;
+                        Sprite sprite = tower.towerImagen[nextLevel].GetComponent<SpriteRenderer>().sprite;
+                        BoxCollider2D col = tower.towerImagen[nextLevel].GetComponent<BoxCollider2D>();
+                
+                        updateTower.levelOfTower++;
+                        tower.updateFireCooldownAndDamage();
+                        tower.setCollisionsAndSprite(tower.GetComponent<SpriteRenderer>(), sprite, col);
+                    }
+                }
+                
+                // 5. Restauramos su inversión de oro original
+                tower.totalGoldInvested = td.totalGoldInvested;
+            }
+        }
+
+        // 6. Al terminar de cargar todas las torres con éxito, devolvemos el dinero real
+        GameManager.countMoney = realMoney;
     }
 }

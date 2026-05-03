@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Enemy_Golem
   m_EditorClassIdentifier: 
   health: 400
-  damage: 28
+  damage: 20
   speed: 0.8
   money: 25
   attackRange: 0.8
-  attackCooldown: 2

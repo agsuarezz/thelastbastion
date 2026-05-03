@@ -15,6 +15,9 @@ public struct EnemyTypeConfig
 
     [Tooltip("Ronda mínima a partir de la que puede aparecer.")]
     public int minRound;
+
+    [Tooltip("Marca esto si este enemigo es un Boss. Solo podrá aparecer uno por ronda.")]
+    public bool isBoss;
 }
 
 public class Spawner : MonoBehaviour
@@ -45,11 +48,15 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    private void Start()
+   private void Start()
+{
+    enemyRoute = FindAnyObjectByType<LevelRoute>();
+
+    if (!GameManager.loadedFromSave)
     {
-        enemyRoute = FindAnyObjectByType<LevelRoute>();
         PrepareWave();
     }
+}
 
     private void Update()
     {
@@ -83,32 +90,57 @@ public class Spawner : MonoBehaviour
         return 5 + round * 3;
     }
 
-    private List<EnemyTypeConfig> GenerateWave(int round, int budget)
+   private List<EnemyTypeConfig> GenerateWave(int round, int budget)
+{
+    List<EnemyTypeConfig> wave = new List<EnemyTypeConfig>();
+
+    bool bossAlreadyAdded = false;
+
+    // Ronda 10: solo aparece un boss
+    if (round == 10)
     {
-        List<EnemyTypeConfig> wave = new List<EnemyTypeConfig>();
-
-        while (budget > 0)
+        foreach (var enemy in enemyTypes)
         {
-            List<EnemyTypeConfig> available = new List<EnemyTypeConfig>();
-
-            foreach (var enemy in enemyTypes)
+            if (enemy.isBoss)
             {
-                if (enemy.minRound <= round && enemy.cost <= budget)
-                {
-                    available.Add(enemy);
-                }
+                wave.Add(enemy);
+                return wave;
             }
-
-            if (available.Count == 0)
-                break;
-
-            EnemyTypeConfig selected = available[Random.Range(0, available.Count)];
-            wave.Add(selected);
-            budget -= selected.cost;
         }
 
+        Debug.LogWarning("Ronda 10 configurada para boss, pero no hay ningún enemigo marcado como Boss.");
         return wave;
     }
+
+    while (budget > 0)
+    {
+        List<EnemyTypeConfig> available = new List<EnemyTypeConfig>();
+
+        foreach (var enemy in enemyTypes)
+        {
+            if (enemy.minRound > round) continue;
+            if (enemy.cost > budget) continue;
+
+            // Si ya salió un boss, no deja meter otro
+            if (enemy.isBoss && bossAlreadyAdded) continue;
+
+            available.Add(enemy);
+        }
+
+        if (available.Count == 0)
+            break;
+
+        EnemyTypeConfig selected = available[Random.Range(0, available.Count)];
+
+        wave.Add(selected);
+        budget -= selected.cost;
+
+        if (selected.isBoss)
+            bossAlreadyAdded = true;
+    }
+
+    return wave;
+}
 
     private void SpawnEnemyFromWave()
     {

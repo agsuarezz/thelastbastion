@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 2640421778265141489}
   - component: {fileID: -4977746142303864419}
   - component: {fileID: 1624724665838431737}
+  - component: {fileID: 5551220052087116305}
   m_Layer: 0
   m_Name: EnemyGolem
   m_TagString: Enemy
@@ -275,6 +276,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5551220052087116305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3934873377327053164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde6755914dd7a94a88a0827e2706a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4049809416180203725
 GameObject:
   m_ObjectHideFlags: 0
