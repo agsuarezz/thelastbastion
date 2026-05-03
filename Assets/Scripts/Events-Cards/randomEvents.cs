@@ -5,28 +5,26 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// Main manager for random game events.
-/// Handles the event catalog (positive and negative) that temporarily alters gameplay rules.
+/// Gestor principal para los eventos aleatorios del juego.
+/// Maneja el catálogo de eventos (positivos y negativos) que alteran temporalmente las reglas de juego.
 /// </summary>
 public class randomEvents : MonoBehaviour
 {
-    [Header("Event Configuration")]
+    [Header("Configuración de Eventos")]
     public static List<System.Func<IEnumerator>> eventList;
 
-    [Tooltip("UI Text component for displaying event messages.")]
+    [Tooltip("Componente de texto UI para mostrar los mensajes de los eventos.")]
     public TextMeshProUGUI messageEventText;
 
-    [Tooltip("Background panel/image for the event messages.")]
+    [Tooltip("Panel/Imagen de fondo para los mensajes de los eventos.")]
     public GameObject eventBackgroundUI;
 
     private void Start()
     {
         eventList = new List<System.Func<IEnumerator>>();
         LoadEvents();
-        HideEventUI(); // Ensure UI is clean at start
+        HideEventUI();
     }
-
-    // 🌟 HELPER FUNCTIONS (The "Don't Repeat Yourself" part)
 
     private void ShowEventUI(string message, AudioClip soundEffect)
     {
@@ -41,12 +39,12 @@ public class randomEvents : MonoBehaviour
         if (eventBackgroundUI != null) eventBackgroundUI.SetActive(false);
     }
 
-    // --- RANDOM EVENTS ---
+    // --- EVENTOS ALEATORIOS ---
 
     public IEnumerator EventLuckyGold()
     {
         GameManager.globalMoneyMultiplier *= 2;
-        ShowEventUI("The goblins just got paid and their pockets are full. Get them!", GameManager.soundHappy);
+        ShowEventUI("Los goblins acaban de cobrar y tienen los bolsillos llenos. ¡A por ellos!", GameManager.soundHappy);
 
         yield return new WaitForSeconds(10f);
 
@@ -57,7 +55,7 @@ public class randomEvents : MonoBehaviour
     public IEnumerator EventTowerDiscount()
     {
         GameManager.globalCostMultiplier *= 0.5f;
-        ShowEventUI("Black Friday at the smithy! Towers are half price.", GameManager.soundHappy);
+        ShowEventUI("¡Black Friday en la herrería! Las torres están a mitad de precio.", GameManager.soundHappy);
 
         yield return new WaitForSeconds(10f);
 
@@ -68,7 +66,7 @@ public class randomEvents : MonoBehaviour
     public IEnumerator EventArcherStrike()
     {
         GameManager.globalAttackSpeedMultiplier *= 4f;
-        ShowEventUI("Archer union on strike. Attack speed significantly reduced.", GameManager.soundSad);
+        ShowEventUI("Sindicato de arqueros en huelga. Velocidad de ataque reducida significativamente.", GameManager.soundSad);
 
         yield return new WaitForSeconds(7f);
 
@@ -80,7 +78,7 @@ public class randomEvents : MonoBehaviour
     {
         int taxes = (int)(GameManager.countMoney * 0.40f);
         GameManager.countMoney -= taxes;
-        ShowEventUI($"Tax inspector confiscated {taxes} Gold for undeclared defensive structures.", GameManager.soundPay);
+        ShowEventUI($"El recaudador de impuestos confiscó {taxes} de oro por estructuras defensivas no declaradas.", GameManager.soundPay);
 
         yield return new WaitForSeconds(5f);
 
@@ -90,7 +88,7 @@ public class randomEvents : MonoBehaviour
     public IEnumerator EventCleanUpCosts()
     {
         GameManager.globalMoneyMultiplier *= -2;
-        ShowEventUI("Ecological tax active. You now PAY to clean up goblin corpses.", GameManager.soundEventCleanUpCosts);
+        ShowEventUI("Impuesto ecológico activo. Ahora PAGAS por limpiar cadáveres de goblins.", GameManager.soundEventCleanUpCosts);
 
         yield return new WaitForSeconds(10f);
 
@@ -102,7 +100,7 @@ public class randomEvents : MonoBehaviour
     {
         GameManager.globalSpeedMultiplier *= 2.5f;
         GameManager.globalDamageTakenMultiplier *= 2f;
-        ShowEventUI("Sugar rush! Enemies are sprinting but they're fragile as glass.", GameManager.soundSad);
+        ShowEventUI("¡Subidón de azúcar! Los enemigos corren a toda velocidad pero son frágiles como el cristal.", GameManager.soundSad);
 
         yield return new WaitForSeconds(10f);
 
@@ -120,7 +118,7 @@ public class randomEvents : MonoBehaviour
             Instantiate(Resources.Load<GameObject>("prefabCoins"), spawnPos, Quaternion.identity);
         }
 
-        ShowEventUI("Bug detected: Raining gold. Profit before the patch!", null);
+        ShowEventUI("Bug detectado: Lluvia de oro. ¡Saca beneficio antes del parche!", null);
 
         yield return new WaitForSeconds(5f);
 
@@ -129,7 +127,7 @@ public class randomEvents : MonoBehaviour
 
     public IEnumerator EventSpawnAds()
     {
-        ShowEventUI("We are an Indie studio, please give us your money.", null);
+        ShowEventUI("Somos un estudio Indie, por favor danos tu dinero.", null);
 
         GameObject[] adPrefabs = new GameObject[4];
         adPrefabs[0] = Resources.Load<GameObject>("prefabNew");
