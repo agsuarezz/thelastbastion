@@ -528,6 +528,10 @@ MonoBehaviour:
   cardManager: {fileID: 626184129}
   roundsForCards: 1
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
+  prefabTowerMedian: {fileID: 8991276415801162673, guid: 9215f2686913cdc45aa6fab00fcff581, type: 3}
+  prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}
+  prefabTowerHeavy: {fileID: 8544740251689827319, guid: 65311828bfcba7d4999338877f98bf6e, type: 3}
+  prefabTowerInfernal: {fileID: 8544740251689827319, guid: 9a324c408fd1b6249bd3463156a9a76d, type: 3}
 --- !u!4 &64441736
 Transform:
   m_ObjectHideFlags: 0
@@ -1582,6 +1586,7 @@ MonoBehaviour:
   lifeText: {fileID: 437871344}
   lifeSlider: {fileID: 404870901}
   life: 100
+  lifeMax: 0
   EndPanel: {fileID: 1426347630}
   castleCollider: {fileID: 196915346}
   LogicaGameOver: {fileID: 1339451479}
