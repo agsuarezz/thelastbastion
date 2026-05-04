@@ -15,5 +15,5 @@ MonoBehaviour:
   health: 1000
   damage: 50
   speed: 2
-  money: 100
+  money: 200
   attackRange: 1

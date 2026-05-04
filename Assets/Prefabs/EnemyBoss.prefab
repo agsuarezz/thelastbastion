@@ -276,7 +276,7 @@ MonoBehaviour:
   fadeDuration: 0.5
   castTriggerName: Cast
   castEndTriggerName: CastEnd
-  castSound: {fileID: 8300000, guid: 5dc4a06e8407f5a46a56710c028a08d0, type: 3}
+  castSound: {fileID: 8300000, guid: a5f4450cafd39c94e9d30da0f205abb0, type: 3}
   audioSource: {fileID: 5171169406409693863}
   volumeProfile: {fileID: 11400000, guid: 633c7bb516b935d4ea804486992eacd1, type: 2}
   normalSaturation: 0

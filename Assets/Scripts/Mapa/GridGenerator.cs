@@ -7,7 +7,7 @@ public class GridGenerator : MonoBehaviour
 
     public List<GameObject> list_grid;
 
-    private void Start()
+    private void Awake()
     {
         if (list_grid == null || list_grid.Count == 0)
         {
