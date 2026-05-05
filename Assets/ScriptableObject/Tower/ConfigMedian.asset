@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee7446e0fe88ae64ab63c9f8e5bcd72b, type: 3}
   m_Name: ConfigMedian
   m_EditorClassIdentifier: 
-  nameOfTower: Tower Median
+  nameOfTower: Torre Media
   baseAttackRadius: 3
   damageUpgradeAmount: 8
   cooldownUpgradeAmount: 0.2
