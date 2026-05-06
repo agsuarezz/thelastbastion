@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameOfTower: Torre Infernal
   baseAttackRadius: 3
-  damageUpgradeAmount: 30
+  damageUpgradeAmount: 25
   cooldownUpgradeAmount: 0.5
   upgradeCosts: 4b0000006e000000b4000000
-  damagePerSecond: 30
+  damagePerSecond: 25
   onTime: 5
   offTime: 2

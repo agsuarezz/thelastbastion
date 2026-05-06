@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameOfTower: Torre Ligera
   baseAttackRadius: 3
-  damageUpgradeAmount: 8
+  damageUpgradeAmount: 5
   cooldownUpgradeAmount: 0.05
   upgradeCosts: 280000004b00000082000000
   projectilePrefab: {fileID: 4912671896811190522, guid: dc6c3ad41a696ba4fa26870e596b1a83, type: 3}
-  baseDamage: 12
-  baseFireRate: 0.4
+  baseDamage: 10
+  baseFireRate: 0.35

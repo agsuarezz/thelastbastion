@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameOfTower: Torre Pesada
   baseAttackRadius: 3
-  damageUpgradeAmount: 40
+  damageUpgradeAmount: 50
   cooldownUpgradeAmount: 0.25
   upgradeCosts: 4b00000078000000c8000000
   projectilePrefab: {fileID: 4912671896811190522, guid: aaded907281ab0d4b8efb79b0b57cb57, type: 3}
