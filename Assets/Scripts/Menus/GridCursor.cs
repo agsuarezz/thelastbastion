@@ -119,25 +119,39 @@ public class GridCursor : MonoBehaviour
 
     /// <summary>
     /// Consulta el menú de construcción para saber qué tipo de torre está intentando poner el jugador.
-    /// Luego, va al Prefab original de esa torre y extrae su atributo 'attackRadius'.
+    /// Lee el attackRadius del Prefab. Si está a 0 (no inicializado), usa el config por defecto.
     /// </summary>
     /// <returns>El radio de ataque en formato float de la torre seleccionada.</returns>
     public float setRange()
     {
+        Tower towerPrefab = null;
+
         switch (constructionMenu.flagTypeTower)
         {
             case 0:
-                return constructionMenu.prefabTowerMedian.GetComponent<Tower>().attackRadius;
+                towerPrefab = constructionMenu.prefabTowerMedian.GetComponent<Tower>();
+                break;
             case 1:
-                return constructionMenu.prefabTowerLight.GetComponent<Tower>().attackRadius;
+                towerPrefab = constructionMenu.prefabTowerLight.GetComponent<Tower>();
+                break;
             case 2:
-                return constructionMenu.prefabTowerHeavy.GetComponent<Tower>().attackRadius;
+                towerPrefab = constructionMenu.prefabTowerHeavy.GetComponent<Tower>();
+                break;
             case 3:
-                return constructionMenu.prefabTowerInfernal.GetComponent<Tower>().attackRadius;
+                towerPrefab = constructionMenu.prefabTowerInfernal.GetComponent<Tower>();
+                break;
             default:
                 Debug.LogWarning("¡Cuidado! No se ha encontrado el attackRadius porque el flagTypeTower no es válido.");
                 return 9999;
         }
+
+        if (towerPrefab != null && towerPrefab.config != null)
+        {
+            return towerPrefab.config.baseAttackRadius;
+        }
+
+        // Valor de seguridad por si todo explota
+        return 3f;
     }
 
 }
