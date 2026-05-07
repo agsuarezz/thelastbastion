@@ -118,6 +118,8 @@ public class GameManager : MonoBehaviour
     public Sprite playSprite;
     public static bool loadedFromSave = false;
     private bool waitingBetweenRounds = false;
+    //velocidad actual del juego
+    private int velocity = 0;
 
     [Header("Prefabs de Torres (para cargar partida)")]
     public GameObject prefabTowerMedian;    // mismo prefab que usa ConstructionMenu
@@ -150,19 +152,19 @@ public class GameManager : MonoBehaviour
             musicaActiva = true;
             if (imagenBotonMusica != null) imagenBotonMusica.sprite = iconoMusicaOn;
         }
-      if (GameObject.Find("PlayButton"))
-{
-    playButton = GameObject.Find("PlayButton").GetComponent<Button>();
+        if (GameObject.Find("PlayButton"))
+        {
+            playButton = GameObject.Find("PlayButton").GetComponent<Button>();
 
-    if (loadedFromSave)
-    {
-        ShowPlayButton();
-    }
-    else
-    {
-        HidePlayButton();
-    }
-}
+            if (loadedFromSave)
+            {
+                ShowPlayButton();
+            }
+            else
+            {
+                HidePlayButton();
+            }
+        }
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
         soundPause = Resources.Load<AudioClip>("soundPause");
@@ -225,21 +227,21 @@ public class GameManager : MonoBehaviour
         if (messageRound != null)
             messageRound.text = "Ronda " + countRound;
         if (_hasSavedGame)
-{
-        // Restaurar vida del castillo
-        if (castlescript != null && _pendingCastleLife >= 0)
         {
-            castlescript.life    = _pendingCastleLife;
-            castlescript.lifeMax = _pendingCastleLifeMax;
+            // Restaurar vida del castillo
+            if (castlescript != null && _pendingCastleLife >= 0)
+            {
+                castlescript.life    = _pendingCastleLife;
+                castlescript.lifeMax = _pendingCastleLifeMax;
+            }
+    
+            // Restaurar torres
+            if (_pendingTowers != null)
+                RestoreTowers(_pendingTowers);
         }
     
-        // Restaurar torres
-        if (_pendingTowers != null)
-            RestoreTowers(_pendingTowers);
-    }
-    
-    if (messageRound != null)
-        messageRound.text = "Ronda " + countRound;
+        if (messageRound != null)
+            messageRound.text = "Ronda " + countRound;
     }
     /// <summary>
     /// Se ejecuta antes que el Start. Ideal para limpiar variables estáticas 
@@ -304,13 +306,18 @@ public class GameManager : MonoBehaviour
         if (isChangingRound) return;
         // Si la ronda acaba de terminar, lanzamos la linea de tiempo
         if (spawner != null && spawner.statusRound() && !waitingBetweenRounds)
-{
-    StartCoroutine(endOfRoundRoutine());
-}
+        {
+            StartCoroutine(endOfRoundRoutine());
+        }
         // El tiempo y el dinero siguen su curso normal
         timeinGame += Time.deltaTime;
         if(countMoneyText != null)
             countMoneyText.text = "Dinero: " + countMoney;
+        // Si se presiona la 'N' cambia la velocidad del juego
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            changeVelocity();
+        }
     }
     /// <summary>
     /// Corrutina de utilidad para pausar la ejecución de un proceso durante un tiempo determinado.
@@ -352,31 +359,31 @@ public class GameManager : MonoBehaviour
     }
 
     private void ShowPlayButton()
-{
-    if (playButton == null) return;
-
-    playButton.interactable = true;
-
-    Image spriteRenderer = playButton.GetComponent<Image>();
-    if (spriteRenderer != null)
     {
-        spriteRenderer.sprite = playSprite;
-        spriteRenderer.color = Color.white;
+        if (playButton == null) return;
+
+        playButton.interactable = true;
+
+        Image spriteRenderer = playButton.GetComponent<Image>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sprite = playSprite;
+            spriteRenderer.color = Color.white;
+        }
     }
-}
 
-private void HidePlayButton()
-{
-    if (playButton == null) return;
-
-    playButton.interactable = false;
-
-    Image spriteRenderer = playButton.GetComponent<Image>();
-    if (spriteRenderer != null)
+    private void HidePlayButton()
     {
-        spriteRenderer.color = new Color32(255, 255, 255, 0);
+        if (playButton == null) return;
+
+        playButton.interactable = false;
+
+        Image spriteRenderer = playButton.GetComponent<Image>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = new Color32(255, 255, 255, 0);
+        }
     }
-}
     public void mainMenuButton()
     {
         Time.timeScale = 1f;
@@ -427,92 +434,110 @@ private void HidePlayButton()
         }
     }
    public IEnumerator endOfRoundRoutine()
-{
-    isChangingRound = true;
+   {
+        isChangingRound = true;
 
-    yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2f);
 
-    int nextRound = countRound + 1;
+        int nextRound = countRound + 1;
 
-    // Cartas ANTES de parar entre rondas
-    if (roundsForCards > 0 && nextRound % roundsForCards == 0)
-    {
-        if (cardManager != null)
+        // Cartas ANTES de parar entre rondas
+        if (roundsForCards > 0 && nextRound % roundsForCards == 0)
         {
-            currentState = GameState.EventOpen;
-            cardManager.ShowCards();
+            if (cardManager != null)
+            {
+                currentState = GameState.EventOpen;
+                cardManager.ShowCards();
 
-            yield return new WaitUntil(() => currentState == GameState.Playing);
+                yield return new WaitUntil(() => currentState == GameState.Playing);
+            }
         }
-    }
 
-    waitingBetweenRounds = true;
+        waitingBetweenRounds = true;
 
-    ShowPlayButton();
+        ShowPlayButton();
 
-    SaveGame();
+        SaveGame();
 
-    isChangingRound = false;
-}
+        isChangingRound = false;
+   }
 
     public void playRound()
-{
-    if (isChangingRound) return;
-    if (!waitingBetweenRounds) return;
-
-    StartCoroutine(StartNextRoundRoutine());
-}
-
-private IEnumerator StartNextRoundRoutine()
-{
-    isChangingRound = true;
-
-    HidePlayButton();
-
-    waitingBetweenRounds = false;
-
-    countRound++;
-
-    globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
-    globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
-
-    if (messageRound != null)
-        messageRound.text = "Ronda " + countRound;
-
-    // Evento especial boss en ronda 10
-    if (countRound == 10)
     {
-        yield return new WaitForSeconds(1f);
+        if (isChangingRound) return;
+        if (!waitingBetweenRounds) return;
 
-        randomEvents eventsScript = GetComponent<randomEvents>();
-        if (eventsScript != null)
+        StartCoroutine(StartNextRoundRoutine());
+    }
+
+    public void changeVelocity()
+    {
+        velocity = (velocity + 1) % 3;
+        switch (velocity)
         {
-            StartCoroutine(eventsScript.EventBossRound());
+            case 0:
+                Time.timeScale = 1.0f;
+                break;
+            case 1:
+                Time.timeScale = 2.0f;
+                break;
+            case 2:
+                Time.timeScale = 3.0f;
+                break;
+            default:
+                Time.timeScale = 1.0f;
+                break;
+        }
+    }
+
+    private IEnumerator StartNextRoundRoutine()
+    {
+        isChangingRound = true;
+
+        HidePlayButton();
+
+        waitingBetweenRounds = false;
+
+        countRound++;
+
+        globalEnemyHealthMultiplier = Mathf.Pow(1.10f, countRound);
+        globalEnemyDamageMultiplier = Mathf.Pow(1.05f, countRound);
+
+        if (messageRound != null)
+            messageRound.text = "Ronda " + countRound;
+
+        // Evento especial boss en ronda 10
+        if (countRound == 10)
+        {
+            yield return new WaitForSeconds(1f);
+
+            randomEvents eventsScript = GetComponent<randomEvents>();
+            if (eventsScript != null)
+            {
+                StartCoroutine(eventsScript.EventBossRound());
            
+            }
         }
-    }
-    // Eventos normales
-    else if (countRound % 2 == 0 && countRound != 0)
-    {
-        yield return new WaitForSeconds(1f);
-
-        if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
+        // Eventos normales
+        else if (countRound % 2 == 0 && countRound != 0)
         {
-            GetComponent<randomEvents>().LoadEvents();
+            yield return new WaitForSeconds(1f);
+
+            if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
+            {
+                GetComponent<randomEvents>().LoadEvents();
+            }
+
+            int random = Random.Range(0, randomEvents.eventList.Count);
+            StartCoroutine(randomEvents.eventList[random]());
+            randomEvents.eventList.RemoveAt(random);
         }
 
-        int random = Random.Range(0, randomEvents.eventList.Count);
-        StartCoroutine(randomEvents.eventList[random]());
-        randomEvents.eventList.RemoveAt(random);
+        if (spawner != null)
+            spawner.restartCountEnemy();
 
-        
+        isChangingRound = false;
     }
-
-    if (spawner != null)
-        spawner.restartCountEnemy();
-
-    isChangingRound = false;
-}
 
     public void SaveGame()
     {
