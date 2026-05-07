@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 // Las de VisualScripting y UnityEditor han sido eliminadas
 
 /// <summary>
@@ -118,7 +119,11 @@ public class GameManager : MonoBehaviour
     public Sprite playSprite;
     public static bool loadedFromSave = false;
     private bool waitingBetweenRounds = false;
-    //velocidad actual del juego
+    // Botón para la velocidad actual del juego
+    Button velocityButton;
+    public Sprite velocitySprite0;
+    public Sprite velocitySprite1;
+    public Sprite velocitySprite2;
     private int velocity = 0;
 
     [Header("Prefabs de Torres (para cargar partida)")]
@@ -164,6 +169,10 @@ public class GameManager : MonoBehaviour
             {
                 HidePlayButton();
             }
+        }
+        if (GameObject.Find("VelocityButton"))
+        {
+            velocityButton = GameObject.Find("VelocityButton").GetComponent<Button>();
         }
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
@@ -334,7 +343,8 @@ public class GameManager : MonoBehaviour
     /// <param name="menuPanel">El GameObject que contiene la interfaz gráfica del menú de pausa.</param>
     public void pauseaandRestartButton(GameObject menuPanel)
     {
-        if (GameManager.currentState != GameState.Playing) return;
+        if(GameManager.currentState == GameState.EventOpen) return;
+        GameManager.currentState = GameManager.currentState == GameState.Paused ? GameState.Playing : GameState.Paused;
         changeTimeScale();
         bool status = menuPanel.activeSelf;
         menuPanel.SetActive(!status);
@@ -409,11 +419,11 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Cambia el time.TimeScale
     /// Si es 0 a 1
-    /// Si es 1 a 0
+    /// Si no es 0 a 0
     /// </summary>
-    public static void changeTimeScale()
+    public void changeTimeScale()
     {
-        Time.timeScale = Time.timeScale == 1.0f ? 0.0f : 1.0f;
+        Time.timeScale = Time.timeScale == 0.0f ? (velocity+1.0f) : 0.0f;
     }
     /// <summary>
     /// Muestra un mensaje de error en pantalla durante 2 segundos y luego lo borra.
@@ -472,22 +482,34 @@ public class GameManager : MonoBehaviour
 
     public void changeVelocity()
     {
+        // Si está en pausa o con cartas, no se hace NADA
+        if (GameManager.currentState != GameState.Playing) return;
+        // Se actualiza la velocidad
         velocity = (velocity + 1) % 3;
-        switch (velocity)
+        Image spriteRenderer = velocityButton.GetComponent<Image>();
+        if (spriteRenderer != null)
         {
-            case 0:
-                Time.timeScale = 1.0f;
-                break;
-            case 1:
-                Time.timeScale = 2.0f;
-                break;
-            case 2:
-                Time.timeScale = 3.0f;
-                break;
-            default:
-                Time.timeScale = 1.0f;
-                break;
+            switch (velocity)
+            {
+                case 0:
+                    spriteRenderer.sprite = velocitySprite0;
+                    Time.timeScale = 1.0f;
+                    break;
+                case 1:
+                    spriteRenderer.sprite = velocitySprite1;
+                    Time.timeScale = 2.0f;
+                    break;
+                case 2:
+                    spriteRenderer.sprite = velocitySprite2;
+                    Time.timeScale = 3.0f;
+                    break;
+                default:
+                    spriteRenderer.sprite = velocitySprite0;
+                    Time.timeScale = 1.0f;
+                    break;
+            }
         }
+        
     }
 
     private IEnumerator StartNextRoundRoutine()
