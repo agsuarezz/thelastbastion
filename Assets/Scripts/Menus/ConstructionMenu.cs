@@ -166,16 +166,20 @@ public class ConstructionMenu : MonoBehaviour
     public void BuyTower(int index)
     {
         int costTowerToInt = costTower(index);
-
-        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier )
-        {
-            SetIsPlacingTilemapFlagTypeTower(index);
-            cancelFunction();
-        }
-        else
+        bool statusTower = setPrefabType(index).GetComponent<Tower>().config.allowBuyTower;
+        if (GameManager.countMoney < costTowerToInt * GameManager.globalCostMultiplier)
         {
             dontHaveMoney();
+            return;
         }
+        else if(!statusTower)
+        {
+            StartCoroutine(gameManager.messageError("No lo tiene desbloqueado"));
+            GameManager.sound(GameManager.soundError);
+            return;
+        }
+        SetIsPlacingTilemapFlagTypeTower(index);
+        cancelFunction();
     }
     /// <summary>
     /// Instancia el prefab de la torre seleccionada en la coordenada exacta de la cuadr�cula.
@@ -213,9 +217,10 @@ public class ConstructionMenu : MonoBehaviour
     /// Devuelve la referencia al GameObject (Prefab) correspondiente bas�ndose 
     /// en el tipo de torre seleccionada (flagTypeTower).
     /// </summary>
-    public GameObject setPrefabType()
+    public GameObject setPrefabType(int type = -1)
     {
-        switch(flagTypeTower)
+        int flag = type != -1 ? type : flagTypeTower;
+        switch (flag)
         {
             case 0: return prefabTowerMedian;
             case 1: return prefabTowerLight;
