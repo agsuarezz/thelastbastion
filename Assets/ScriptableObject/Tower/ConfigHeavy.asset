@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ConfigHeavy
   m_EditorClassIdentifier: 
   nameOfTower: Torre Pesada
+  allowBuyTower: 1
   baseAttackRadius: 4.5
   damageUpgradeAmount: 50
   cooldownUpgradeAmount: 0.25

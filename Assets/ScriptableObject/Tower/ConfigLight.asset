@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ConfigLight
   m_EditorClassIdentifier: 
   nameOfTower: Torre Ligera
+  allowBuyTower: 1
   baseAttackRadius: 2.5
   damageUpgradeAmount: 5
   cooldownUpgradeAmount: 0.05

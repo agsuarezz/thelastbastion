@@ -74,19 +74,23 @@ public class ConstructionMenu : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Alpha1)) // Tecla '1'
             {
-                BuyTorreMedian();
+                BuyTower(0);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha2)) // Tecla '2'
             {
-                BuyTorreLight();
+                BuyTower(1);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha3)) // Tecla '3'
             {
-                BuyTorreHeavy();
+                BuyTower(2);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha4)) // Tecla '4'
             {
-                BuyTorreInfernal();
+                BuyTower(3);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5)) // Tecla '4'
+            {
+                BuyTower(4);
             }
         }
         // --------------------------------------------------
@@ -159,89 +163,13 @@ public class ConstructionMenu : MonoBehaviour
     /// Comprueba si hay dinero suficiente, asigna el tipo de torre (0), 
     /// activa el modo de colocaci�n en el mapa y cierra el men�.
     /// </summary>
-    public void BuyTorreMedian()
+    public void BuyTower(int index)
     {
-        int costTowerToInt = costTower(0);
+        int costTowerToInt = costTower(index);
 
-        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
+        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier )
         {
-            SetIsPlacingTilemapFlagTypeTower(0);
-            cancelFunction();
-        }
-        else
-        {
-            dontHaveMoney();
-        }
-    }
-    /// <summary>
-    /// M�todo asignado al bot�n de comprar "Torre Ligera".
-    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (1), 
-    /// activa el modo de colocaci�n en el mapa y cierra el men�.
-    /// </summary>
-    public void BuyTorreLight()
-    {
-        int costTowerToInt = costTower(1);
-
-        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
-        {
-            SetIsPlacingTilemapFlagTypeTower(1);
-            cancelFunction();
-        }
-        else
-        {
-            dontHaveMoney();
-        }
-    }
-    /// <summary>
-    /// M�todo asignado al bot�n de comprar "Torre Pesada".
-    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (2), 
-    /// activa el modo de colocaci�n en el mapa y cierra el men�.
-    /// </summary>
-    public void BuyTorreHeavy()
-    {
-        int costTowerToInt = costTower(2);
-
-        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
-        {
-            SetIsPlacingTilemapFlagTypeTower(2);
-            cancelFunction();
-        }
-        else
-        {
-            dontHaveMoney();
-        }
-    }
-    /// <summary>
-    /// M�todo asignado al bot�n de comprar "Torre Infernal".
-    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (3), 
-    /// activa el modo de colocaci�n en el mapa y cierra el men�.
-    /// </summary>
-    public void BuyTorreInfernal()
-    {
-        int costTowerToInt = costTower(3);
-
-        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
-        {
-            SetIsPlacingTilemapFlagTypeTower(3);
-            cancelFunction();
-        }
-        else
-        {
-            dontHaveMoney();
-        }
-    }
-    /// <summary>
-    /// M�todo asignado al bot�n de comprar "Torre Soporte".
-    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (4), 
-    /// activa el modo de colocaci�n en el mapa y cierra el men�.
-    /// </summary>
-    public void BuyTorreSupport()
-    {
-        int costTowerToInt = costTower(4);
-
-        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
-        {
-            SetIsPlacingTilemapFlagTypeTower(4);
+            SetIsPlacingTilemapFlagTypeTower(index);
             cancelFunction();
         }
         else

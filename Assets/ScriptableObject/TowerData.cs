@@ -4,6 +4,7 @@ using UnityEngine;
 public abstract class TowerData : ScriptableObject
 {
     public string nameOfTower;
+    public bool allowBuyTower;
     public float baseAttackRadius;
     public int damageUpgradeAmount;
     public float cooldownUpgradeAmount;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ConfigMedian
   m_EditorClassIdentifier: 
   nameOfTower: Torre Media
+  allowBuyTower: 1
   baseAttackRadius: 3
   damageUpgradeAmount: 15
   cooldownUpgradeAmount: 0.1
