@@ -99,10 +99,10 @@ public class Tower : MonoBehaviour
         {
             int nextLevel = updatetower.levelOfTower + 1;
             // Cogemos el sprite del nivel al que acabamos de subir (1 o 2)
-            Sprite proximoSprite = towerImagen[nextLevel].GetComponent<SpriteRenderer>().sprite;
-            BoxCollider2D proximoCol = towerImagen[nextLevel].GetComponent<BoxCollider2D>();
+            SpriteRenderer nexSprite = towerImagen[nextLevel].GetComponent<SpriteRenderer>();
+            BoxCollider2D nexCol = towerImagen[nextLevel].GetComponent<BoxCollider2D>();
 
-            SetTower(proximoSprite, proximoCol, updatetower.typeOfTower);
+            SetTower(nexSprite, nexCol, updatetower.typeOfTower);
 
             updatetower.needUpdateTower = false; // Reset de la bandera
 
@@ -115,6 +115,14 @@ public class Tower : MonoBehaviour
             GameManager.countMoney += goldRecovered;
             isBuilt = false;
             GameManager.countTower -= 1;
+            if (config is SupportTowerData)
+            {
+                RemoveAllBuffs();
+            }
+            if (towerActiveInMenu == this)
+            {
+                setGameObjectUpDeleStatus(false);
+            }
             Destroy(gameObject);
             return;
         }
@@ -205,7 +213,6 @@ public class Tower : MonoBehaviour
                         // Le damos el bufo y la apuntamos en la libreta
                         nearbyTower.currentDamage += currentIncreaseDamage;
                         buffedTowers.Add(nearbyTower);
-                        Debug.Log("He bufado a la torre: " + nearbyTower.gameObject.name + " daño: " + nearbyTower.currentDamage);
                     }
                 }
             }
@@ -407,7 +414,7 @@ public class Tower : MonoBehaviour
     /// <summary>
     /// Configura la torre recién comprada o mejorada.
     /// </summary>
-    public void SetTower(Sprite sprite = null, BoxCollider2D boxCollider = null, int type = 0)
+    public void SetTower(SpriteRenderer sprite = null, BoxCollider2D boxCollider = null, int type = 0)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
 
@@ -439,7 +446,8 @@ public class Tower : MonoBehaviour
             }
 
             // 4. Aplicamos los visuales
-            if (sprite == null) sprite = towerImagen[0].GetComponent<SpriteRenderer>().sprite;
+            if (sprite == null) 
+                sprite = towerImagen[0].GetComponent<SpriteRenderer>();
             if (boxCollider == null) boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
 
@@ -489,9 +497,10 @@ public class Tower : MonoBehaviour
     /// Actualiza la apariencia física de la torre, aplicándole un nuevo sprite y ajustando 
     /// su caja de colisión (BoxCollider2D) al tamaño exacto de esa nueva imagen.
     /// </summary>
-    public void setCollisionsAndSprite(SpriteRenderer spriteRenderer, Sprite sprite, BoxCollider2D boxCollider)
+    public void setCollisionsAndSprite(SpriteRenderer spriteRenderer, SpriteRenderer spriteRenderNew, BoxCollider2D boxCollider)
     {
-        spriteRenderer.sprite = sprite;
+        spriteRenderer.sprite = spriteRenderNew.sprite;
+        spriteRenderer.color = spriteRenderNew.color;
         this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider.size.x, boxCollider.size.y);
 
     }
@@ -718,15 +727,5 @@ public class Tower : MonoBehaviour
             }
         }
         buffedTowers.Clear();
-    }
-    /// <summary>
-    /// Si esta torre es destruida (por venta o enemigos), le quita el daño extra a todas las torres.
-    /// </summary>
-    private void OnDestroy()
-    {
-        if (config is SupportTowerData)
-        {
-            RemoveAllBuffs();
-        }
     }
 }

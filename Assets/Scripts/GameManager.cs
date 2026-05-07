@@ -652,7 +652,7 @@ public class GameManager : MonoBehaviour
                     for (int i = 0; i < td.level; i++)
                     {
                         int nextLevel = updateTower.levelOfTower + 1;
-                        Sprite sprite = tower.towerImagen[nextLevel].GetComponent<SpriteRenderer>().sprite;
+                        SpriteRenderer sprite = tower.towerImagen[nextLevel].GetComponent<SpriteRenderer>();
                         BoxCollider2D col = tower.towerImagen[nextLevel].GetComponent<BoxCollider2D>();
                 
                         updateTower.levelOfTower++;
