@@ -335,6 +335,7 @@ public class GameManager : MonoBehaviour
     /// <param name="menuPanel">El GameObject que contiene la interfaz gráfica del menú de pausa.</param>
     public void pauseaandRestartButton(GameObject menuPanel)
     {
+        if(GameManager.currentState == GameState.EventOpen) return;
         GameManager.currentState = GameManager.currentState == GameState.Paused ? GameState.Playing : GameState.Paused;
         changeTimeScale();
         bool status = menuPanel.activeSelf;
