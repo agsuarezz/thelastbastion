@@ -119,7 +119,11 @@ public class GameManager : MonoBehaviour
     public Sprite playSprite;
     public static bool loadedFromSave = false;
     private bool waitingBetweenRounds = false;
-    //velocidad actual del juego
+    // Botón para la velocidad actual del juego
+    Button velocityButton;
+    public Sprite velocitySprite0;
+    public Sprite velocitySprite1;
+    public Sprite velocitySprite2;
     private int velocity = 0;
 
     [Header("Prefabs de Torres (para cargar partida)")]
@@ -165,6 +169,10 @@ public class GameManager : MonoBehaviour
             {
                 HidePlayButton();
             }
+        }
+        if (GameObject.Find("VelocityButton"))
+        {
+            velocityButton = GameObject.Find("VelocityButton").GetComponent<Button>();
         }
         soundLostGame = Resources.Load<AudioClip>("soundLostGame");
         soundTakeLife = Resources.Load<AudioClip>("soundTakeLife");
@@ -478,21 +486,30 @@ public class GameManager : MonoBehaviour
         if (GameManager.currentState != GameState.Playing) return;
         // Se actualiza la velocidad
         velocity = (velocity + 1) % 3;
-        switch (velocity)
+        Image spriteRenderer = velocityButton.GetComponent<Image>();
+        if (spriteRenderer != null)
         {
-            case 0:
-                Time.timeScale = 1.0f;
-                break;
-            case 1:
-                Time.timeScale = 2.0f;
-                break;
-            case 2:
-                Time.timeScale = 3.0f;
-                break;
-            default:
-                Time.timeScale = 1.0f;
-                break;
+            switch (velocity)
+            {
+                case 0:
+                    spriteRenderer.sprite = velocitySprite0;
+                    Time.timeScale = 1.0f;
+                    break;
+                case 1:
+                    spriteRenderer.sprite = velocitySprite1;
+                    Time.timeScale = 2.0f;
+                    break;
+                case 2:
+                    spriteRenderer.sprite = velocitySprite2;
+                    Time.timeScale = 3.0f;
+                    break;
+                default:
+                    spriteRenderer.sprite = velocitySprite0;
+                    Time.timeScale = 1.0f;
+                    break;
+            }
         }
+        
     }
 
     private IEnumerator StartNextRoundRoutine()
