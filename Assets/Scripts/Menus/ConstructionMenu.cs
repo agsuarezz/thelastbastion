@@ -11,6 +11,7 @@ public class ConstructionMenu : MonoBehaviour
     public GameObject prefabTowerLight;
     public GameObject prefabTowerHeavy;
     public GameObject prefabTowerInfernal;
+    public GameObject prefabTowerSupport;
     public Tilemap tilemap;
 
     // Da permiso para que coloque la torre
@@ -230,6 +231,25 @@ public class ConstructionMenu : MonoBehaviour
         }
     }
     /// <summary>
+    /// M�todo asignado al bot�n de comprar "Torre Pesada".
+    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (2), 
+    /// activa el modo de colocaci�n en el mapa y cierra el men�.
+    /// </summary>
+    public void BuyTorreSupport()
+    {
+        int costTowerToInt = costTower(4);
+
+        if (GameManager.countMoney >= costTowerToInt * GameManager.globalCostMultiplier)
+        {
+            SetIsPlacingTilemapFlagTypeTower(4);
+            cancelFunction();
+        }
+        else
+        {
+            dontHaveMoney();
+        }
+    }
+    /// <summary>
     /// Instancia el prefab de la torre seleccionada en la coordenada exacta de la cuadr�cula.
     /// Oculta la cuadr�cula de ayuda (tilemap) y saca al jugador del modo colocaci�n.
     /// (El cobro del dinero se realiza posteriormente desde el script de la propia torre).
@@ -273,6 +293,7 @@ public class ConstructionMenu : MonoBehaviour
             case 1: return prefabTowerLight;
             case 2: return prefabTowerHeavy;
             case 3: return prefabTowerInfernal;
+            case 4: return prefabTowerSupport;
             default: return null;
         }
     }
@@ -288,6 +309,7 @@ public class ConstructionMenu : MonoBehaviour
             case 1: return prefabTowerLight.GetComponent<Tower>().config.upgradeCosts[0];
             case 2: return prefabTowerHeavy.GetComponent<Tower>().config.upgradeCosts[0];
             case 3: return prefabTowerInfernal.GetComponent<Tower>().config.upgradeCosts[0];
+            case 4: return prefabTowerSupport.GetComponent<Tower>().config.upgradeCosts[0];
             default: return prefabTowerMedian.GetComponent<Tower>().config.upgradeCosts[0];
         }
     }

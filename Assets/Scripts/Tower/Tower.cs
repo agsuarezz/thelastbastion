@@ -34,6 +34,8 @@ public class Tower : MonoBehaviour
     [HideInInspector] public float upgradeCooldownStep;
     [HideInInspector] public int totalGoldInvested = 0;
     [HideInInspector] public bool isBuilt = false;
+    [HideInInspector] public int currentIncreaseDamage;
+    private List<Tower> buffedTowers = new List<Tower>();
 
     private Transform currentTarget;
     private SpriteRenderer spriteRenderer;
@@ -77,6 +79,11 @@ public class Tower : MonoBehaviour
                 fireCooldown = projData.baseFireRate;
                 projectilePrefab = projData.projectilePrefab;
             }
+            else if (config is SupportTowerData supportData)
+            {
+                currentIncreaseDamage = supportData.baseIncreaseDamage;
+                fireCooldown = supportData.baseFireRate;
+            }
         }
         SetTower(null, null, constructionMenu.flagTypeTower);
     }
@@ -88,6 +95,7 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        Debug.Log(currentDamage);
         if (updatetower && updatetower.needUpdateTower && updatetower.typeOfTower != -1)
         {
             int nextLevel = updatetower.levelOfTower + 1;
@@ -123,9 +131,10 @@ public class Tower : MonoBehaviour
 
         if (config is LaserTowerData)
             HandleLaserAttack();
-        else
+        else if (config is ProjectileTowerData)
             HandleProjectileAttack();
-
+        else if (config is SupportTowerData)
+            HandleIncreaseDamage();
     }
     private void HandleLaserAttack()
     {
@@ -177,7 +186,32 @@ public class Tower : MonoBehaviour
             }
         }
     }
+    private void HandleIncreaseDamage()
+    {
+        fireTimer -= Time.deltaTime;
+        if(fireTimer <= 0f)
+        {
 
+            fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+            float radius = attackRadius * GameManager.globalRadiusMultiplier;
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+
+            foreach (Collider2D hit in hits)
+            {
+                if (hit.CompareTag("tower"))
+                {
+                    Tower nearbyTower = hit.GetComponent<Tower>();
+                    if (nearbyTower != null && nearbyTower != this && nearbyTower.isBuilt && !buffedTowers.Contains(nearbyTower))
+                    {
+                        // Le damos el bufo y la apuntamos en la libreta
+                        nearbyTower.currentDamage += currentIncreaseDamage;
+                        buffedTowers.Add(nearbyTower);
+                        Debug.Log("He bufado a la torre: " + nearbyTower.gameObject.name);
+                    }
+                }
+            }
+        }
+    }
     private void HandleProjectileAttack()
     {
         if (currentTarget == null) return;

@@ -140,6 +140,9 @@ public class GridCursor : MonoBehaviour
             case 3:
                 towerPrefab = constructionMenu.prefabTowerInfernal.GetComponent<Tower>();
                 break;
+            case 4:
+                towerPrefab = constructionMenu.prefabTowerSupport.GetComponent<Tower>();
+                break;
             default:
                 Debug.LogWarning("¡Cuidado! No se ha encontrado el attackRadius porque el flagTypeTower no es válido.");
                 return 9999;
