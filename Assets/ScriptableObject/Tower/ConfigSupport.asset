@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameOfTower: Torre Soporte
   baseAttackRadius: 3
-  damageUpgradeAmount: 5
-  cooldownUpgradeAmount: 0.2
-  upgradeCosts: 000000000000000000000000
+  damageUpgradeAmount: 10
+  cooldownUpgradeAmount: 0.5
+  upgradeCosts: 280000003c00000050000000
   baseIncreaseDamage: 5
   baseFireRate: 2

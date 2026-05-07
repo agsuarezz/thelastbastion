@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7611472788029974179}
   - component: {fileID: 1269333603004536476}
   - component: {fileID: -3715985671207351881}
-  - component: {fileID: 1840142924808511575}
+  - component: {fileID: 3937067793857834119}
   m_Layer: 5
-  m_Name: tower4ImagenUpdate1
+  m_Name: tower4ImagenUpdate2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,7 +101,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &1840142924808511575
+--- !u!61 &3937067793857834119
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,11 +139,11 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 17.5, y: 38.5}
+    oldSize: {x: 0.5833333, y: 1.2833333}
     newSize: {x: 1.5, y: 1.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 17.5, y: 38.5}
+  m_Size: {x: 0.5833333, y: 1.2833333}
   m_EdgeRadius: 0

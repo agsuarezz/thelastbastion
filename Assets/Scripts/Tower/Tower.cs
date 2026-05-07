@@ -95,7 +95,6 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        Debug.Log(currentDamage);
         if (updatetower && updatetower.needUpdateTower && updatetower.typeOfTower != -1)
         {
             int nextLevel = updatetower.levelOfTower + 1;
@@ -206,7 +205,7 @@ public class Tower : MonoBehaviour
                         // Le damos el bufo y la apuntamos en la libreta
                         nearbyTower.currentDamage += currentIncreaseDamage;
                         buffedTowers.Add(nearbyTower);
-                        Debug.Log("He bufado a la torre: " + nearbyTower.gameObject.name);
+                        Debug.Log("He bufado a la torre: " + nearbyTower.gameObject.name + " daño: " + nearbyTower.currentDamage);
                     }
                 }
             }
@@ -423,7 +422,7 @@ public class Tower : MonoBehaviour
             updateExtensionsTower();
             setTypeTower(type);
 
-            // 3. ¡LA CLAVE! Separamos Construir vs Mejorar para el orden de estadísticas
+            // 3. Separamos Construir vs Mejorar para el orden de estadísticas
             if (!isBuilt)
             {
                 // ES NUEVA (Nivel 0)
@@ -503,7 +502,15 @@ public class Tower : MonoBehaviour
     {
         if (updatetower.levelOfTower == 0) return;
 
-        currentDamage += upgradeDamageStep;
+        RemoveAllBuffs();
+        if (config is LaserTowerData || config is ProjectileTowerData)
+        {
+            currentDamage += upgradeDamageStep;
+        }
+        else if(config is SupportTowerData)
+        {
+            currentIncreaseDamage += upgradeDamageStep;
+        }
 
         if (config is LaserTowerData)
         {
@@ -513,7 +520,6 @@ public class Tower : MonoBehaviour
         }
         else
         {
-            // Mejora reduce el tiempo entre balas
             fireCooldown -= upgradeCooldownStep;
             fireCooldown = Mathf.Max(fireCooldown, 0.1f);
         }
@@ -567,15 +573,7 @@ public class Tower : MonoBehaviour
             }
             if (text.name == "currentDamageText")
             {
-                if (updatetower.levelOfTower < 2)
-                {
-                    int increaseCurrentDamage = currentDamage + upgradeDamageStep;
-                    text.text = "Daño: [" + currentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
-                }
-                else
-                {
-                    text.text = "Daño: [" + currentDamage + "] (MÁXIMO)";
-                }
+                damageFunction(text);
             }
             if (text.name == "cadenceText")
             {
@@ -626,29 +624,109 @@ public class Tower : MonoBehaviour
             angle += (360f / circleSegments);
         }
     }
-    public void cadenceFunction(TextMeshProUGUI text)
+    public void damageFunction(TextMeshProUGUI text)
     {
-        float currentBaseCooldown = config is LaserTowerData ? currentRestDuration : fireCooldown;
-        if (updatetower.levelOfTower < 2)
+        // Si es torre de soporte, leemos el daño extra y cambiamos el texto
+        if (config is SupportTowerData)
         {
-            // 1. Recarga REAL actual (Base * Cartas)
-            float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
+            if (updatetower.levelOfTower < 2)
+            {
+                int increaseSupportDamage = currentIncreaseDamage + upgradeDamageStep;
+                text.text = "Daño Extra: [" + currentIncreaseDamage + "] -> <color=#2ECC71> [" + increaseSupportDamage + "] </color>";
+            }
+            else
+            {
+                text.text = "Daño Extra: [" + currentIncreaseDamage + "] (MÁXIMO)";
+            }
+        }
+        // Si es cualquier otra torre, usamos la lógica normal
+        else
+        {
+            if (updatetower.levelOfTower < 2)
+            {
+                int increaseCurrentDamage = currentDamage + upgradeDamageStep;
+                text.text = "Daño: [" + currentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
+            }
+            else
+            {
+                text.text = "Daño: [" + currentDamage + "] (MÁXIMO)";
+            }
+        }
+    }
+    public void cadenceFunction(TextMeshProUGUI text)
+    { 
+        if(config is LaserTowerData || config is ProjectileTowerData)
+        {
+            float currentBaseCooldown = config is LaserTowerData ? currentRestDuration : fireCooldown;
+            if (updatetower.levelOfTower < 2)
+            {
+                // 1. Recarga REAL actual (Base * Cartas)
+                float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
 
-            // 2. Simulamos cuál será la Base si la mejoramos
-            float baseNextCooldown = currentBaseCooldown - upgradeCooldownStep;
-            baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); // Seguridad para la base
+                // 2. Simulamos cuál será la Base si la mejoramos
+                float baseNextCooldown = currentBaseCooldown - upgradeCooldownStep;
+                baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); // Seguridad para la base
 
-            // 3. Recarga REAL futura (Nueva Base * Cartas)
-            float realNextCooldown = baseNextCooldown * GameManager.globalAttackSpeedMultiplier;
-            realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); // Seguridad final
+                // 3. Recarga REAL futura (Nueva Base * Cartas)
+                float realNextCooldown = baseNextCooldown * GameManager.globalAttackSpeedMultiplier;
+                realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); // Seguridad final
 
-            text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextCooldown.ToString("F2") + "s] </color>";
+                text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextCooldown.ToString("F2") + "s] </color>";
+            }
+            else
+            {
+                // Si ya es nivel máximo, calculamos su recarga real actual para mostrarla
+                float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
+                text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] (MÁXIMO)";
+            }
         }
         else
         {
-            // Si ya es nivel máximo, calculamos su recarga real actual para mostrarla
-            float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
-            text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] (MÁXIMO)";
+            // --- LÓGICA PARA LA TORRE DE SOPORTE ---
+            if (updatetower.levelOfTower < 2)
+            {
+                // Usamos fireCooldown (que en esta torre guarda el tiempo de escaneo)
+                float realCurrentScan = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+
+                float baseNextScan = fireCooldown - upgradeCooldownStep;
+                baseNextScan = Mathf.Max(baseNextScan, 0.1f);
+
+                float realNextScan = baseNextScan * GameManager.globalAttackSpeedMultiplier;
+                realNextScan = Mathf.Max(realNextScan, 0.1f);
+
+                text.text = "Escaneo: [" + realCurrentScan.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextScan.ToString("F2") + "s] </color>";
+            }
+            else
+            {
+                float realCurrentScan = fireCooldown * GameManager.globalAttackSpeedMultiplier;
+                text.text = "Escaneo: [" + realCurrentScan.ToString("F2") + "s] (MÁXIMO)";
+            }
+        }
+    }
+    /// <summary>
+    /// Elimina el daño extra otorgado a todas las torres aliadas que estaban siendo potenciadas.
+    /// Recorre la lista de torres bufadas, resta la bonificación actual y vacía el registro.
+    /// Es vital llamarlo antes de mejorar esta torre (para actualizar el bufo) o al destruirla/venderla.
+    /// </summary>
+    public void RemoveAllBuffs()
+    {
+        foreach (Tower tower in buffedTowers)
+        {
+            if (tower != null)
+            {
+                tower.currentDamage -= currentIncreaseDamage;
+            }
+        }
+        buffedTowers.Clear();
+    }
+    /// <summary>
+    /// Si esta torre es destruida (por venta o enemigos), le quita el daño extra a todas las torres.
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (config is SupportTowerData)
+        {
+            RemoveAllBuffs();
         }
     }
 }

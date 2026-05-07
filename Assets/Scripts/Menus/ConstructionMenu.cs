@@ -231,8 +231,8 @@ public class ConstructionMenu : MonoBehaviour
         }
     }
     /// <summary>
-    /// M�todo asignado al bot�n de comprar "Torre Pesada".
-    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (2), 
+    /// M�todo asignado al bot�n de comprar "Torre Soporte".
+    /// Comprueba si hay dinero suficiente, asigna el tipo de torre (4), 
     /// activa el modo de colocaci�n en el mapa y cierra el men�.
     /// </summary>
     public void BuyTorreSupport()

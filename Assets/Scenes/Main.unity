@@ -1151,6 +1151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: d99218c89fddbb14c934656478fedfb8, type: 2}
+  textNameTower: {fileID: 286489930}
   textDamage: {fileID: 207204191}
   textFireRate: {fileID: 1111126140}
   textAmout: {fileID: 773728836}
@@ -14446,6 +14447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: 51db0feb5655a16419af0f41d4dddeb7, type: 2}
+  textNameTower: {fileID: 2080263031}
   textDamage: {fileID: 1150647540}
   textFireRate: {fileID: 13018904}
   textAmout: {fileID: 1195068758}
@@ -15280,7 +15282,7 @@ GameObject:
   - component: {fileID: 977876277}
   - component: {fileID: 977876280}
   - component: {fileID: 977876279}
-  - component: {fileID: 977876278}
+  - component: {fileID: 977876281}
   m_Layer: 5
   m_Name: featureSupport
   m_TagString: Untagged
@@ -15310,22 +15312,6 @@ RectTransform:
   m_AnchoredPosition: {x: 74, y: -7.1896973}
   m_SizeDelta: {x: -114.4292, y: -349.6206}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &977876278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 977876276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ade7e433f6dde3145b34ebc67ddfb6f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: d99218c89fddbb14c934656478fedfb8, type: 2}
-  textDamage: {fileID: 24516847}
-  textFireRate: {fileID: 2116687463}
-  textAmout: {fileID: 1211756960}
 --- !u!114 &977876279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15364,6 +15350,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 977876276}
   m_CullTransparentMesh: 1
+--- !u!114 &977876281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977876276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9b64108a64188245b42c33368d0399e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: 9e858b73df393f14982f7e4784b97b30, type: 2}
+  textNameTower: {fileID: 1229871456}
+  textExtraDamage: {fileID: 24516847}
+  textScanRate: {fileID: 2116687463}
+  textPrice: {fileID: 1211756960}
 --- !u!1 &998636210
 GameObject:
   m_ObjectHideFlags: 0
@@ -21127,6 +21130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: 92235023035516348b0e2eaef105d3cc, type: 2}
+  textNameTower: {fileID: 1436499385}
   textDamage: {fileID: 1987464242}
   textFireRate: {fileID: 171548783}
   textAmout: {fileID: 235238226}
@@ -25323,6 +25327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: 63dc6320520ece94180ee1d295b782e4, type: 2}
+  textNameTower: {fileID: 1338683600}
   textDamage: {fileID: 6745828767907185387}
   textFireRate: {fileID: 8867117592621492373}
   textAmout: {fileID: 236649797651766861}
