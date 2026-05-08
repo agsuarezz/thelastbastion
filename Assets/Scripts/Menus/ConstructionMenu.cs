@@ -174,8 +174,7 @@ public class ConstructionMenu : MonoBehaviour
         }
         else if(!statusTower)
         {
-            StartCoroutine(gameManager.messageError("No lo tiene desbloqueado"));
-            GameManager.sound(GameManager.soundError);
+            DenyLockedAccess();
             return;
         }
         SetIsPlacingTilemapFlagTypeTower(index);
@@ -248,7 +247,12 @@ public class ConstructionMenu : MonoBehaviour
     }
     public void dontHaveMoney()
     {
-        StartCoroutine(gameManager.messageError("No hay dinero suficiente"));
+        StartCoroutine(gameManager.messageError("Presupuesto insuficiente... ¡El constructor se niega a trabajar!"));
+        GameManager.sound(GameManager.soundError);
+    }
+    public void DenyLockedAccess()
+    {
+        StartCoroutine(gameManager.messageError("¡No insistas! El candado es de verdad."));
         GameManager.sound(GameManager.soundError);
     }
 }
