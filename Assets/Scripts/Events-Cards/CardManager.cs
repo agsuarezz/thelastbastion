@@ -58,7 +58,7 @@ public class CardManager : MonoBehaviour
     public void ShowCards()
     {
         cardsPanel.SetActive(true);
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
 
         // Seleccionar 3 cartas aleatorias sin que se repitan
         List<CardData> pool = new List<CardData>(availableUpgrades);
@@ -108,6 +108,6 @@ public class CardManager : MonoBehaviour
 
         GameManager.currentState = GameState.Playing;
         cardsPanel.SetActive(false);
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
     }
 }

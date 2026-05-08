@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a39d1158c741a843bd75527c0746791, type: 3}
+  m_Name: TowerDiscount
+  m_EditorClassIdentifier: 
+  eventName: Descuento en Torres
+  description: Torres al 50%. Si pierdes ahora es por tu culpa, no por el juego.
+  type: 0
+  audioClip: {fileID: 8300000, guid: 4fa5c000dc8dfb34e81b1192c3609fd4, type: 3}
+  baseWeight: 10

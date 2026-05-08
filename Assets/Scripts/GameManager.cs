@@ -77,10 +77,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public TextMeshProUGUI countMoneyText;
     /// <summary>
-    /// Enlace al script gestor de eventos aleatorios, utilizado para disparar eventos (como estampidas o bonus) desde aquí.
-    /// </summary>
-    public randomEvents randomEvent;
-    /// <summary>
     /// Multiplicador global que afecta a todo el oro ganado durante la partida. 
     /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales (ej. Frenesí Capitalista).
     /// </summary>
@@ -136,7 +132,8 @@ public class GameManager : MonoBehaviour
     private int  _pendingCastleLifeMax = -1;
     private bool _hasSavedGame         = false;
     private List<TowerSaveData> _pendingTowers = null;
-    
+
+
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -511,7 +508,12 @@ public class GameManager : MonoBehaviour
         }
         
     }
-
+    /// <summary>
+    /// Corrutina que gestiona la transición y el inicio de una nueva ronda.
+    /// Se encarga de incrementar el contador de oleadas, escalar matemáticamente la vida 
+    /// y el daño global de los enemigos, actualizar la interfaz y, de forma periódica (cada 2 rondas), 
+    /// invocar al EventManager para lanzar un evento aleatorio antes de reactivar el Spawner.
+    /// </summary>
     private IEnumerator StartNextRoundRoutine()
     {
         isChangingRound = true;
@@ -528,31 +530,18 @@ public class GameManager : MonoBehaviour
         if (messageRound != null)
             messageRound.text = "Ronda " + countRound;
 
-        // Evento especial boss en ronda 10
-        if (countRound == 10)
+
+         if (countRound % 2 == 0 && countRound != 0)
         {
+
             yield return new WaitForSeconds(1f);
 
-            randomEvents eventsScript = GetComponent<randomEvents>();
-            if (eventsScript != null)
+            EventManager eventManager = this.GetComponent<EventManager>();
+            if (eventManager != null)
             {
-                StartCoroutine(eventsScript.EventBossRound());
-           
-            }
-        }
-        // Eventos normales
-        else if (countRound % 2 == 0 && countRound != 0)
-        {
-            yield return new WaitForSeconds(1f);
+                eventManager.TriggerEvent(GameManager.countRound);
 
-            if (randomEvents.eventList == null || randomEvents.eventList.Count == 0)
-            {
-                GetComponent<randomEvents>().LoadEvents();
             }
-
-            int random = Random.Range(0, randomEvents.eventList.Count);
-            StartCoroutine(randomEvents.eventList[random]());
-            randomEvents.eventList.RemoveAt(random);
         }
 
         if (spawner != null)

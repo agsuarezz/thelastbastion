@@ -26,28 +26,28 @@ public class randomEvents : MonoBehaviour
         HideEventUI();
     }
 
- [Tooltip("Duración del texto y fondo del evento en pantalla.")]
-public float eventUIDuration = 5f;
+    [Tooltip("Duración del texto y fondo del evento en pantalla.")]
+    public float eventUIDuration = 5f;
 
-private Coroutine hideUICoroutine;
+    private Coroutine hideUICoroutine;
 
-private void ShowEventUI(string message, AudioClip soundEffect)
-{
-    if (messageEventText != null) messageEventText.text = message;
-    if (eventBackgroundUI != null) eventBackgroundUI.SetActive(true);
-    if (soundEffect != null) GameManager.sound(soundEffect);
+    private void ShowEventUI(string message, AudioClip soundEffect)
+    {
+        if (messageEventText != null) messageEventText.text = message;
+        if (eventBackgroundUI != null) eventBackgroundUI.SetActive(true);
+        if (soundEffect != null) GameManager.sound(soundEffect);
 
-    if (hideUICoroutine != null)
-        StopCoroutine(hideUICoroutine);
+        if (hideUICoroutine != null)
+            StopCoroutine(hideUICoroutine);
 
-    hideUICoroutine = StartCoroutine(HideEventUIAfterSeconds());
-}
+        hideUICoroutine = StartCoroutine(HideEventUIAfterSeconds());
+    }
 
-private IEnumerator HideEventUIAfterSeconds()
-{
-    yield return new WaitForSeconds(eventUIDuration);
-    HideEventUI();
-}
+    private IEnumerator HideEventUIAfterSeconds()
+    {
+        yield return new WaitForSeconds(eventUIDuration);
+        HideEventUI();
+    }
 
     private void HideEventUI()
     {
@@ -126,13 +126,13 @@ private IEnumerator HideEventUIAfterSeconds()
     }
 
     public IEnumerator EventBossRound()
-{
-    ShowEventUI("Ha llegado el jefe final... el de prueba, el bueno es DLC.", GameManager.soundBoss);
+    {
+        ShowEventUI("Ha llegado el jefe final... el de prueba, el bueno es DLC.", GameManager.soundBoss);
 
-    yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(5f);
 
-    HideEventUI();
-}
+        HideEventUI();
+    }
 
     public IEnumerator EventCoinRain()
     {
