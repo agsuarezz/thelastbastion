@@ -16,6 +16,18 @@ public class TowerSaveData
     public int   level;            // 0, 1 o 2
     public int   totalGoldInvested;
 }
+// ═════════════════════════════════════════════════════════════════════════════
+//  DATOS SERIALIZABLES PARA METAPROGRESIÓN (ÁRBOL DE MEJORAS)
+// ═════════════════════════════════════════════════════════════════════════════
+[Serializable]
+public class MetaSaveData
+{
+    public int totalExperience; // La XP global para gastar en el árbol
+
+    // Booleanos de tus torres desbloqueables (asumo que la Mediana viene por defecto)
+    public bool isInfernalTowerUnlocked = false;
+    public bool isSupportTowerUnlocked = false;
+}
 
 [Serializable]
 public class GameSaveData
@@ -24,9 +36,11 @@ public class GameSaveData
     public int   countRound;
     public int   countMoney;
     public float timeinGame;
-    public int   enemiesDestroyed;
+    public int countEnemiesDied;
     public int   countTower;
-
+    public int enemiesDestroyed;
+    // ── Boss ──────────────────────────────────────────────────────────
+    public bool hasBossAppeared;
 
     // ── Castillo ──────────────────────────────────────────────────────────
     public int castleLife;
@@ -58,6 +72,8 @@ public static class SaveSystem
     private static readonly string SavePath =
         Path.Combine(Application.persistentDataPath, "savegame.json");
 
+    //Ruta en donde se guarda SERIALIZABLES PARA METAPROGRESIÓN (ÁRBOL DE MEJORAS)
+    private static readonly string MetaSavePath = Path.Combine(Application.persistentDataPath, "metaprogression.json");
     public static void Save(GameSaveData data)
     {
         try
@@ -71,16 +87,40 @@ public static class SaveSystem
 
     public static GameSaveData Load()
     {
-        if (!File.Exists(SavePath)) return null;
+        if (!File.Exists(SavePath)) return new GameSaveData();
         try
         {
-            var data = JsonUtility.FromJson<GameSaveData>(File.ReadAllText(SavePath));
-            Debug.Log($"[SaveSystem] Cargado (guardado el {data.saveDate})");
-            return data;
+            return JsonUtility.FromJson<GameSaveData>(File.ReadAllText(SavePath));
         }
-        catch (Exception e) { Debug.LogError($"[SaveSystem] Error al cargar: {e.Message}"); return null; }
+        catch (Exception e) { return new GameSaveData(); }
     }
-
     public static void DeleteSave() { if (File.Exists(SavePath)) File.Delete(SavePath); }
     public static bool SaveExists()  => File.Exists(SavePath);
+
+    public static void SaveMeta(MetaSaveData data)
+    {
+        try
+        {
+            File.WriteAllText(MetaSavePath, JsonUtility.ToJson(data, prettyPrint: true));
+            Debug.Log($"[SaveSystem] MetaProgreso Guardado en: {MetaSavePath}");
+        }
+        catch (Exception e) { Debug.LogError($"[SaveSystem] Error al guardar Meta: {e.Message}"); }
+    }
+
+    public static MetaSaveData LoadMeta()
+    {
+        if (!File.Exists(MetaSavePath)) return new MetaSaveData(); // Si no existe, devuelve uno nuevo en blanco
+        try
+        {
+            return JsonUtility.FromJson<MetaSaveData>(File.ReadAllText(MetaSavePath));
+        }
+        catch (Exception e) { Debug.LogError($"[SaveSystem] Error al cargar Meta: {e.Message}"); return new MetaSaveData(); }
+    }
+    public static void DebugLogMetaSave()
+    {
+        MetaSaveData data = LoadMeta();
+        // LoadMeta siempre devuelve un objeto (aunque esté vacío), así que imprimimos siempre
+        string json = JsonUtility.ToJson(data, true);
+        Debug.Log($"<color=magenta>[SaveSystem] Contenido de METAPROGRESIÓN:</color>\n{json}");
+    }
 }

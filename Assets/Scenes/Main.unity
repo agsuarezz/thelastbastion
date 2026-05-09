@@ -662,7 +662,6 @@ MonoBehaviour:
   spawner: {fileID: 452400196}
   castlescript: {fileID: 196915343}
   countMoneyText: {fileID: 1781555234}
-  randomEvent: {fileID: 64441738}
   cardManager: {fileID: 626184129}
   roundsForCards: 3
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
@@ -673,6 +672,8 @@ MonoBehaviour:
   prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}
   prefabTowerHeavy: {fileID: 8544740251689827319, guid: 65311828bfcba7d4999338877f98bf6e, type: 3}
   prefabTowerInfernal: {fileID: 8544740251689827319, guid: 9a324c408fd1b6249bd3463156a9a76d, type: 3}
+  configTowerSupport: {fileID: 11400000, guid: 9e858b73df393f14982f7e4784b97b30, type: 2}
+  configTowerInfernal: {fileID: 11400000, guid: d99218c89fddbb14c934656478fedfb8, type: 2}
 --- !u!4 &64441736
 Transform:
   m_ObjectHideFlags: 0
@@ -7598,7 +7599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -850, y: -175}
+  m_AnchoredPosition: {x: 606, y: 309}
   m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &438094632
@@ -7805,7 +7806,7 @@ MonoBehaviour:
   - pooler: {fileID: 1979209788}
     enemyData: {fileID: 11400000, guid: ef6e8e2cbdc866342ba4a1cd9397feff, type: 2}
     cost: 1
-    minRound: 1
+    minRound: 0
     isBoss: 0
   - pooler: {fileID: 1993064750}
     enemyData: {fileID: 11400000, guid: b939b8eccd6494c429098ceea6d11a51, type: 2}
@@ -21903,7 +21904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1478752676
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23775,8 +23776,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 613.7971, y: 308.22546}
-  m_SizeDelta: {x: 228.406, y: 75.5492}
+  m_AnchoredPosition: {x: 516, y: 308.22546}
+  m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1702351655
 MonoBehaviour:
@@ -23854,7 +23855,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4366468120289485129, guid: 3aa9ec3bd08658743a921dea618f8a64, type: 3}
+  m_Sprite: {fileID: 5100347675393945542, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

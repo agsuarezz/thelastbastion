@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -77,9 +78,34 @@ public class castleScript : MonoBehaviour
             isGameOver = true;
             life = 0;
 
-            
+            SaveData();
+
+
             FindObjectOfType<GameManager>().cargarGameOver();
         }
+    }
+    public void SaveData()
+    {
+        int xpThisGame = calculateXP();
+        // 1. Cargamos lo que ya tenía el jugador en su cuenta persistente
+        MetaSaveData metaPersistent = SaveSystem.LoadMeta();
+
+        // 2. SUMAMOS la experiencia nueva a la que ya tenía
+        metaPersistent.totalExperience += xpThisGame;
+        SaveSystem.SaveMeta(metaPersistent);
+        SaveSystem.DebugLogMetaSave();
+    }
+    public int calculateXP()
+    {
+        int baseRound = 10 * GameManager.countRound;
+        int difficultyMultiplier = numberRoundHighTen() * 5;
+        int bonusBoss = GameManager.hasBossAppeared ? 100: 0;
+        int enemyDied = GameManager.enemiesDestroyed / 10;
+        return baseRound + difficultyMultiplier + bonusBoss + enemyDied;
+    }
+    private int numberRoundHighTen()
+    {
+        return Mathf.Max(0, GameManager.countRound - 10);
     }
     public IEnumerator SearchandMovetotheMap()
     {

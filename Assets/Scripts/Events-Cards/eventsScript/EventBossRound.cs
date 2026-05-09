@@ -6,6 +6,7 @@ public class EventBossRound : DynamicEvent
 {
     public override IEnumerator Execute()
     {
+        GameManager.hasBossAppeared = true;
         yield break;
     }
 }

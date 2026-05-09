@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     public static int enemiesDestroyed = 0;
     // Cantidad total de torres que el jugador ha construido en el mapa a lo largo del juego.
     public static int countTower = 0;
+    public static bool hasBossAppeared = false;
     [Header("Economía y Eventos")]
 
     /// <summary>
@@ -132,8 +133,9 @@ public class GameManager : MonoBehaviour
     private int  _pendingCastleLifeMax = -1;
     private bool _hasSavedGame         = false;
     private List<TowerSaveData> _pendingTowers = null;
-
-
+    [Header("Configuración de Torres (ScriptableObjects)")]
+    public TowerData configTowerSupport;
+    public TowerData configTowerInfernal;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -254,11 +256,18 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+        // 1. CARGAMOS LA METAPROGRESIÓN PERMANENTE
+        MetaSaveData meta = SaveSystem.LoadMeta();
+
+        // 2. INYECTAMOS EL PROGRESO EN LOS SCRIPTABLE OBJECTS
+        if (configTowerSupport != null) configTowerSupport.allowBuyTower = meta.isSupportTowerUnlocked;
+        if (configTowerInfernal != null) configTowerInfernal.allowBuyTower = meta.isInfernalTowerUnlocked;
+        // 3. CONTINUAMOS CON TU CÓDIGO NORMAL DE LA PARTIDA
         GameSaveData saved = SaveSystem.Load();
- 
-        if (saved != null)
+        if (saved.countRound > 0)
         {
             countRound                  = saved.countRound;
+            hasBossAppeared             = saved.hasBossAppeared;
             countMoney                  = saved.countMoney;
             timeinGame                  = saved.timeinGame;
             enemiesDestroyed            = saved.enemiesDestroyed;
@@ -282,21 +291,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            countRound                  = 0;
-            countMoney                  = 200;
-            timeinGame = 0f;
-            enemiesDestroyed = 0;
-            countTower = 0;
-            globalMoneyMultiplier       = 1;
-            globalCostMultiplier        = 1f;
-            globalAttackSpeedMultiplier = 1f;
-            globalDamageTakenMultiplier = 1f;
-            globalSpeedMultiplier       = 1f;
-            globalEnemyDamageMultiplier = 1f;
-            globalEnemyHealthMultiplier = 1f;
-            loadedFromSave = false;
-            waitingBetweenRounds = false;
-            GridGenerator.selectedGridIndex = -1;
+           ResetAllStaticVariables();
         }
     }
     /// <summary>
@@ -558,6 +553,7 @@ public class GameManager : MonoBehaviour
             countMoney                  = countMoney,
             timeinGame                  = timeinGame,
             enemiesDestroyed            = enemiesDestroyed,
+            hasBossAppeared             = hasBossAppeared,
             countTower                  = countTower,
             castleLife                  = castlescript != null ? castlescript.life    : 100,
             castleLifeMax               = castlescript != null ? castlescript.lifeMax : 100,
@@ -664,6 +660,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public static void ResetAllStaticVariables()
     {
+        hasBossAppeared = false;
         countRound = 0;
         timeinGame = 0f;
         enemiesDestroyed = 0;
@@ -680,6 +677,7 @@ public class GameManager : MonoBehaviour
         globalEnemyHealthMultiplier = 1f;
         globalEnemyDamageMultiplier = 1f;
 
+        GridGenerator.selectedGridIndex = 0;
         // Estado del juego
         currentState = GameState.Playing;
         loadedFromSave = false;
