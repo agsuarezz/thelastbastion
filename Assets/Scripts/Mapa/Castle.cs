@@ -98,14 +98,9 @@ public class castleScript : MonoBehaviour
     public int calculateXP()
     {
         int baseRound = 10 * GameManager.countRound;
-        int difficultyMultiplier = numberRoundHighTen() * 5;
-        int bonusBoss = GameManager.hasBossAppeared ? 100: 0;
-        int enemyDied = GameManager.enemiesDestroyed / 10;
-        return baseRound + difficultyMultiplier + bonusBoss + enemyDied;
-    }
-    private int numberRoundHighTen()
-    {
-        return Mathf.Max(0, GameManager.countRound - 10);
+        int difficultyMultiplier = 10 * (GameManager.countRound / 100);
+        int bonusBoss = 100 * (GameManager.countRound / 10);
+        return baseRound + difficultyMultiplier + bonusBoss;
     }
     public IEnumerator SearchandMovetotheMap()
     {

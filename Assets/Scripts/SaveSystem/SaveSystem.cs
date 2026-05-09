@@ -24,7 +24,6 @@ public class MetaSaveData
 {
     public int totalExperience; // La XP global para gastar en el árbol
 
-    // Booleanos de tus torres desbloqueables (asumo que la Mediana viene por defecto)
     public bool isInfernalTowerUnlocked = false;
     public bool isSupportTowerUnlocked = false;
 }
