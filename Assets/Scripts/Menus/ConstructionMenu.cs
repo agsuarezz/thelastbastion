@@ -166,7 +166,7 @@ public class ConstructionMenu : MonoBehaviour
     public void BuyTower(int index)
     {
         int costTowerToInt = costTower(index);
-        bool statusTower = setPrefabType(index).GetComponent<Tower>().config.allowBuyTower;
+        bool statusTower = TowerLockUI.IsTowerUnlocked(setPrefabType(index).GetComponent<Tower>().config);
         if (GameManager.countMoney < costTowerToInt * GameManager.globalCostMultiplier)
         {
             dontHaveMoney();

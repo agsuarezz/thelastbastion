@@ -256,13 +256,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        // 1. CARGAMOS LA METAPROGRESIÓN PERMANENTE
-        MetaSaveData meta = SaveSystem.LoadMeta();
-
-        // 2. INYECTAMOS EL PROGRESO EN LOS SCRIPTABLE OBJECTS
-        if (configTowerSupport != null) configTowerSupport.allowBuyTower = meta.isSupportTowerUnlocked;
-        if (configTowerInfernal != null) configTowerInfernal.allowBuyTower = meta.isInfernalTowerUnlocked;
-        // 3. CONTINUAMOS CON TU CÓDIGO NORMAL DE LA PARTIDA
+        // 1. CONTINUAMOS CON TU CÓDIGO NORMAL DE LA PARTIDA
         GameSaveData saved = SaveSystem.Load();
         if (saved.countRound > 0)
         {
