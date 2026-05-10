@@ -388,7 +388,7 @@ public class GameManager : MonoBehaviour
     }
     public void mainMenuButton()
     {
-        Time.timeScale = 1f;
+        SaveSystem.DeleteSave();
         SceneManager.LoadScene("principalMenu");
     }
     /// <summary>

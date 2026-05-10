@@ -460,7 +460,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalXpText: {fileID: 758291729}
-  allNodesInTree: []
+  allNodesInTree:
+  - {fileID: 1787394820}
+  - {fileID: 1416476019}
 --- !u!4 &943329535
 Transform:
   m_ObjectHideFlags: 0
@@ -1126,6 +1128,7 @@ MonoBehaviour:
   iconImage: {fileID: 1416476017}
   costText: {fileID: 152714877}
   buyButton: {fileID: 1416476016}
+  lineRenderer: {fileID: 1281869688}
 --- !u!1 &1787394815
 GameObject:
   m_ObjectHideFlags: 0
@@ -1264,6 +1267,7 @@ MonoBehaviour:
   iconImage: {fileID: 1787394818}
   costText: {fileID: 1229411928}
   buyButton: {fileID: 1787394817}
+  lineRenderer: {fileID: 0}
 --- !u!1 &2138006262
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,6 +19,7 @@ public class principalSceneTransition : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1f;
         if (fadeCanvasGroup != null)
         {
             fadeCanvasGroup.alpha = 0f;
