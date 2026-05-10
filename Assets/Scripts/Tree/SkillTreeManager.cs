@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class SkillTreeManager : MonoBehaviour
@@ -14,10 +15,25 @@ public class SkillTreeManager : MonoBehaviour
 
     private void Start()
     {
+        SaveSystem.DeleteMeta();
         // 1. Al abrir la escena del árbol, cargamos la partida
         currentMeta = SaveSystem.LoadMeta();
+        currentMeta.totalExperience += 100;
 
-        // 2. Actualizamos todo visualmente
+        // 2. Iniciamos todos los nodos en el guardado si no lo están
+        bool confirmed = false;
+        foreach (SkillNode node in allNodesInTree)
+        {
+            if (GetNode(node.myData.skillID) == null)
+            {
+                InitNode(node);
+                confirmed = true;
+            }
+        }
+        if (confirmed) SaveSystem.SaveMeta(currentMeta);
+        SaveSystem.DebugLogMetaSave();
+
+        // 3. Actualizamos todo visualmente
         UpdateUI();
     }
 
@@ -28,35 +44,27 @@ public class SkillTreeManager : MonoBehaviour
     public void TryBuySkill(SkillData skillToBuy)
     {
 
-        // 1. ¿Tenemos el requisito previo comprado? (Si es que tiene)
-        if (skillToBuy.prerequisite != null && !skillToBuy.prerequisite.buyed)
+        int currentLevel = GetSkillLevel(skillToBuy.skillID);
+        if (currentLevel >= skillToBuy.maxNBuy)
         {
-            Debug.LogWarning("Te falta comprar la mejora anterior primero.");
+            Debug.LogWarning("Ya se ha comprado este nodo al máximo.");
             return;
         }
 
-        // 2. ¿Tenemos suficiente pasta (XP)?
-        if (currentMeta.totalExperience < skillToBuy.cost)
+        int cost = skillToBuy.baseCost + (currentLevel * skillToBuy.costMultiplier);
+        if (currentMeta.totalExperience < cost)
         {
-            Debug.LogWarning("No tienes suficiente XP. ¡A farmear!");
-            // Aquí podrías reproducir el 'GameManager.soundError'
-            return;
-        }
-
-        // 3.. ¿Ya está comprado?
-        if (skillToBuy.buyed)
-        {
-            Debug.LogWarning("Eso ya lo compraste, tontín.");
+            Debug.LogWarning("No hay pasta.");
             return;
         }
 
         // --- ¡COMPRA ACEPTADA! ---
 
         // Descontamos la XP
-        currentMeta.totalExperience -= skillToBuy.cost;
+        currentMeta.totalExperience -= cost;
 
         // Desbloqueamos la torre correspondiente en nuestro MetaSaveData
-        skillToBuy.buyed = true;
+        UpLevel(skillToBuy.skillID);
 
         // Guardamos físicamente en el archivo JSON
         SaveSystem.SaveMeta(currentMeta);
@@ -78,8 +86,51 @@ public class SkillTreeManager : MonoBehaviour
         // Recorremos todos los botones y les decimos: "Oye, revisa si estás bloqueado o comprado"
         foreach (SkillNode node in allNodesInTree)
         {
-            if (node.myData.prerequisite) node.RefreshVisuals(node.myData.prerequisite.buyed);
-            else node.RefreshVisuals(true);
+            if (node.myData.prerequisite != null)
+            {
+                SkillProgress nodePrerequisite = GetNode(node.myData.prerequisite.skillID);
+                node.RefreshVisuals(nodePrerequisite.buyed);
+            }
+            else
+            {
+                node.RefreshVisuals(true);
+                Debug.Log(node.myData.skillID);
+            }
         }
+    }
+
+    private void InitNode(SkillNode node)
+    {
+        currentMeta.skillList.Add(new SkillProgress { id = node.myData.skillID, level = 0, buyed = node.myData.maxNBuy == 0 });
+    }
+
+    public int GetSkillLevel(string id)
+    {
+        // Buscamos en la lista si existe una entrada con ese ID
+        SkillProgress progress = GetNode(id);
+
+        if (progress != null) return progress.level;
+        return 0;
+    }
+
+    public void UpLevel(string id)
+    {
+        SkillProgress progress = GetNode(id);
+        int maxNBuy = allNodesInTree.Find(s => s.myData.skillID == id).myData.maxNBuy;
+
+        if (progress != null)
+        {
+            progress.level += 1; // Si existe, actualizamos
+            progress.buyed = progress.level == maxNBuy;
+        }
+        else
+        {
+            // Si no existe, creamos la entrada nueva en la lista
+            currentMeta.skillList.Add(new SkillProgress { id = id, level = 1, buyed = (1 == maxNBuy) });
+        }
+    }
+    public SkillProgress GetNode(string id)
+    {
+        return currentMeta.skillList.Find(s => s.id == id);
     }
 }

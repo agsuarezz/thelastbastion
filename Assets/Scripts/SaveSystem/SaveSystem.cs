@@ -26,6 +26,17 @@ public class MetaSaveData
 
     public bool isInfernalTowerUnlocked = false;
     public bool isSupportTowerUnlocked = false;
+    public List<SkillProgress> skillList = new List<SkillProgress>();
+}
+// ═════════════════════════════════════════════════════════════════════════════
+//  DATOS DE LOS NODOS (ÁRBOL DE MEJORAS)
+// ═════════════════════════════════════════════════════════════════════════════
+[Serializable]
+public class SkillProgress
+{
+    public string id;
+    public int level;
+    public bool buyed;
 }
 
 [Serializable]
@@ -94,6 +105,7 @@ public static class SaveSystem
         catch (Exception e) { return new GameSaveData(); }
     }
     public static void DeleteSave() { if (File.Exists(SavePath)) File.Delete(SavePath); }
+    public static void DeleteMeta() { if (File.Exists(MetaSavePath)) File.Delete(MetaSavePath); }
     public static bool SaveExists()  => File.Exists(SavePath);
 
     public static void SaveMeta(MetaSaveData data)

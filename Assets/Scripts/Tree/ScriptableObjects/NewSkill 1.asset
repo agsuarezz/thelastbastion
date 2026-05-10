@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: Unlock_Median
   skillName: Torre Mediana
-  cost: 1
   icon: {fileID: 409599816753543952, guid: 7875fe1ce6febb94fa627b4ec9ce1e0f, type: 3}
-  buyed: 0
-  prerequisite: {fileID: 0}
+  maxNBuy: 1
+  baseCost: 1
+  costMultiplier: 0
+  benefitPerLevel: 0.2
+  prerequisite: {fileID: 11400000, guid: 799f111c8bb5ab94885dd4d5ec0604aa, type: 2}
