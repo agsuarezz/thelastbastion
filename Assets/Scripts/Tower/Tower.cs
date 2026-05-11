@@ -396,20 +396,53 @@ public class Tower : MonoBehaviour
             btnUpdate.onClick.RemoveAllListeners();
         }
     }
-    /// <summary>
-    /// Instancia un proyectil en la posición actual de la torre y le asigna el objetivo fijado.
+        /// <summary>
+    /// Instancia un proyectil en la posición actual de la torre y le asigna
+    /// el objetivo fijado. Si la mejora de fuego está activa, añade quemadura
+    /// al proyectil con la probabilidad global configurada.
     /// </summary>
     private void Shoot()
     {
-        Vector3 startPos = transform.position;
+        Vector3    startPos     = transform.position;
         GameObject projectileGO = Instantiate(projectilePrefab, startPos, Quaternion.identity);
-
+ 
         Projectile projectile = projectileGO.GetComponent<Projectile>();
         if (projectile != null)
         {
             projectile.Seek(currentTarget);
             projectile.SetDamage(currentDamage);
+            TryInjectBurnEffect(projectile);   // ← única línea añadida
         }
+    }
+ 
+    /// <summary>
+    /// Si la probabilidad global de quemadura es mayor que 0, lanza el dado
+    /// y, en caso de éxito, construye un BurnOnHitEffect y se lo asigna
+    /// al proyectil.
+    ///
+    /// Los parámetros de la quemadura (daño, intervalo, ticks) están aquí
+    /// centralizados como constantes privadas. Si en el futuro se quiere
+    /// exponerlos al inspector, basta moverlos a campos serializables sin
+    /// tocar el resto del código.
+    /// </summary>
+    private void TryInjectBurnEffect(Projectile projectile)
+    {
+        if (GameManager.globalBurnProbability <= 0f) return;
+ 
+        bool burnTriggered = Random.value < GameManager.globalBurnProbability;
+        if (!burnTriggered) return;
+ 
+        const int   burnDamagePerTick = 3;   // daño por tick de fuego
+        const float burnTickInterval  = 0.5f; // segundos entre ticks
+        const int   burnTotalTicks    = 12;   // duración total: 3 segundos
+ 
+        IOnHitEffect burnEffect = new BurnOnHitEffect(
+            burnDamagePerTick,
+            burnTickInterval,
+            burnTotalTicks
+        );
+ 
+        projectile.SetOnHitEffect(burnEffect);
     }
     /// <summary>
     /// Configura la torre recién comprada o mejorada.

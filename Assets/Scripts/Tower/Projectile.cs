@@ -1,7 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// Controla el viaje del disparo hacia el objetivo y aplica el daño al colisionar con el enemigo
+/// Controla el viaje del disparo hacia el objetivo y aplica el daño al colisionar con el enemigo.
+/// Admite un efecto opcional al impacto (IOnHitEffect) para poder añadir quemaduras, veneno,
+/// ralentización, etc. sin modificar esta clase (Principio Abierto/Cerrado).
 /// </summary>
 public class Projectile : MonoBehaviour
 {
@@ -12,21 +14,37 @@ public class Projectile : MonoBehaviour
     [Tooltip("Cantidad de vida que restará al impactar.")]
     [HideInInspector] public int damage = 20;
 
+    // Efecto opcional que se ejecuta al impactar (null = sin efecto especial)
+    private IOnHitEffect _onHitEffect;
+
     private Transform target;
+
+    // ── API pública ──────────────────────────────────────────────────────────
 
     public void Seek(Transform newTarget)
     {
         target = newTarget;
     }
+
     public void SetDamage(int newDamage)
     {
         damage = newDamage;
     }
 
+    /// <summary>
+    /// Asigna un efecto al impacto. Pasar <c>null</c> elimina cualquier efecto previo.
+    /// </summary>
+    public void SetOnHitEffect(IOnHitEffect effect)
+    {
+        _onHitEffect = effect;
+    }
+
+    // ── Unity ────────────────────────────────────────────────────────────────
+
     private void Update()
     {
         if (EnemyTimeStopAbility.IsTimeStopped) return;
-        
+
         if (target == null || !target.gameObject.activeInHierarchy)
         {
             Destroy(gameObject);
@@ -55,26 +73,31 @@ public class Projectile : MonoBehaviour
         }
     }
 
-   private void HitTarget(GameObject enemyGO)
-{
-    if (enemyGO == null || !enemyGO.activeInHierarchy)
-    {
-        Destroy(gameObject);
-        return;
-    }
+    // ── Lógica interna ───────────────────────────────────────────────────────
 
-    Enemy enemyScript = enemyGO.GetComponent<Enemy>();
-    if (enemyScript != null)
+    private void HitTarget(GameObject enemyGO)
     {
-        if (enemyScript.IsDead)
+        if (enemyGO == null || !enemyGO.activeInHierarchy)
         {
             Destroy(gameObject);
             return;
         }
 
-        enemyScript.TakeDamage(damage);
-    }
+        Enemy enemyScript = enemyGO.GetComponent<Enemy>();
+        if (enemyScript != null)
+        {
+            if (enemyScript.IsDead)
+            {
+                Destroy(gameObject);
+                return;
+            }
 
-    Destroy(gameObject);
-}
+            enemyScript.TakeDamage(damage);
+
+            // Aplicamos el efecto especial si existe (quemadura, veneno, etc.)
+            _onHitEffect?.Apply(enemyScript);
+        }
+
+        Destroy(gameObject);
+    }
 }

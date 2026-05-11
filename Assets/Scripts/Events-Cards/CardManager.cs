@@ -4,7 +4,9 @@ using TMPro;
 using UnityEngine.UI;
 
 /// <summary>
-/// Gestiona la aparición de cartas de mejora, pausa el juego y aplica los beneficios
+/// Gestiona la aparición de cartas de mejora, pausa el juego y aplica los beneficios.
+/// Para añadir nuevas mejoras: añade un valor al enum UpgradeType, registra los datos
+/// en InitializeUpgrades() e implementa la lógica en ApplyUpgrade().
 /// </summary>
 public class CardManager : MonoBehaviour
 {
@@ -19,13 +21,22 @@ public class CardManager : MonoBehaviour
     public TextMeshProUGUI[] cardDescriptions;
 
     [Header("Referencias Externas")]
-    public castleScript castle; // Para poder curarlo
+    public castleScript castle;
     public GameManager gameManager;
 
-    // Lista de tipos de mejoras posibles
-    public enum UpgradeType { HealCastle, DamageUp, AttackSpeedUp, RadiusUp }
+    // ── Tipos de mejora disponibles ──────────────────────────────────────────
 
-    // Estructura para definir que hace cada carta
+    public enum UpgradeType
+    {
+        HealCastle,
+        DamageUp,
+        AttackSpeedUp,
+        RadiusUp,
+        FireBurn       // ← nueva mejora de fuego
+    }
+
+    // ── Datos internos de carta ──────────────────────────────────────────────
+
     private struct CardData
     {
         public UpgradeType type;
@@ -33,7 +44,9 @@ public class CardManager : MonoBehaviour
         public string description;
     }
 
-    private List<CardData> availableUpgrades;
+    private List<CardData> _availableUpgrades;
+
+    // ── Unity ────────────────────────────────────────────────────────────────
 
     private void Start()
     {
@@ -41,47 +54,76 @@ public class CardManager : MonoBehaviour
         InitializeUpgrades();
     }
 
+    // ── Mazo de cartas ───────────────────────────────────────────────────────
+
     /// <summary>
-    /// Define el mazo de cartas posibles
+    /// Define el catálogo completo de cartas posibles.
     /// </summary>
     private void InitializeUpgrades()
     {
-        availableUpgrades = new List<CardData>
+        _availableUpgrades = new List<CardData>
         {
-            new CardData { type = UpgradeType.HealCastle, title = "Reparación", description = "Restaura 25 PV al castillo." },
-            new CardData { type = UpgradeType.DamageUp, title = "Fuerza Bruta", description = "Los enemigos reciben 20% MÁS de daño." },
-            new CardData { type = UpgradeType.AttackSpeedUp, title = "Recarga Ligera", description = "Las torres disparan un 15% más RÁPIDO." },
-            new CardData { type = UpgradeType.RadiusUp, title = "Vista de Águila", description = "Aumenta un 20% el RADIO de visión de las torres." }
+            new CardData
+            {
+                type        = UpgradeType.HealCastle,
+                title       = "Reparación",
+                description = "Restaura 25 PV al castillo."
+            },
+            new CardData
+            {
+                type        = UpgradeType.DamageUp,
+                title       = "Fuerza Bruta",
+                description = "Los enemigos reciben 20% MÁS de daño."
+            },
+            new CardData
+            {
+                type        = UpgradeType.AttackSpeedUp,
+                title       = "Recarga Ligera",
+                description = "Las torres disparan un 15% más RÁPIDO."
+            },
+            new CardData
+            {
+                type        = UpgradeType.RadiusUp,
+                title       = "Vista de Águila",
+                description = "Aumenta un 20% el RADIO de visión de las torres."
+            },
+            new CardData
+            {
+                type        = UpgradeType.FireBurn,
+                title       = "Brasas Eternas",
+                description = "Tus proyectiles tienen un 30% de probabilidad de incendiar al enemigo, aplicando daño de fuego a lo largo del tiempo."
+            }
         };
     }
+
+    // ── Mostrar cartas ───────────────────────────────────────────────────────
 
     public void ShowCards()
     {
         cardsPanel.SetActive(true);
-        //Time.timeScale = 0f;
 
-        // Seleccionar 3 cartas aleatorias sin que se repitan
-        List<CardData> pool = new List<CardData>(availableUpgrades);
-        List<CardData> chosenCards = new List<CardData>();
+        List<CardData> pool         = new List<CardData>(_availableUpgrades);
+        List<CardData> chosenCards  = new List<CardData>();
 
         for (int i = 0; i < 3; i++)
         {
             int randomIndex = Random.Range(0, pool.Count);
             chosenCards.Add(pool[randomIndex]);
-            pool.RemoveAt(randomIndex); // Se quita del pool para que no se repita
+            pool.RemoveAt(randomIndex);
         }
 
         for (int i = 0; i < 3; i++)
         {
-            cardTitles[i].text = chosenCards[i].title;
+            cardTitles[i].text       = chosenCards[i].title;
             cardDescriptions[i].text = chosenCards[i].description;
 
             cardButtons[i].onClick.RemoveAllListeners();
             UpgradeType typeToApply = chosenCards[i].type;
             cardButtons[i].onClick.AddListener(() => ApplyUpgrade(typeToApply));
         }
-        
     }
+
+    // ── Aplicar mejora ───────────────────────────────────────────────────────
 
     /// <summary>
     /// Aplica la mejora seleccionada, oculta el panel y reanuda el juego.
@@ -93,21 +135,41 @@ public class CardManager : MonoBehaviour
             case UpgradeType.HealCastle:
                 castle.life += 25;
                 break;
+
             case UpgradeType.DamageUp:
                 GameManager.globalDamageTakenMultiplier += 0.2f;
                 break;
+
             case UpgradeType.AttackSpeedUp:
                 GameManager.globalAttackSpeedMultiplier *= 0.85f;
-                // Evitamos que las cartas rompan la velocidad de la luz:
-                GameManager.globalAttackSpeedMultiplier = Mathf.Max(GameManager.globalAttackSpeedMultiplier, 0.5f);
+                GameManager.globalAttackSpeedMultiplier  =
+                    Mathf.Max(GameManager.globalAttackSpeedMultiplier, 0.5f);
                 break;
+
             case UpgradeType.RadiusUp:
                 GameManager.globalRadiusMultiplier += 0.2f;
+                break;
+
+            case UpgradeType.FireBurn:
+                ApplyFireBurnUpgrade();
                 break;
         }
 
         GameManager.currentState = GameState.Playing;
         cardsPanel.SetActive(false);
-        //Time.timeScale = 1f;
+    }
+
+    /// <summary>
+    /// Activa (o incrementa) la probabilidad global de quemadura en proyectiles.
+    /// Cada vez que el jugador elige esta carta, la probabilidad sube un 15%
+    /// hasta un máximo del 80%.
+    /// </summary>
+    private void ApplyFireBurnUpgrade()
+    {
+        const float incrementPerCard = 0.15f;
+        const float maxProbability   = 0.80f;
+
+        GameManager.globalBurnProbability =
+            Mathf.Min(GameManager.globalBurnProbability + incrementPerCard, maxProbability);
     }
 }

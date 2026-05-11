@@ -102,6 +102,7 @@ public class GameManager : MonoBehaviour
     public static float globalRadiusMultiplier = 1f;
     public static float globalEnemyHealthMultiplier = 1f;
     public static float globalEnemyDamageMultiplier = 1f;
+    public static float globalBurnProbability = 0f;
 
     [Header("Sistema de Cartas")]
     public CardManager cardManager;

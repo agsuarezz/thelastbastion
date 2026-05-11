@@ -663,7 +663,7 @@ MonoBehaviour:
   castlescript: {fileID: 196915343}
   countMoneyText: {fileID: 1781555234}
   cardManager: {fileID: 626184129}
-  roundsForCards: 3
+  roundsForCards: 1
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
   velocitySprite0: {fileID: 7285970225754692813, guid: dad99ea25f8f2dd44baea79394e09dc1, type: 3}
   velocitySprite1: {fileID: -3439486116421378984, guid: dad99ea25f8f2dd44baea79394e09dc1, type: 3}
