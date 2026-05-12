@@ -12,7 +12,7 @@ public class Projectile : MonoBehaviour
     [HideInInspector] public float speed = 20f;
 
     [Tooltip("Cantidad de vida que restará al impactar.")]
-    [HideInInspector] public int damage = 20;
+    [HideInInspector] public float damage = 20;
 
     // Efecto opcional que se ejecuta al impactar (null = sin efecto especial)
     private IOnHitEffect _onHitEffect;
@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
         target = newTarget;
     }
 
-    public void SetDamage(int newDamage)
+    public void SetDamage(float newDamage)
     {
         damage = newDamage;
     }

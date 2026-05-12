@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: ConfigSupport
   m_EditorClassIdentifier: 
   nameOfTower: Torre Soporte
-  allowBuyTower: 1
   baseAttackRadius: 3
   damageUpgradeAmount: 10
   cooldownUpgradeAmount: 0.5
-  upgradeCosts: 280000003c00000050000000
+  upgradeCosts:
+  - 1
+  - 1
+  - 1
   baseIncreaseDamage: 5
   baseFireRate: 2

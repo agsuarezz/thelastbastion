@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: ConfigInfernal
   m_EditorClassIdentifier: 
   nameOfTower: Torre Infernal
-  allowBuyTower: 1
   baseAttackRadius: 3
   damageUpgradeAmount: 25
   cooldownUpgradeAmount: 0.5
-  upgradeCosts: 4b0000006e000000b4000000
+  upgradeCosts:
+  - 0
+  - 0
+  - 0
   damagePerSecond: 25
   onTime: 5
   offTime: 2

@@ -30,12 +30,12 @@ public class Tower : MonoBehaviour
     private float fireTimer = 0f;
 
     [HideInInspector] public float attackRadius;
-    [HideInInspector] public int currentDamage;
-    [HideInInspector] public int upgradeDamageStep;
+    [HideInInspector] public float currentDamage;
+    [HideInInspector] public float upgradeDamageStep;
     [HideInInspector] public float upgradeCooldownStep;
     [HideInInspector] public int totalGoldInvested = 0;
     [HideInInspector] public bool isBuilt = false;
-    [HideInInspector] public int currentIncreaseDamage;
+    [HideInInspector] public float currentIncreaseDamage;
     private List<Tower> buffedTowers = new List<Tower>();
 
     private Transform currentTarget;
@@ -67,26 +67,26 @@ public class Tower : MonoBehaviour
             float treeIncreaseDamage = meta.upgradesTree[config.nameOfTower][0];
             float treeIncreaseRadius = meta.upgradesTree[config.nameOfTower][1];
             float treeIncreaseVelocity = meta.upgradesTree[config.nameOfTower][2];
-            attackRadius = (int)(config.baseAttackRadius * treeIncreaseRadius);
-            upgradeDamageStep = (int)(config.damageUpgradeAmount * treeIncreaseDamage);
-            upgradeCooldownStep = (int)(config.cooldownUpgradeAmount / treeIncreaseVelocity);
+            attackRadius = config.baseAttackRadius * treeIncreaseRadius;
+            upgradeDamageStep = config.damageUpgradeAmount * treeIncreaseDamage;
+            upgradeCooldownStep = config.cooldownUpgradeAmount / treeIncreaseVelocity;
 
             // CARGA SEGÚN EL TIPO DE DATA
             if (config is LaserTowerData laserData)
             {
-                currentDamage = (int)(laserData.damagePerSecond * treeIncreaseDamage);
+                currentDamage = laserData.damagePerSecond * treeIncreaseDamage;
                 laserActiveTimer = laserData.onTime;
                 currentRestDuration = laserData.offTime;
             }
             else if (config is ProjectileTowerData projData)
             {
-                currentDamage = (int)(projData.baseDamage * treeIncreaseDamage);
+                currentDamage = projData.baseDamage * treeIncreaseDamage;
                 fireCooldown = projData.baseFireRate;
                 projectilePrefab = projData.projectilePrefab;
             }
             else if (config is SupportTowerData supportData)
             {
-                currentIncreaseDamage = (int)(supportData.baseIncreaseDamage * treeIncreaseDamage);
+                currentIncreaseDamage = supportData.baseIncreaseDamage * treeIncreaseDamage;
                 fireCooldown = supportData.baseFireRate;
             }
         }
@@ -377,7 +377,7 @@ public class Tower : MonoBehaviour
         // 2. Si NO es nivel máximo, el botón SIEMPRE debe estar visible en pantalla.
         btnUpdate.gameObject.SetActive(true);
         int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
-        int costTower = config.upgradeCosts[indexToLook];
+        float costTower = config.upgradeCosts[indexToLook];
 
         TextMeshProUGUI textBoton = btnUpdate.GetComponentInChildren<TextMeshProUGUI>();
 
@@ -678,7 +678,7 @@ public class Tower : MonoBehaviour
         {
             if (updatetower.levelOfTower < 2)
             {
-                int increaseSupportDamage = currentIncreaseDamage + upgradeDamageStep;
+                float increaseSupportDamage = currentIncreaseDamage + upgradeDamageStep;
                 text.text = "Daño Extra: [" + currentIncreaseDamage + "] -> <color=#2ECC71> [" + increaseSupportDamage + "] </color>";
             }
             else
@@ -689,10 +689,10 @@ public class Tower : MonoBehaviour
         // Si es cualquier otra torre, usamos la lógica normal
         else
         {
-            int realCurrentDamage = GetRealDamage(currentDamage);
+            float realCurrentDamage = GetRealDamage(currentDamage);
             if (updatetower.levelOfTower < 2)
             {
-                int increaseCurrentDamage = GetRealDamage(currentDamage + upgradeDamageStep);
+                float increaseCurrentDamage = GetRealDamage(currentDamage + upgradeDamageStep);
                 text.text = "Daño: [" + realCurrentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
             }
             else
@@ -771,8 +771,8 @@ public class Tower : MonoBehaviour
     /// <summary>
     /// Calcula el daño real aplicando los multiplicadores globales.
     /// </summary>
-    public int GetRealDamage(int baseDamage)
+    public float GetRealDamage(float baseDamage)
     {
-        return Mathf.RoundToInt(baseDamage * GameManager.globalDamageTakenMultiplier);
+        return baseDamage * GameManager.globalDamageTakenMultiplier;
     }
 }

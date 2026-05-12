@@ -5,7 +5,7 @@ public abstract class TowerData : ScriptableObject
 {
     public string nameOfTower;
     public float baseAttackRadius;
-    public int damageUpgradeAmount;
+    public float damageUpgradeAmount;
     public float cooldownUpgradeAmount;
-    public int[] upgradeCosts;
+    public float[] upgradeCosts;
 }

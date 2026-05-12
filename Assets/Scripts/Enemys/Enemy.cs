@@ -174,7 +174,7 @@ public class Enemy : MonoBehaviour
         targetCastle = FindObjectOfType<castleScript>();
     }
 
-    public void TakeDamage(int damageAmount)
+    public void TakeDamage(float damageAmount)
     {
         if (isDead) return;
 

@@ -3,6 +3,6 @@ using UnityEngine;
 public class ProjectileTowerData : TowerData
 {
     public GameObject projectilePrefab;
-    public int baseDamage;
+    public float baseDamage;
     public float baseFireRate;
 }

@@ -165,7 +165,7 @@ public class ConstructionMenu : MonoBehaviour
     /// </summary>
     public void BuyTower(int index)
     {
-        int costTowerToInt = costTower(index);
+        float costTowerToInt = costTower(index);
         bool statusTower = TowerLockUI.IsTowerUnlocked(setPrefabType(index).GetComponent<Tower>().config);
         if (GameManager.countMoney < costTowerToInt * GameManager.globalCostMultiplier)
         {
@@ -187,7 +187,7 @@ public class ConstructionMenu : MonoBehaviour
     /// </summary>
     public void PlantTowerOnMap(Vector2 vector2)
     {
-        int costTowerToInt = costTower(flagTypeTower);
+        float costTowerToInt = costTower(flagTypeTower);
         GameObject prefab = setPrefabType();
         if(prefab != null)
             Instantiate(prefab, vector2, Quaternion.identity);
@@ -233,7 +233,7 @@ public class ConstructionMenu : MonoBehaviour
     /// Devuelve el coste base en oro necesario para comprar una torre 
     /// espec�fica seg�n su identificador (0 = Media, 1 = Ligera, 2 = Pesada, 3 = Infernal).
     /// </summary>
-    public int costTower(int typeTower = -1)
+    public float costTower(int typeTower = -1)
     {
         switch (typeTower)
         {
