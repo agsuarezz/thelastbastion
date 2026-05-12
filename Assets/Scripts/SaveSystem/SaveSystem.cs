@@ -134,7 +134,19 @@ public static class SaveSystem
         try
         {
             string json = File.ReadAllText(MetaSavePath);
-            return JsonConvert.DeserializeObject<MetaSaveData>(json);
+            MetaSaveData data = JsonConvert.DeserializeObject<MetaSaveData>(json);
+            if (data.upgradesTree == null)
+            {
+                data.upgradesTree = new Dictionary<string, List<float>>
+                {
+                    {"Torre Media", new List<float> { 1f, 1f, 1f } },
+                    {"Torre Ligera", new List<float> { 1f, 1f, 1f } },
+                    {"Torre Pesada", new List<float> { 1f, 1f, 1f } },
+                    {"Torre Infernal", new List<float> { 1f, 1f, 1f } },
+                    {"Torre Soporte", new List<float> { 1f, 1f, 1f } }
+                };
+            }
+            return data;
         }
         catch (Exception e) { Debug.LogError($"[SaveSystem] Error al cargar Meta: {e.Message}"); return new MetaSaveData(); }
     }

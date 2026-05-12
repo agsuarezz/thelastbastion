@@ -75,19 +75,19 @@ public class Tower : MonoBehaviour
             if (config is LaserTowerData laserData)
             {
                 currentDamage = laserData.damagePerSecond * treeIncreaseDamage;
-                laserActiveTimer = laserData.onTime;
+                laserActiveTimer = laserData.onTime / treeIncreaseVelocity;
                 currentRestDuration = laserData.offTime;
             }
             else if (config is ProjectileTowerData projData)
             {
                 currentDamage = projData.baseDamage * treeIncreaseDamage;
-                fireCooldown = projData.baseFireRate;
+                fireCooldown = projData.baseFireRate / treeIncreaseVelocity;
                 projectilePrefab = projData.projectilePrefab;
             }
             else if (config is SupportTowerData supportData)
             {
                 currentIncreaseDamage = supportData.baseIncreaseDamage * treeIncreaseDamage;
-                fireCooldown = supportData.baseFireRate;
+                fireCooldown = supportData.baseFireRate / treeIncreaseVelocity;
             }
         }
         SetTower(null, null, constructionMenu.flagTypeTower);

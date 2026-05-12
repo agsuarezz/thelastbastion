@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SkillTreeManager : MonoBehaviour
 {
@@ -152,6 +153,21 @@ public class SkillTreeManager : MonoBehaviour
             }
             return;
         }
-        currentMeta.upgradesTree["Torre " + node.typeTower.ToString()][node.typeUpgrade - 1] += node.benefitPerLevel;
+        int index = node.typeUpgrade - 1;
+        string towerName = "Torre " + node.typeTower.ToString();
+
+        // Comprobamos que el diccionario tiene la torre y que el índice es seguro (0, 1 o 2)
+        if (currentMeta.upgradesTree.ContainsKey(towerName) && index >= 0 && index < currentMeta.upgradesTree[towerName].Count)
+        {
+            currentMeta.upgradesTree[towerName][index] += node.benefitPerLevel;
+        }
+        else
+        {
+            Debug.LogError($"[Árbol] Configuración inválida en la carta {node.skillID}. Índice {index} fuera de rango.");
+        }
+    }
+    public void startGame()
+    {
+        SceneManager.LoadScene("Main");
     }
 }

@@ -21,7 +21,7 @@ public class GetProjectileTowerData : MonoBehaviour
     {
         textNameTower.text = config.nameOfTower;
         textDamage.text = "Daño: " + ((int)(config.baseDamage * meta.upgradesTree[config.nameOfTower][0]) * GameManager.globalDamageTakenMultiplier).ToString();
-        textFireRate.text = "Recarga: " +  (config.baseFireRate * meta.upgradesTree[config.nameOfTower][2] * GameManager.globalAttackSpeedMultiplier).ToString() + "/s";
+        textFireRate.text = "Recarga: " +  (config.baseFireRate / meta.upgradesTree[config.nameOfTower][2] * GameManager.globalAttackSpeedMultiplier).ToString("F2") + "/s";
         textAmout.text = "Precio: " +  config.upgradeCosts[0].ToString();
     }
 }
