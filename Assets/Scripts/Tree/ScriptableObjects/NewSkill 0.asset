@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457cd4c824cd6f646bc4e93bcd255f35, type: 3}
   m_Name: NewSkill 0
   m_EditorClassIdentifier: 
-  skillID: Damage_Median
-  skillName: "Aumento de da\xF1o"
+  skillID: Raiz
+  skillName: Raiz
   icon: {fileID: -744547327682308377, guid: fc0b81ce34d3c124fab29e2ab9cf2e06, type: 3}
   maxNBuy: 0
   baseCost: 0

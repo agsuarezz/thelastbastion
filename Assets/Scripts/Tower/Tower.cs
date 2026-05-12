@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.UI;
@@ -53,6 +54,7 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        MetaSaveData meta = SaveSystem.LoadMeta();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         deletetower = this.GetComponentInChildren<DeleteTower>(true);
         updatetower = this.GetComponentInChildren<UpdateTower>(true);
@@ -65,23 +67,26 @@ public class Tower : MonoBehaviour
             attackRadius = config.baseAttackRadius;
             upgradeDamageStep = config.damageUpgradeAmount;
             upgradeCooldownStep = config.cooldownUpgradeAmount;
+            float treeIncreaseDamage = meta.upgradesTree[config.nameOfTower][0];
+            float treeIncreaseRadius = meta.upgradesTree[config.nameOfTower][1];
+            float treeIncreaseVelocity = meta.upgradesTree[config.nameOfTower][2];
 
             // CARGA SEGÚN EL TIPO DE DATA
             if (config is LaserTowerData laserData)
             {
-                currentDamage = (int)laserData.damagePerSecond;
+                currentDamage = (int)(laserData.damagePerSecond * treeIncreaseDamage);
                 laserActiveTimer = laserData.onTime;
                 currentRestDuration = laserData.offTime;
             }
             else if (config is ProjectileTowerData projData)
             {
-                currentDamage = projData.baseDamage;
+                currentDamage = (int)(projData.baseDamage * treeIncreaseDamage);
                 fireCooldown = projData.baseFireRate;
                 projectilePrefab = projData.projectilePrefab;
             }
             else if (config is SupportTowerData supportData)
             {
-                currentIncreaseDamage = supportData.baseIncreaseDamage;
+                currentIncreaseDamage = (int)(supportData.baseIncreaseDamage * treeIncreaseDamage);
                 fireCooldown = supportData.baseFireRate;
             }
         }
@@ -410,8 +415,8 @@ public class Tower : MonoBehaviour
         if (projectile != null)
         {
             projectile.Seek(currentTarget);
-            projectile.SetDamage(currentDamage);
-            TryInjectBurnEffect(projectile);   // ← única línea añadida
+            projectile.SetDamage(GetRealDamage(currentDamage));
+            TryInjectBurnEffect(projectile);
         }
     }
  
@@ -684,14 +689,15 @@ public class Tower : MonoBehaviour
         // Si es cualquier otra torre, usamos la lógica normal
         else
         {
+            int realCurrentDamage = GetRealDamage(currentDamage);
             if (updatetower.levelOfTower < 2)
             {
-                int increaseCurrentDamage = currentDamage + upgradeDamageStep;
-                text.text = "Daño: [" + currentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
+                int increaseCurrentDamage = GetRealDamage(currentDamage + upgradeDamageStep);
+                text.text = "Daño: [" + realCurrentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
             }
             else
             {
-                text.text = "Daño: [" + currentDamage + "] (MÁXIMO)";
+                text.text = "Daño: [" + realCurrentDamage + "] (MÁXIMO)";
             }
         }
     }
@@ -760,5 +766,13 @@ public class Tower : MonoBehaviour
             }
         }
         buffedTowers.Clear();
+    }
+
+    /// <summary>
+    /// Calcula el daño real aplicando los multiplicadores globales.
+    /// </summary>
+    public int GetRealDamage(int baseDamage)
+    {
+        return Mathf.RoundToInt(baseDamage * GameManager.globalDamageTakenMultiplier);
     }
 }

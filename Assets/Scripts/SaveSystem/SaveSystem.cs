@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 // ═════════════════════════════════════════════════════════════════════════════
 //  DATOS SERIALIZABLES
@@ -27,6 +28,14 @@ public class MetaSaveData
     public bool isInfernalTowerUnlocked = false;
     public bool isSupportTowerUnlocked = false;
     public List<SkillProgress> skillList = new List<SkillProgress>();
+    public Dictionary<string, List<float>> upgradesTree = new Dictionary<string, List<float>>
+    {
+        {"Torre Media", new List<float> { 1f, 1f, 1f } },
+        {"Torre Ligera", new List<float> { 1f, 1f, 1f } },
+        {"Torre Pesada", new List<float> { 1f, 1f, 1f } },
+        {"Torre Infernal", new List<float> { 1f, 1f, 1f } },
+        {"Torre Soporte", new List<float> { 1f, 1f, 1f } }
+    };
 }
 // ═════════════════════════════════════════════════════════════════════════════
 //  DATOS DE LOS NODOS (ÁRBOL DE MEJORAS)
@@ -112,7 +121,8 @@ public static class SaveSystem
     {
         try
         {
-            File.WriteAllText(MetaSavePath, JsonUtility.ToJson(data, prettyPrint: true));
+            string json = JsonConvert.SerializeObject(data, Formatting.Indented);
+            File.WriteAllText(MetaSavePath, json);
             Debug.Log($"[SaveSystem] MetaProgreso Guardado en: {MetaSavePath}");
         }
         catch (Exception e) { Debug.LogError($"[SaveSystem] Error al guardar Meta: {e.Message}"); }
@@ -123,7 +133,8 @@ public static class SaveSystem
         if (!File.Exists(MetaSavePath)) return new MetaSaveData(); // Si no existe, devuelve uno nuevo en blanco
         try
         {
-            return JsonUtility.FromJson<MetaSaveData>(File.ReadAllText(MetaSavePath));
+            string json = File.ReadAllText(MetaSavePath);
+            return JsonConvert.DeserializeObject<MetaSaveData>(json);
         }
         catch (Exception e) { Debug.LogError($"[SaveSystem] Error al cargar Meta: {e.Message}"); return new MetaSaveData(); }
     }
@@ -131,7 +142,7 @@ public static class SaveSystem
     {
         MetaSaveData data = LoadMeta();
         // LoadMeta siempre devuelve un objeto (aunque esté vacío), así que imprimimos siempre
-        string json = JsonUtility.ToJson(data, true);
+        string json = JsonConvert.SerializeObject(data, Formatting.Indented);
         Debug.Log($"<color=magenta>[SaveSystem] Contenido de METAPROGRESIÓN:</color>\n{json}");
     }
 }

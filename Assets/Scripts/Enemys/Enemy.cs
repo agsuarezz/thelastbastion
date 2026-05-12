@@ -178,7 +178,7 @@ public class Enemy : MonoBehaviour
     {
         if (isDead) return;
 
-        currentLife -= damageAmount * GameManager.globalDamageTakenMultiplier;
+        currentLife -= damageAmount;
 
         if (lifeSlider != null)
         {

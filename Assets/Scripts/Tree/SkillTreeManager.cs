@@ -66,8 +66,12 @@ public class SkillTreeManager : MonoBehaviour
         // Desbloqueamos la torre correspondiente en nuestro MetaSaveData
         UpLevel(skillToBuy.skillID);
 
+        // Se aplica el efecto
+        ApplyUpgrade(skillToBuy);
+
         // Guardamos físicamente en el archivo JSON
         SaveSystem.SaveMeta(currentMeta);
+        SaveSystem.DebugLogMetaSave();
 
         // Reproducimos sonido de compra
         GameManager.sound(GameManager.soundPay);
@@ -132,5 +136,22 @@ public class SkillTreeManager : MonoBehaviour
     public SkillProgress GetNode(string id)
     {
         return currentMeta.skillList.Find(s => s.id == id);
+    }
+
+    public void ApplyUpgrade(SkillData node)
+    {
+        if(node.typeUpgrade == 0)
+        {
+            if (node.typeTower == tower.Infernal)
+            {
+                currentMeta.isInfernalTowerUnlocked = true;
+            }
+            else
+            {
+                currentMeta.isSupportTowerUnlocked = true;
+            }
+            return;
+        }
+        currentMeta.upgradesTree["Torre " + node.typeTower.ToString()][node.typeUpgrade - 1] += node.benefitPerLevel;
     }
 }

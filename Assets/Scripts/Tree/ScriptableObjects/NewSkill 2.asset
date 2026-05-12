@@ -19,4 +19,6 @@ MonoBehaviour:
   baseCost: 1
   costMultiplier: 1
   benefitPerLevel: 0.2
+  typeUpgrade: 1
+  typeTower: 0
   prerequisite: {fileID: 11400000, guid: c77112e71dfb3834694af63819ee7fcf, type: 2}
