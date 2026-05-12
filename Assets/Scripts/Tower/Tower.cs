@@ -64,12 +64,12 @@ public class Tower : MonoBehaviour
 
         if (config != null)
         {
-            attackRadius = config.baseAttackRadius;
-            upgradeDamageStep = config.damageUpgradeAmount;
-            upgradeCooldownStep = config.cooldownUpgradeAmount;
             float treeIncreaseDamage = meta.upgradesTree[config.nameOfTower][0];
             float treeIncreaseRadius = meta.upgradesTree[config.nameOfTower][1];
             float treeIncreaseVelocity = meta.upgradesTree[config.nameOfTower][2];
+            attackRadius = (int)(config.baseAttackRadius * treeIncreaseRadius);
+            upgradeDamageStep = (int)(config.damageUpgradeAmount * treeIncreaseDamage);
+            upgradeCooldownStep = (int)(config.cooldownUpgradeAmount / treeIncreaseVelocity);
 
             // CARGA SEGÚN EL TIPO DE DATA
             if (config is LaserTowerData laserData)
