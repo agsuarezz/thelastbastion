@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,8 +18,15 @@ public class principalSceneTransition : MonoBehaviour
 
     private bool isTransitioning = false;
 
+    public TextMeshProUGUI buttonStartText;
+
     private void Start()
     {
+        if (buttonStartText != null)
+        {
+            buttonStartText.text = (SaveSystem.SaveExists()) ? "CONTINUAR" : "NUEVA PARTIDA";
+            buttonStartText.fontSize = (SaveSystem.SaveExists()) ? 12: 10;
+        }
         Time.timeScale = 1f;
         if (fadeCanvasGroup != null)
         {
@@ -64,5 +72,9 @@ public class principalSceneTransition : MonoBehaviour
         }
 
         SceneManager.LoadScene(sceneToLoad);
+    }
+    public void goToTree()
+    {
+        SceneManager.LoadScene("Tree");
     }
 }

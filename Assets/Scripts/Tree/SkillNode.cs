@@ -29,8 +29,6 @@ public class SkillNode : MonoBehaviour
 
     public void OnClick()
     {
-        // Desactivar instantáneamente para evitar spam 
-        if (buyButton != null) buyButton.interactable = false;
         // Le pasamos nuestro ScriptableObject al Manager para que él haga los cálculos
         FindObjectOfType<SkillTreeManager>().TryBuySkill(myData);
     }
@@ -57,7 +55,7 @@ public class SkillNode : MonoBehaviour
         else if(currentLevel >= myData.maxNBuy)
         {
             // ESTADO 3: COMPRADO AL MÁXIMO
-            if (buyButton != null) buyButton.interactable = false; // Bloqueado, ya no se puede comprar más
+            if (buyButton != null) buyButton.interactable = true;
             if (costText != null) costText.text = "MÁXIMO";
             iconImage.color = Color.white;
 

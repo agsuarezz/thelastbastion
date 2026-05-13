@@ -286,6 +286,7 @@ public class GameManager : MonoBehaviour
             loadedFromSave = true;
             waitingBetweenRounds = true;
             GridGenerator.selectedGridIndex = saved.gridIndex;
+            currentState = GameState.Playing;
         }
         else
         {
@@ -303,6 +304,11 @@ public class GameManager : MonoBehaviour
         if (GameManager.currentState != GameState.Playing) return;
         // Si ya estamos gestionando el cambio de ronda, esperamos
         if (isChangingRound) return;
+        if(waitingBetweenRounds && Input.GetKeyDown(KeyCode.Space))
+        {
+            playRound();
+            return;
+        }
         // Si la ronda acaba de terminar, lanzamos la linea de tiempo
         if (spawner != null && spawner.statusRound() && !waitingBetweenRounds)
         {
@@ -539,7 +545,7 @@ public class GameManager : MonoBehaviour
 
         if (spawner != null)
             spawner.restartCountEnemy();
-
+        yield return null;
         isChangingRound = false;
     }
 
