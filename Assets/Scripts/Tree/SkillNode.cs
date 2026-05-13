@@ -38,14 +38,15 @@ public class SkillNode : MonoBehaviour
     /// <summary>
     /// El Manager llama a esto para decirle al botón cómo tiene que verse.
     /// </summary>
-    public void RefreshVisuals(bool isUnlocked)
+    public void RefreshVisuals(bool isUnlocked, int currentLevel, int currentCost)
     {
         if (!isUnlocked)
         {
             // ESTADO 1: NO SE PUEDE COMPRAR
             if (buyButton != null) buyButton.interactable = false; // No se puede clickear
             if (costText != null) costText.text = "";
-            iconImage.color = new Color(255f, 255f, 255f, 100f);
+            // Oscurecemos el icono
+            iconImage.color = new Color(0.3f, 0.3f, 0.3f, 0.5f);
             // Ponemos la línea "bloqueada"
             if (lineRenderer != null)
             {
@@ -53,12 +54,26 @@ public class SkillNode : MonoBehaviour
                 lineRenderer.endColor = colorLocked;
             }
         }
+        else if(currentLevel >= myData.maxNBuy)
+        {
+            // ESTADO 3: COMPRADO AL MÁXIMO
+            if (buyButton != null) buyButton.interactable = false; // Bloqueado, ya no se puede comprar más
+            if (costText != null) costText.text = "MÁXIMO";
+            iconImage.color = Color.white;
+
+            if (lineRenderer != null)
+            {
+                lineRenderer.startColor = colorUnlocked;
+                lineRenderer.endColor = colorUnlocked;
+            }
+        }
         else
         {
             // ESTADO 2: NO LO TENEMOS, PERO PODEMOS COMPRARLO
             if (buyButton != null) buyButton.interactable = true; // Se puede clickear
             if (costText != null) costText.text = myData.baseCost.ToString() + " xp";
-            iconImage.color = new Color(255f, 255f, 255f, 255f);
+            // Icono visible pero indicando que faltaa dinero
+            iconImage.color = Color.white;
             // Ponemos la línea "desbloqueada"
             if (lineRenderer != null)
             {

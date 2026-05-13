@@ -137,6 +137,8 @@ public class GameManager : MonoBehaviour
     [Header("Configuración de Torres (ScriptableObjects)")]
     public TowerData configTowerSupport;
     public TowerData configTowerInfernal;
+
+    public static MetaSaveData metaProgression;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -259,6 +261,7 @@ public class GameManager : MonoBehaviour
     {
         // 1. CONTINUAMOS CON TU CÓDIGO NORMAL DE LA PARTIDA
         GameSaveData saved = SaveSystem.Load();
+        metaProgression = SaveSystem.LoadMeta();
         if (saved.countRound > 0)
         {
             countRound                  = saved.countRound;

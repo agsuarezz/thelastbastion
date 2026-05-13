@@ -54,7 +54,6 @@ public class Tower : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        MetaSaveData meta = SaveSystem.LoadMeta();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
         deletetower = this.GetComponentInChildren<DeleteTower>(true);
         updatetower = this.GetComponentInChildren<UpdateTower>(true);
@@ -64,9 +63,9 @@ public class Tower : MonoBehaviour
 
         if (config != null)
         {
-            float treeIncreaseDamage = meta.upgradesTree[config.nameOfTower][0];
-            float treeIncreaseRadius = meta.upgradesTree[config.nameOfTower][1];
-            float treeIncreaseVelocity = meta.upgradesTree[config.nameOfTower][2];
+            float treeIncreaseDamage = GameManager.metaProgression.upgradesTree[config.nameOfTower][0];
+            float treeIncreaseRadius = GameManager.metaProgression.upgradesTree[config.nameOfTower][1];
+            float treeIncreaseVelocity = GameManager.metaProgression.upgradesTree[config.nameOfTower][2];
             attackRadius = config.baseAttackRadius * treeIncreaseRadius;
             upgradeDamageStep = config.damageUpgradeAmount * treeIncreaseDamage;
             upgradeCooldownStep = config.cooldownUpgradeAmount / treeIncreaseVelocity;
@@ -693,11 +692,11 @@ public class Tower : MonoBehaviour
             if (updatetower.levelOfTower < 2)
             {
                 float increaseCurrentDamage = GetRealDamage(currentDamage + upgradeDamageStep);
-                text.text = "Daño: [" + realCurrentDamage + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
+                text.text = "Daño: [" + realCurrentDamage.ToString("F0") + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
             }
             else
             {
-                text.text = "Daño: [" + realCurrentDamage + "] (MÁXIMO)";
+                text.text = "Daño: [" + realCurrentDamage.ToString("F0") + "] (MÁXIMO)";
             }
         }
     }

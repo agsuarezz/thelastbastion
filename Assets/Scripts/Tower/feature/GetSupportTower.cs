@@ -10,14 +10,15 @@ public class GetSupportTower : MonoBehaviour
     public TextMeshProUGUI textExtraDamage;
     public TextMeshProUGUI textScanRate;
     public TextMeshProUGUI textPrice;
-    private MetaSaveData meta;
 
     void Start()
     {
-        meta = SaveSystem.LoadMeta();
+        MetaSaveData meta = GameManager.metaProgression;
         textNameTower.text = config.nameOfTower;
-        textExtraDamage.text = "Daño Extra: +" + ((int)(config.baseIncreaseDamage * meta.upgradesTree[config.nameOfTower][0])).ToString();
-        textScanRate.text = "Escaneo: " + (config.baseFireRate / meta.upgradesTree[config.nameOfTower][2]).ToString("F2") + "s";
+        float damage = config.baseIncreaseDamage * meta.upgradesTree[config.nameOfTower][0];
+        textExtraDamage.text = "Daño Extra: +" + damage.ToString("F0");
+        float checkTime = config.baseFireRate / meta.upgradesTree[config.nameOfTower][2];
+        textScanRate.text = "Escaneo: " + checkTime.ToString("F2") + "s";
         textPrice.text = "Precio: " + config.upgradeCosts[0].ToString();
     }
 }

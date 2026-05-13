@@ -94,15 +94,20 @@ public class SkillTreeManager : MonoBehaviour
         // Recorremos todos los botones y les decimos: "Oye, revisa si estás bloqueado o comprado"
         foreach (SkillNode node in allNodesInTree)
         {
+            // Pillamos el nivel actual de este nodo para pasárselo a la UI
+            int currentLevel = GetSkillLevel(node.myData.skillID);
+
+            // Calculamos el coste actual para mostrarlo bien en el texto
+            int currentCost = node.myData.baseCost + (currentLevel * node.myData.costMultiplier);
             if (node.myData.prerequisite != null)
             {
                 SkillProgress nodePrerequisite = GetNode(node.myData.prerequisite.skillID);
-                node.RefreshVisuals(nodePrerequisite.buyed);
+                bool isUnlocked = (nodePrerequisite != null) && nodePrerequisite.buyed;
+                node.RefreshVisuals(isUnlocked, currentLevel, currentCost);
             }
             else
             {
-                node.RefreshVisuals(true);
-                Debug.Log(node.myData.skillID);
+                node.RefreshVisuals(true, currentLevel, currentCost);
             }
         }
     }
