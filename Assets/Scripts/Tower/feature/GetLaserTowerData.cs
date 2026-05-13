@@ -14,7 +14,7 @@ public class GetLaserTowerData : MonoBehaviour
         MetaSaveData meta = GameManager.metaProgression;
         textNameTower.text = config.nameOfTower;
         float damage = config.damagePerSecond * meta.upgradesTree[config.nameOfTower][0] * GameManager.globalDamageTakenMultiplier;
-        textDamage.text = "Daño: " + damage.ToString("F0");
+        textDamage.text = "Daño: " + damage.ToString("F1");
         float reloadconfig = config.onTime / meta.upgradesTree[config.nameOfTower][2];
         textFireRate.text = "Recarga: " + reloadconfig.ToString("F2") + "/s";
         textAmout.text = "Precio: " + config.upgradeCosts[0].ToString();

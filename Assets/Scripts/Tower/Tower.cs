@@ -678,11 +678,11 @@ public class Tower : MonoBehaviour
             if (updatetower.levelOfTower < 2)
             {
                 float increaseSupportDamage = currentIncreaseDamage + upgradeDamageStep;
-                text.text = "Daño Extra: [" + currentIncreaseDamage + "] -> <color=#2ECC71> [" + increaseSupportDamage + "] </color>";
+                text.text = "Daño Extra: [" + currentIncreaseDamage.ToString("F1") + "] -> <color=#2ECC71> [" + increaseSupportDamage.ToString("F1") + "] </color>";
             }
             else
             {
-                text.text = "Daño Extra: [" + currentIncreaseDamage + "] (MÁXIMO)";
+                text.text = "Daño Extra: [" + currentIncreaseDamage.ToString("F1") + "] (MÁXIMO)";
             }
         }
         // Si es cualquier otra torre, usamos la lógica normal
@@ -692,11 +692,11 @@ public class Tower : MonoBehaviour
             if (updatetower.levelOfTower < 2)
             {
                 float increaseCurrentDamage = GetRealDamage(currentDamage + upgradeDamageStep);
-                text.text = "Daño: [" + realCurrentDamage.ToString("F0") + "] -> <color=#2ECC71> [" + increaseCurrentDamage + "] </color>";
+                text.text = "Daño: [" + realCurrentDamage.ToString("F1") + "] -> <color=#2ECC71> [" + increaseCurrentDamage.ToString("F1") + "] </color>";
             }
             else
             {
-                text.text = "Daño: [" + realCurrentDamage.ToString("F0") + "] (MÁXIMO)";
+                text.text = "Daño: [" + realCurrentDamage.ToString("F1") + "] (MÁXIMO)";
             }
         }
     }

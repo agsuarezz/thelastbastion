@@ -95,7 +95,7 @@ public class GridCursor : MonoBehaviour
         if (lineRenderer == null) return;
 
         // Extraemos el radio base del prefab y le aplicamos los multiplicadores globales de la partida
-        float realRadius = setRange() * GameManager.globalRadiusMultiplier;
+        float realRadius = setRange() * GameManager.globalRadiusMultiplier * GameManager.metaProgression.upgradesTree[getTowerPrefab().config.nameOfTower][1];
 
         // Le decimos al LineRenderer cuántos puntos va a tener la línea
         lineRenderer.positionCount = circleSegments;
@@ -124,31 +124,10 @@ public class GridCursor : MonoBehaviour
     /// <returns>El radio de ataque en formato float de la torre seleccionada.</returns>
     public float setRange()
     {
-        Tower towerPrefab = null;
+        Tower towerPrefab = getTowerPrefab();
+        if (towerPrefab == null) return 99999f;
 
-        switch (constructionMenu.flagTypeTower)
-        {
-            case 0:
-                towerPrefab = constructionMenu.prefabTowerMedian.GetComponent<Tower>();
-                break;
-            case 1:
-                towerPrefab = constructionMenu.prefabTowerLight.GetComponent<Tower>();
-                break;
-            case 2:
-                towerPrefab = constructionMenu.prefabTowerHeavy.GetComponent<Tower>();
-                break;
-            case 3:
-                towerPrefab = constructionMenu.prefabTowerInfernal.GetComponent<Tower>();
-                break;
-            case 4:
-                towerPrefab = constructionMenu.prefabTowerSupport.GetComponent<Tower>();
-                break;
-            default:
-                Debug.LogWarning("¡Cuidado! No se ha encontrado el attackRadius porque el flagTypeTower no es válido.");
-                return 9999;
-        }
-
-        if (towerPrefab != null && towerPrefab.config != null)
+        if (towerPrefab.config != null)
         {
             return towerPrefab.config.baseAttackRadius;
         }
@@ -157,4 +136,23 @@ public class GridCursor : MonoBehaviour
         return 3f;
     }
 
+    private Tower getTowerPrefab()
+    {
+        switch (constructionMenu.flagTypeTower)
+        {
+            case 0:
+                return constructionMenu.prefabTowerMedian.GetComponent<Tower>();
+            case 1:
+                return constructionMenu.prefabTowerLight.GetComponent<Tower>();
+            case 2:
+                return constructionMenu.prefabTowerHeavy.GetComponent<Tower>();
+            case 3:
+                return constructionMenu.prefabTowerInfernal.GetComponent<Tower>();
+            case 4:
+                return constructionMenu.prefabTowerSupport.GetComponent<Tower>();
+            default:
+                Debug.LogWarning("¡Cuidado! No se ha encontrado el attackRadius porque el flagTypeTower no es válido.");
+                return null;
+        };
+    }
 }
