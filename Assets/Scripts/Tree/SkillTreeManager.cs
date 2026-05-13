@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
@@ -13,6 +14,8 @@ public class SkillTreeManager : MonoBehaviour
     public List<SkillNode> allNodesInTree;
 
     private MetaSaveData currentMeta; // Los datos del jugador cargados en memoria
+
+    public TextMeshProUGUI messageErrorText;
 
     private void Start()
     {
@@ -48,14 +51,14 @@ public class SkillTreeManager : MonoBehaviour
         int currentLevel = GetSkillLevel(skillToBuy.skillID);
         if (currentLevel >= skillToBuy.maxNBuy)
         {
-            Debug.LogWarning("Ya se ha comprado este nodo al máximo.");
+            StartCoroutine(messageError("Límite alcanzado. Si mejoramos esto un nivel más, el motor de Unity explota y te borra el Windows."));
             return;
         }
 
         int cost = skillToBuy.baseCost + (currentLevel * skillToBuy.costMultiplier);
         if (currentMeta.totalExperience < cost)
         {
-            Debug.LogWarning("No hay pasta.");
+            StartCoroutine(messageError("Sin experiencia no hay mejoras. Si las quieres gratis, haber comprado la edición Deluxe."));
             return;
         }
 
@@ -170,4 +173,15 @@ public class SkillTreeManager : MonoBehaviour
     {
         SceneManager.LoadScene("Main");
     }
+    /// <summary>
+    /// Muestra un mensaje de error en pantalla durante 2 segundos y luego lo borra.
+    /// </summary>
+    public IEnumerator messageError(string text)
+    {
+        messageErrorText.text = text;
+        messageErrorText.color = Color.red;
+        yield return new WaitForSeconds(2f);
+        messageErrorText.text = "";
+    }
+
 }
