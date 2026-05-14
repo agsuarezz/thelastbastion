@@ -22,40 +22,40 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 4880523274685937445, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.083333336
+    - time: 0.2
       value: {fileID: 6497299558051612606, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.16666667
+    - time: 0.4
       value: {fileID: 1640459993709404721, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.25
-      value: {fileID: 1620020546130643878, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.33333334
+    - time: 0.6
       value: {fileID: -2032438291353025295, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.41666666
+    - time: 0.8
       value: {fileID: -4042034173729339270, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.5
-      value: {fileID: -8632210637703985939, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.5833333
-      value: {fileID: 4451060922991824286, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.6666667
-      value: {fileID: 6405643120833249975, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.75
-      value: {fileID: 1878989539424652003, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.8333333
-      value: {fileID: 8520895683359543962, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 0.9166667
-      value: {fileID: -6670348678217829923, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - time: 1
+      value: {fileID: 1620020546130643878, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - time: 1.2
+      value: {fileID: -8632210637703985939, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - time: 1.4
+      value: {fileID: 4451060922991824286, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - time: 1.6
+      value: {fileID: 6405643120833249975, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - time: 1.8
+      value: {fileID: 1878989539424652003, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - time: 2
+      value: {fileID: 8520895683359543962, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - time: 2.2
+      value: {fileID: -6670348678217829923, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - time: 2.4
       value: {fileID: -1953191800096732447, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 1.0833334
+    - time: 2.6
       value: {fileID: -5784191093614676159, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - time: 1.1666666
+    - time: 2.8
       value: {fileID: -9147222279066183815, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 12
+  m_SampleRate: 5
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -75,9 +75,9 @@ AnimationClip:
     - {fileID: 4880523274685937445, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - {fileID: 6497299558051612606, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - {fileID: 1640459993709404721, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
-    - {fileID: 1620020546130643878, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - {fileID: -2032438291353025295, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - {fileID: -4042034173729339270, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
+    - {fileID: 1620020546130643878, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - {fileID: -8632210637703985939, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - {fileID: 4451060922991824286, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
     - {fileID: 6405643120833249975, guid: bf10833facaebe9489fd9efae94211ab, type: 3}
@@ -92,7 +92,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 1.25
+    m_StopTime: 3
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -111,4 +111,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 2.8
+    functionName: OnDeathAnimationFinished
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
