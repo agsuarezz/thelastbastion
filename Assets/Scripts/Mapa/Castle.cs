@@ -3,6 +3,7 @@ using TMPro;
 using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Gestiona la vida del castillo, actualiza la UI y dispara el Game Over.
@@ -26,6 +27,7 @@ public class castleScript : MonoBehaviour
 
     private bool isGameOver = false;
     public GameObject LogicaGameOver;
+
     private void Start()
     {
         StartCoroutine(SearchandMovetotheMap());
@@ -38,26 +40,19 @@ public class castleScript : MonoBehaviour
         }
 
         if (EndPanel != null)
-        {
             EndPanel.SetActive(false);
-        }
-        if(LogicaGameOver != null)
-        {
+
+        if (LogicaGameOver != null)
             LogicaGameOver.SetActive(false);
-        }
     }
 
     private void FixedUpdate()
     {
         if (lifeText != null)
-        {
             lifeText.text = life + "/" + lifeMax;
-        }
 
         if (lifeSlider != null)
-        {
             lifeSlider.value = life;
-        }
     }
 
     public void TakeDamage(int damage)
@@ -79,22 +74,42 @@ public class castleScript : MonoBehaviour
             life = 0;
 
             SaveData();
-
-
-            FindObjectOfType<GameManager>().cargarGameOver();
+            TriggerGameOver();
         }
     }
+
+    /// <summary>
+    /// Congela el mapa tal como está y carga la escena GameOver encima (Additive),
+    /// de modo que el fondo sigue siendo el mapa en el momento de la derrota.
+    /// </summary>
+    private void TriggerGameOver()
+    {
+        // 1. Borramos la partida guardada
+        SaveSystem.DeleteSave();
+
+        // 2. Congelamos el tiempo: enemigos, torres y animaciones quedan parados
+        Time.timeScale = 0f;
+
+        // 3. Actualizamos el estado global
+        GameManager.currentState = GameState.Paused;
+
+        // 4. Sonido de derrota
+        GameManager.sound(GameManager.soundLostGame);
+
+        // 5. Cargamos la escena GameOver ENCIMA de la escena actual (sin destruirla)
+        //    Así el mapa sigue visible de fondo
+        SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
+    }
+
     public void SaveData()
     {
         int xpThisGame = calculateXP();
-        // 1. Cargamos lo que ya tenía el jugador en su cuenta persistente
         MetaSaveData metaPersistent = SaveSystem.LoadMeta();
-
-        // 2. SUMAMOS la experiencia nueva a la que ya tenía
         metaPersistent.totalExperience += xpThisGame;
         SaveSystem.SaveMeta(metaPersistent);
         SaveSystem.DebugLogMetaSave();
     }
+
     public int calculateXP()
     {
         int baseRound = 10 * GameManager.countRound;
@@ -102,6 +117,7 @@ public class castleScript : MonoBehaviour
         int bonusBoss = 100 * (GameManager.countRound / 10);
         return baseRound + difficultyMultiplier + bonusBoss;
     }
+
     public IEnumerator SearchandMovetotheMap()
     {
         yield return new WaitForEndOfFrame();
