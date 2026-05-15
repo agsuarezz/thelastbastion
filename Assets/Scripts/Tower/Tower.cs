@@ -48,6 +48,8 @@ public class Tower : MonoBehaviour
     public static Tower towerActiveInMenu;
     int circleSegments = 50;
     private void Awake() => towerActiveInMenu = null;
+
+    public ShortCutScript shortCuts;
     /// <summary>
     /// Inicializa las referencias de los componentes, busca el menú global en la escena 
     /// y autoconstruye la torre base basándose en la elección del jugador en el menú de construcción.
@@ -135,6 +137,11 @@ public class Tower : MonoBehaviour
         if (towerActiveInMenu == this)
         {
             refreshButtonUpdate();
+            if (Input.GetKeyDown(shortCuts.keyToSellTower))
+            {
+                // Simulamos que el jugador ha hecho clic en el botón de vender de ESTA torre
+                deletetower.onClickPlayer();
+            }
         }
         if (!isBuilt) return;
         UpdateTarget();

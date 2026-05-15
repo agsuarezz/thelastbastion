@@ -16,4 +16,4 @@ MonoBehaviour:
   description: "Impuesto ecol\xF3gico. Ahora PAGAS por limpiar la sangre de los goblins."
   type: 0
   audioClip: {fileID: 8300000, guid: d72c4f83bead118459f2dcb89947cfa4, type: 3}
-  baseWeight: 10
+  baseWeight: 20

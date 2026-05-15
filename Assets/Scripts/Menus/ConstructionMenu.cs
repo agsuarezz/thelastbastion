@@ -18,6 +18,7 @@ public class ConstructionMenu : MonoBehaviour
     [HideInInspector] public bool isPlacing = false;
     [HideInInspector] public int flagTypeTower = -1;
     GameManager gameManager;
+    public ShortCutScript shortCut;
     private void Start()
     {
         gameManager = FindAnyObjectByType<GameManager>();
@@ -66,35 +67,30 @@ public class ConstructionMenu : MonoBehaviour
         tilemap.gameObject.SetActive(false);
     }
 }
-        // -----------------------------------------------
-        
-        // --- NUEVA LÓGICA: Atajos 1, 2 y 3 para comprar ---
-        // Solo comprobamos estas teclas si el menú de selección ESTÁ ABIERTO
+ 
         if (menuTowerSelect.activeSelf)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1)) // Tecla '1'
+            if (Input.GetKeyDown(shortCut.keyTowerMedian))
             {
                 BuyTower(0);
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha2)) // Tecla '2'
+            else if (Input.GetKeyDown(shortCut.keyTowerLight))
             {
                 BuyTower(1);
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha3)) // Tecla '3'
+            else if (Input.GetKeyDown(shortCut.keyTowerHeavy))
             {
                 BuyTower(2);
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha4)) // Tecla '4'
+            else if (Input.GetKeyDown(shortCut.keyTowerInfernal))
             {
                 BuyTower(3);
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha5)) // Tecla '4'
+            else if (Input.GetKeyDown(shortCut.keyTowerSupport))
             {
                 BuyTower(4);
             }
         }
-        // --------------------------------------------------
-
         // 1. Entramos solo si estamos en modo colocación
         if (isPlacing)
         {

@@ -142,8 +142,10 @@ public class GameManager : MonoBehaviour
     [Header("Configuración de Torres (ScriptableObjects)")]
     public TowerData configTowerSupport;
     public TowerData configTowerInfernal;
-
+    // Sirve para cargar los datos del arbol
     public static MetaSaveData metaProgression;
+    // ScriptableObject con los ShortCut
+    public ShortCutScript shortCut;
     /// <summary>
     /// Método de inicialización. Vincula el componente AudioSource y carga los efectos 
     /// de sonido desde la carpeta 'Resources'. Emite advertencias en consola si falta algo.
@@ -309,7 +311,7 @@ public class GameManager : MonoBehaviour
         if (GameManager.currentState != GameState.Playing) return;
         // Si ya estamos gestionando el cambio de ronda, esperamos
         if (isChangingRound) return;
-        if (waitingBetweenRounds && Input.GetKeyDown(KeyCode.Space))
+        if (waitingBetweenRounds && Input.GetKeyDown(shortCut.keyToPassRound))
         {
             playRound();
             return;
@@ -323,8 +325,8 @@ public class GameManager : MonoBehaviour
         timeinGame += Time.deltaTime;
         if (countMoneyText != null)
             countMoneyText.text = "Dinero: " + countMoney;
-        // Si se presiona la 'N' cambia la velocidad del juego
-        if (Input.GetKeyDown(KeyCode.N))
+        // Si se presiona la letra indica la varible  keyToControlVelocityGame en ScriptableObject (ShortCut) cambia la velocidad del juego
+        if (Input.GetKeyDown(shortCut.keyToControlVelocityGame))
         {
             changeVelocity();
         }

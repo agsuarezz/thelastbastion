@@ -63,62 +63,87 @@ public class EventManager : MonoBehaviour
         StartCoroutine(selectedEvent.Execute());
     }
     /// <summary>
-    /// Calcula y selecciona un evento aleatorio utilizando un sistema de probabilidad ponderada. 
-    /// Ignora eventos forzados (como el Boss) y aplica un escalado matemático de "crueldad" 
-    /// para hacer que los eventos negativos sean más frecuentes en rondas avanzadas.
+    /// Gira la ruleta de eventos. Suma los pesos de todos los eventos válidos (aplicando 
+    /// el castigo por ronda) y saca una papeleta al azar.
     /// </summary>
-    /// <param name="currentWave">La oleada actual, utilizada como multiplicador de crueldad.</param>
-    /// <returns>El evento dinámico (DynamicEvent) ganador de la ruleta.</returns>
     private DynamicEvent SelectEventByWeight(int currentWave)
     {
+        List<DynamicEvent> validEvents = new List<DynamicEvent>();
+        List<float> finalWeights = new List<float>();
         float totalWeight = 0f;
-        List<float> calculatedWeights = new List<float>();
 
-        // Creamos una lista temporal solo con los eventos que SÍ pueden salir al azar
-        List<DynamicEvent> validRandomEvents = new List<DynamicEvent>();
-
+        // 1. PREPARAMOS EL BOMBO DE LOTERÍA
         foreach (var ev in allEvents)
         {
-            // Si el evento es el del Boss, lo ignoramos y no entra en la ruleta
+            // El Boss no juega a esta ruleta, sale cuando le toca
             if (ev is EventBossRound) continue;
 
-            float currentWeight = ev.baseWeight;
+            // Preguntamos a nuestro otro método cuántos "boletos" merece este evento hoy
+            float weightForThisRound = CalculateCrueltyWeight(ev, currentWave);
 
-            // LÓGICA DE ESCALADO INFINITO
-            if (currentWave <= 3)
-            {
-                if (ev.type == EventType.Harmful) currentWeight *= 0.2f;
-                if (ev.type == EventType.Beneficial) currentWeight *= 1.5f;
-            }
-            else if (currentWave <= 9)
-            {
-                // Fase Normal
-            }
-            else
-            {
-                // Aumento de la dificultad
-                float crueltyLevel = (currentWave - 9) * 0.1f;
-
-                if (ev.type == EventType.Harmful) currentWeight *= (1.5f + crueltyLevel);
-                if (ev.type == EventType.Beneficial) currentWeight *= Mathf.Max(0.1f, 1f - crueltyLevel);
-            }
-
-            validRandomEvents.Add(ev);
-            calculatedWeights.Add(currentWeight);
-            totalWeight += currentWeight;
+            validEvents.Add(ev);
+            finalWeights.Add(weightForThisRound);
+            totalWeight += weightForThisRound; // Agrandamos el bombo
         }
 
-        // Tirar el "dado" de la ruleta
+        // 2. TIRAMOS EL DADO (Mano inocente saca un número del 0 al total de boletos)
         float randomValue = Random.Range(0f, totalWeight);
 
-        // Ver qué evento ha ganado en nuestra lista de eventos válidos
-        for (int i = 0; i < validRandomEvents.Count; i++)
+        // 3. REVISAMOS QUIÉN HA GANADO
+        for (int i = 0; i < validEvents.Count; i++)
         {
-            randomValue -= calculatedWeights[i];
-            if (randomValue <= 0f) return validRandomEvents[i];
+            randomValue -= finalWeights[i];
+
+            // Cuando la resta llega a 0 o menos, hemos encontrado el boleto ganador
+            if (randomValue <= 0f)
+            {
+                return validEvents[i];
+            }
         }
 
-        return validRandomEvents[validRandomEvents.Count - 1];
+        // Por seguridad, si Unity se lía con los decimales, devolvemos el último
+        return validEvents[validEvents.Count - 1];
+    }
+
+    /// <summary>
+    /// Aquí reside la maldad pura. Coge el peso base de un evento y lo muta 
+    /// dependiendo de en qué ronda estemos. Cuanto más avanzas, más se dopan los eventos malos.
+    /// </summary>
+    private float CalculateCrueltyWeight(DynamicEvent ev, int currentWave)
+    {
+        float weight = ev.baseWeight; // Los boletos iniciales que tiene este evento
+
+        // FASE 1: Tutorial (Rondas 1-3). Somos buenos con el jugador.
+        if (currentWave <= 3)
+        {
+            if (ev.type == EventType.Harmful) return weight * 0.2f;    // Le quitamos el 80% de los boletos malos
+            if (ev.type == EventType.Beneficial) return weight * 1.5f; // Le regalamos un 50% extra de boletos buenos
+            return weight; // Los neutros se quedan igual
+        }
+
+        // FASE 2: Normal (Rondas 4-9). El juego es justo.
+        if (currentWave <= 9)
+        {
+            return weight;
+        }
+
+        // FASE 3: El Infierno (Rondas 10+). Que empiece el sufrimiento.
+        float crueltyLevel = (currentWave - 9) * 0.1f; // Sube 0.1 por cada ronda extra
+
+        if (ev.type == EventType.Harmful)
+        {
+            // Un evento malo multiplica sus boletos salvajemente
+            return weight * (1.5f + crueltyLevel);
+        }
+
+        if (ev.type == EventType.Beneficial)
+        {
+            // Un evento bueno pierde sus boletos, pero nunca baja de 0.1f para mantener la esperanza viva
+            return weight * Mathf.Max(0.1f, 1f - crueltyLevel);
+        }
+
+        // Los neutrales siempre mantienen su peso base
+        return weight;
     }
     /// <summary>
     /// Oculta instantáneamente el panel visual de eventos y limpia el texto en pantalla.

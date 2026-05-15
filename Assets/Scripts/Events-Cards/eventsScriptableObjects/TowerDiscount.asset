@@ -16,4 +16,4 @@ MonoBehaviour:
   description: Torres al 50%. Si pierdes ahora es por tu culpa, no por el juego.
   type: 0
   audioClip: {fileID: 8300000, guid: 4fa5c000dc8dfb34e81b1192c3609fd4, type: 3}
-  baseWeight: 10
+  baseWeight: 20

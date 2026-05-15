@@ -519,7 +519,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10000
   m_Sprite: {fileID: 21300000, guid: cb7a3d7e997861c48999ddeef77cadc8, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -557,6 +557,8 @@ MonoBehaviour:
   upgradeCooldownStep: 0
   totalGoldInvested: 0
   isBuilt: 0
+  currentIncreaseDamage: 0
+  shortCuts: {fileID: 11400000, guid: 9e3b77de91c9ca447ac7392d0f9f75ef, type: 2}
 --- !u!61 &2644344469074054056
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -722,3 +724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde6755914dd7a94a88a0827e2706a47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseOrder: 10000
+  multiplier: 100
+  minOrder: 0
+  maxOrder: 20000

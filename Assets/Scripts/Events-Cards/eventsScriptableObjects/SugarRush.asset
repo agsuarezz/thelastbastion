@@ -15,5 +15,5 @@ MonoBehaviour:
   eventName: 
   description: "Monstruos dopados. Corren a 300km/h pero mueren de un soplo. \xA1Espabila!"
   type: 0
-  audioClip: {fileID: 0}
-  baseWeight: 10
+  audioClip: {fileID: 8300000, guid: 5130ae639ee902645a5d00265f9b9167, type: 3}
+  baseWeight: 15
