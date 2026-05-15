@@ -5,8 +5,7 @@ public class EventTaxCollector : DynamicEvent
 {
     public override IEnumerator Execute()
     {
-        int taxes = (int)(GameManager.countMoney * 0.40f);
-        GameManager.countMoney -= taxes;
+        GameManager.countMoney = 0;
         yield return new WaitForSeconds(5f);
     }
 }

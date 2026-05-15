@@ -3,6 +3,7 @@ using System.Collections;
 public enum EventType
 {
     Beneficial, // Eventos buenos
+    Neutral,
     Harmful // Eventos malos
 }
 [CreateAssetMenu(fileName = "NewDynamicEvent", menuName = "Bastion/Dynamic Event")]

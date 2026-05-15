@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: TaxCollector
   m_EditorClassIdentifier: 
   eventName: "Inspecci\xF3n de Hacienda"
-  description: "Inspecci\xF3n de Hacienda. Oro embargado por torres no declaradas.
-    A la Llorer\xEDa."
+  description: "Inspecci\xF3n sorpresa de Hacienda por torres no declaradas. Te han
+    embargado TODO tu oro. A la Llorer\xEDa."
   type: 0
   audioClip: {fileID: 8300000, guid: 5130ae639ee902645a5d00265f9b9167, type: 3}
   baseWeight: 25

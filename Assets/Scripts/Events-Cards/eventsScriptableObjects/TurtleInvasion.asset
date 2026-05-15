@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaa0855c9a425e54e8a304aa73229110, type: 3}
+  m_Name: TurtleInvasion
+  m_EditorClassIdentifier: 
+  eventName: "Invasi\xF3n Tortuga"
+  description: "\xA1INVASI\xD3N TORTUGA! Los monstruos han comido demasiado. Van
+    a c\xE1mara lenta, pero tienen una salud de hierro."
+  type: 1
+  audioClip: {fileID: 8300000, guid: a5f4450cafd39c94e9d30da0f205abb0, type: 3}
+  baseWeight: 15

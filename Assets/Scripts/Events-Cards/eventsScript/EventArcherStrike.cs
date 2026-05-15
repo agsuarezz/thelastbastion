@@ -6,8 +6,8 @@ public class EventArcherStrike : DynamicEvent
 {
     public override IEnumerator Execute()
     {
-        GameManager.globalAttackSpeedMultiplier *= 4f;
-        yield return new WaitForSeconds(7f);
-        GameManager.globalAttackSpeedMultiplier /= 4f;
+        GameManager.globalAttackSpeedMultiplier *= 1000f;
+        yield return new WaitForSeconds(5f);
+        GameManager.globalAttackSpeedMultiplier /= 1000f;
     }
 }

@@ -23,6 +23,7 @@ public class EventManager : MonoBehaviour
     public float eventUIDuration = 5f;
 
     private Coroutine hideUICoroutine;
+    private DynamicEvent lastPlayedEvent;
     /// <summary>
     /// Método de inicialización de Unity. Se asegura de que el panel de la interfaz 
     /// de los eventos esté completamente oculto al comenzar la partida.
@@ -56,6 +57,7 @@ public class EventManager : MonoBehaviour
             selectedEvent = SelectEventByWeight(currentWave);
         }
 
+        lastPlayedEvent = selectedEvent;
         // 1. Mostramos el mensaje sarcástico en pantalla y reproducimos el sonido
         ShowEventUI(selectedEvent.description, selectedEvent.audioClip);
 
@@ -77,7 +79,7 @@ public class EventManager : MonoBehaviour
         {
             // El Boss no juega a esta ruleta, sale cuando le toca
             if (ev is EventBossRound) continue;
-
+            if (ev == lastPlayedEvent) continue;
             // Preguntamos a nuestro otro método cuántos "boletos" merece este evento hoy
             float weightForThisRound = CalculateCrueltyWeight(ev, currentWave);
 
@@ -117,7 +119,8 @@ public class EventManager : MonoBehaviour
         if (currentWave <= 3)
         {
             if (ev.type == EventType.Harmful) return weight * 0.2f;    // Le quitamos el 80% de los boletos malos
-            if (ev.type == EventType.Beneficial) return weight * 1.5f; // Le regalamos un 50% extra de boletos buenos
+            else if (ev.type == EventType.Beneficial) return weight * 1.5f; // Le regalamos un 50% extra de boletos buenos
+            else if (ev.type == EventType.Neutral) return weight;
             return weight; // Los neutros se quedan igual
         }
 
@@ -135,14 +138,18 @@ public class EventManager : MonoBehaviour
             // Un evento malo multiplica sus boletos salvajemente
             return weight * (1.5f + crueltyLevel);
         }
-
-        if (ev.type == EventType.Beneficial)
+        else if (ev.type == EventType.Beneficial)
         {
-            // Un evento bueno pierde sus boletos, pero nunca baja de 0.1f para mantener la esperanza viva
+            // Un evento bueno pierde sus boletos
             return weight * Mathf.Max(0.1f, 1f - crueltyLevel);
         }
+        else if (ev.type == EventType.Neutral)
+        {
+            // LOS NEUTROS: Escalan un poquito (la mitad que los malos) 
+            // para no desaparecer del bombo de lotería en rondas altas.
+            return weight * (1f + (crueltyLevel * 0.5f));
+        }
 
-        // Los neutrales siempre mantienen su peso base
         return weight;
     }
     /// <summary>

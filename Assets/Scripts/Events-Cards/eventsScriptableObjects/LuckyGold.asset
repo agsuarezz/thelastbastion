@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4419e1e4546ec95429f2c7453739d88c, type: 3}
   m_Name: LuckyGold
   m_EditorClassIdentifier: 
-  eventName: Oro Doble
-  description: Doble oro. A ver si con esta limosna dejas de perder.
+  eventName: Fiebre del Oro
+  description: "\xA1FIEBRE DEL ORO! El oro de los enemigos se multiplica x10 durante
+    5 segundos. A ver si con esta limosna dejas de perder de una vez."
   type: 0
   audioClip: {fileID: 8300000, guid: 4fa5c000dc8dfb34e81b1192c3609fd4, type: 3}
   baseWeight: 10

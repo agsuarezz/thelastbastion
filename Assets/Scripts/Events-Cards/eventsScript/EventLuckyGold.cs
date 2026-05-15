@@ -5,8 +5,8 @@ public class EventLuckyGold : DynamicEvent
 {
     public override IEnumerator Execute()
     {
-        GameManager.globalMoneyMultiplier *= 2;
-        yield return new WaitForSeconds(10f);
-        GameManager.globalMoneyMultiplier /= 2;
+        GameManager.globalMoneyMultiplier *= 10;
+        yield return new WaitForSeconds(5f);
+        GameManager.globalMoneyMultiplier /= 10;
     }
 }

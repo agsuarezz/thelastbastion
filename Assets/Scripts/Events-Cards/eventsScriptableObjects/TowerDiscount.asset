@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: TowerDiscount
   m_EditorClassIdentifier: 
   eventName: Descuento en Torres
-  description: Torres al 50%. Si pierdes ahora es por tu culpa, no por el juego.
+  description: "\xA1D\xCDA SIN IVA! Todas las construcciones y mejoras son GRATIS
+    durante 5 segundos. \xA1R\xE1pido, rompe el rat\xF3n a clics!"
   type: 0
   audioClip: {fileID: 8300000, guid: 4fa5c000dc8dfb34e81b1192c3609fd4, type: 3}
   baseWeight: 20

@@ -5,8 +5,9 @@ public class EventTowerDiscount : DynamicEvent
 {
     public override IEnumerator Execute()
     {
-        GameManager.globalCostMultiplier *= 0.5f;
-        yield return new WaitForSeconds(10f);
-        GameManager.globalCostMultiplier /= 0.5f;
+        float lastMultiplier = GameManager.globalCostMultiplier;
+        GameManager.globalCostMultiplier = 0f;
+        yield return new WaitForSeconds(5f);
+        GameManager.globalCostMultiplier = lastMultiplier;
     }
 }

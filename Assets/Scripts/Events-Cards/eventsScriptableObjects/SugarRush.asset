@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50366e0869108a45bd1120cf136717d, type: 3}
   m_Name: SugarRush
   m_EditorClassIdentifier: 
-  eventName: 
+  eventName: "Subid\xF3n de Az\xFAcar"
   description: "Monstruos dopados. Corren a 300km/h pero mueren de un soplo. \xA1Espabila!"
-  type: 0
+  type: 1
   audioClip: {fileID: 8300000, guid: 5130ae639ee902645a5d00265f9b9167, type: 3}
   baseWeight: 15
