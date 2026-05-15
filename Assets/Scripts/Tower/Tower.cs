@@ -117,6 +117,8 @@ public class Tower : MonoBehaviour
         {
             int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
             GameManager.countMoney += goldRecovered;
+            GameManager.ShowFloatingMoney(goldRecovered, isGain: true);
+            GameManager.sound(GameManager.soundMoney);
             isBuilt = false;
             GameManager.countTower -= 1;
             if (config is SupportTowerData)
@@ -200,7 +202,7 @@ public class Tower : MonoBehaviour
     private void HandleIncreaseDamage()
     {
         fireTimer -= Time.deltaTime;
-        if(fireTimer <= 0f)
+        if (fireTimer <= 0f)
         {
 
             fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
@@ -286,7 +288,7 @@ public class Tower : MonoBehaviour
         {
             hijo.gameObject.SetActive(status);
         }
-        if(!status)
+        if (!status)
             towerActiveInMenu = null;
     }
     /// <summary>
@@ -299,7 +301,7 @@ public class Tower : MonoBehaviour
         if (currentTarget != null)
         {
             Enemy currentEnemyScript = currentTarget.GetComponent<Enemy>();
-            if(currentEnemyScript == null)
+            if (currentEnemyScript == null)
             {
                 currentTarget = null;
             }
@@ -318,7 +320,7 @@ public class Tower : MonoBehaviour
                     return;
                 }
             }
-            
+
         }
         // 2. BUSCAR UN NUEVO OBJETIVO
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -400,16 +402,16 @@ public class Tower : MonoBehaviour
             btnUpdate.onClick.RemoveAllListeners();
         }
     }
-        /// <summary>
+    /// <summary>
     /// Instancia un proyectil en la posición actual de la torre y le asigna
     /// el objetivo fijado. Si la mejora de fuego está activa, añade quemadura
     /// al proyectil con la probabilidad global configurada.
     /// </summary>
     private void Shoot()
     {
-        Vector3    startPos     = transform.position;
+        Vector3 startPos = transform.position;
         GameObject projectileGO = Instantiate(projectilePrefab, startPos, Quaternion.identity);
- 
+
         Projectile projectile = projectileGO.GetComponent<Projectile>();
         if (projectile != null)
         {
@@ -418,7 +420,7 @@ public class Tower : MonoBehaviour
             TryInjectBurnEffect(projectile);
         }
     }
- 
+
     /// <summary>
     /// Si la probabilidad global de quemadura es mayor que 0, lanza el dado
     /// y, en caso de éxito, construye un BurnOnHitEffect y se lo asigna
@@ -432,20 +434,20 @@ public class Tower : MonoBehaviour
     private void TryInjectBurnEffect(Projectile projectile)
     {
         if (GameManager.globalBurnProbability <= 0f) return;
- 
+
         bool burnTriggered = Random.value < GameManager.globalBurnProbability;
         if (!burnTriggered) return;
- 
-        const int   burnDamagePerTick = 3;   // daño por tick de fuego
-        const float burnTickInterval  = 0.5f; // segundos entre ticks
-        const int   burnTotalTicks    = 12;   // duración total: 3 segundos
- 
+
+        const int burnDamagePerTick = 3;   // daño por tick de fuego
+        const float burnTickInterval = 0.5f; // segundos entre ticks
+        const int burnTotalTicks = 12;   // duración total: 3 segundos
+
         IOnHitEffect burnEffect = new BurnOnHitEffect(
             burnDamagePerTick,
             burnTickInterval,
             burnTotalTicks
         );
- 
+
         projectile.SetOnHitEffect(burnEffect);
     }
     /// <summary>
@@ -483,7 +485,7 @@ public class Tower : MonoBehaviour
             }
 
             // 4. Aplicamos los visuales
-            if (sprite == null) 
+            if (sprite == null)
                 sprite = towerImagen[0].GetComponent<SpriteRenderer>();
             if (boxCollider == null) boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
@@ -519,6 +521,10 @@ public class Tower : MonoBehaviour
         // 2. Se lo restamos al dinero del jugador
         GameManager.countMoney -= finalCost;
 
+        // Feedback visual de gasto
+        GameManager.ShowFloatingMoney(finalCost, isGain: false);
+        GameManager.sound(GameManager.soundPay);
+
         // 3. ¡Lo guardamos en la hucha de la torre para su futura venta!
         totalGoldInvested += finalCost;
     }
@@ -553,7 +559,7 @@ public class Tower : MonoBehaviour
         {
             currentDamage += upgradeDamageStep;
         }
-        else if(config is SupportTowerData)
+        else if (config is SupportTowerData)
         {
             currentIncreaseDamage += upgradeDamageStep;
         }
@@ -576,7 +582,7 @@ public class Tower : MonoBehaviour
     /// </summary>
     public void increaseCountTower()
     {
-        if(updatetower.levelOfTower == 0)
+        if (updatetower.levelOfTower == 0)
         {
             GameManager.countTower += 1;
         }
@@ -591,9 +597,9 @@ public class Tower : MonoBehaviour
         Image[] imageList = gameObjectUpdateDeleteTower.GetComponentsInChildren<Image>();
         foreach (Image image in imageList)
         {
-            if(image.gameObject.name == "towerImageUpgrade")
+            if (image.gameObject.name == "towerImageUpgrade")
             {
-                if(updatetower.levelOfTower < 2)
+                if (updatetower.levelOfTower < 2)
                 {
                     image.sprite = towerImagen[updatetower.levelOfTower + 1].GetComponent<SpriteRenderer>().sprite;
                     return;
@@ -701,8 +707,8 @@ public class Tower : MonoBehaviour
         }
     }
     public void cadenceFunction(TextMeshProUGUI text)
-    { 
-        if(config is LaserTowerData || config is ProjectileTowerData)
+    {
+        if (config is LaserTowerData || config is ProjectileTowerData)
         {
             float currentBaseCooldown = config is LaserTowerData ? currentRestDuration : fireCooldown;
             if (updatetower.levelOfTower < 2)

@@ -48,7 +48,7 @@ public class Enemy : MonoBehaviour
         if (!isAttackingCastle)
         {
             MoveAlongPath();
-            
+
         }
     }
 
@@ -60,7 +60,7 @@ public class Enemy : MonoBehaviour
 
         SetAttackingAnimation(false);
     }
-    
+
 
     public void SetLifeBarVisible(bool visible)
     {
@@ -131,7 +131,7 @@ public class Enemy : MonoBehaviour
         SetAttackingAnimation(true);
     }
 
-   
+
     public void ApplyCastleAttackDamage()
     {
         if (isDead) return;
@@ -147,10 +147,10 @@ public class Enemy : MonoBehaviour
         int finalDamage = Mathf.RoundToInt(enemyData.damage * GameManager.globalEnemyDamageMultiplier);
         targetCastle.TakeDamage(finalDamage);
 
-       
+
     }
 
-    
+
 
 
     private void SetAttackingAnimation(bool value)
@@ -202,7 +202,10 @@ public class Enemy : MonoBehaviour
 
         if (enemyData != null)
         {
-            GameManager.countMoney += enemyData.money * GameManager.globalMoneyMultiplier;
+            int reward = enemyData.money * GameManager.globalMoneyMultiplier;
+            GameManager.countMoney += reward;
+            GameManager.ShowFloatingMoney(reward, isGain: true);
+            GameManager.sound(GameManager.soundMoney);
         }
 
         currentSpeed = 0f;
@@ -237,35 +240,35 @@ public class Enemy : MonoBehaviour
     }
 
     public float GetPathProgress()
-{
-    if (pathWaypoints == null || pathWaypoints.Length == 0)
-        return 0f;
-
-    if (isAttackingCastle)
-        return pathWaypoints.Length + 1f;
-
-    if (currentWaypointIndex >= pathWaypoints.Length)
-        return pathWaypoints.Length;
-
-    float progress = currentWaypointIndex;
-
-    Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
-
-    if (currentWaypointIndex > 0)
     {
-        Vector3 previousWaypoint = pathWaypoints[currentWaypointIndex - 1];
+        if (pathWaypoints == null || pathWaypoints.Length == 0)
+            return 0f;
 
-        float segmentLength = Vector2.Distance(previousWaypoint, targetWaypoint);
-        float distanceFromPrevious = Vector2.Distance(previousWaypoint, transform.position);
+        if (isAttackingCastle)
+            return pathWaypoints.Length + 1f;
 
-        if (segmentLength > 0f)
+        if (currentWaypointIndex >= pathWaypoints.Length)
+            return pathWaypoints.Length;
+
+        float progress = currentWaypointIndex;
+
+        Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
+
+        if (currentWaypointIndex > 0)
         {
-            progress += Mathf.Clamp01(distanceFromPrevious / segmentLength);
-        }
-    }
+            Vector3 previousWaypoint = pathWaypoints[currentWaypointIndex - 1];
 
-    return progress;
-}
+            float segmentLength = Vector2.Distance(previousWaypoint, targetWaypoint);
+            float distanceFromPrevious = Vector2.Distance(previousWaypoint, transform.position);
+
+            if (segmentLength > 0f)
+            {
+                progress += Mathf.Clamp01(distanceFromPrevious / segmentLength);
+            }
+        }
+
+        return progress;
+    }
 
     public void OnDeathAnimationFinished()
     {

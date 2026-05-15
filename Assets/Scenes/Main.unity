@@ -662,6 +662,7 @@ MonoBehaviour:
   spawner: {fileID: 452400196}
   castlescript: {fileID: 196915343}
   countMoneyText: {fileID: 1781555234}
+  floatingTextSpawner: {fileID: 1179635855}
   cardManager: {fileID: 626184129}
   roundsForCards: 1
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
@@ -18733,6 +18734,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1172191665}
   m_CullTransparentMesh: 1
+--- !u!1 &1179635854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1179635856}
+  - component: {fileID: 1179635855}
+  m_Layer: 5
+  m_Name: FloatingTextManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1179635855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179635854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4610e9b22600d45478b330b9d0c3f31b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floatingTextPrefab: {fileID: 2659537090425049417, guid: f2d89bb9fdbc94b439784dd3a1b21e42, type: 3}
+  targetCanvas: {fileID: 0}
+  spawnOffset: {x: 100, y: 20}
+  randomSpread: 30
+--- !u!224 &1179635856
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179635854}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2079989284}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1191266583
 GameObject:
   m_ObjectHideFlags: 0
@@ -27330,6 +27383,7 @@ RectTransform:
   - {fileID: 932560498}
   - {fileID: 384515469}
   - {fileID: 1719469415}
+  - {fileID: 1179635856}
   - {fileID: 1442444985}
   - {fileID: 1962524003}
   - {fileID: 406818255}
