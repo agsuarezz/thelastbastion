@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97688ddcefd993f4b9acdb888e80fc17, type: 3}
+  m_Name: TaxAdministrativeError
+  m_EditorClassIdentifier: 
+  eventName: Error Administrativo
+  description: Susto de Hacienda. Al final era un error de redondeo y solo tienes
+    que pagar 1 moneda.
+  type: 2
+  audioClip: {fileID: 8300000, guid: 5130ae639ee902645a5d00265f9b9167, type: 3}
+  baseWeight: 5
+  fixedGoldToRemove: 1
+  theftMultiplier: 0
