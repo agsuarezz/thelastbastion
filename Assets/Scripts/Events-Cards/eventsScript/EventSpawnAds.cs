@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EventSpawnAds : DynamicEvent
 {
+    [Header("Configuración del Spam")]
+    [Tooltip("Número de anuncios que van a salir en pantalla")]
+    public int adAmount = 4;
     public override IEnumerator Execute()
     {
         GameObject[] adPrefabs = new GameObject[4];
@@ -14,9 +17,10 @@ public class EventSpawnAds : DynamicEvent
 
         Transform parentCanvas = GameObject.Find("Canvas_General").transform;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < adAmount; i++)
         {
-            GameObject selectedPrefab = adPrefabs[i];
+            int randomPrefabIndex = Random.Range(0, adPrefabs.Length);
+            GameObject selectedPrefab = adPrefabs[randomPrefabIndex];
             GameObject spawnedAd = Instantiate(selectedPrefab, parentCanvas, false);
             RectTransform adRect = spawnedAd.GetComponent<RectTransform>();
 

@@ -852,6 +852,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 83217a7c4aa19074b970b9485e83263c, type: 2}
   - {fileID: 11400000, guid: 3af9e8ce365837b46995fb5829ddd17a, type: 2}
   - {fileID: 11400000, guid: 07bfdaf6a4a7b3444af9f4ad7ab8336d, type: 2}
+  - {fileID: 11400000, guid: 89374eb9bf6d7ab41b098261532bc865, type: 2}
+  - {fileID: 11400000, guid: eee1589361753494788ac6b532d2de9f, type: 2}
+  - {fileID: 11400000, guid: 080c0f0fc4b03654bad58d67bf286d4c, type: 2}
   messageEventText: {fileID: 1944678644}
   eventBackgroundUI: {fileID: 1310106337}
   eventUIDuration: 5

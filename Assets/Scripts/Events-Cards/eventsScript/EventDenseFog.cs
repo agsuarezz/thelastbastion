@@ -6,10 +6,12 @@ public class EventDenseFog : DynamicEvent
 {
     public override IEnumerator Execute()
     {
-        GameManager.globalRadiusMultiplier *= 0.5f;
+        float oldRadiusMultiplier = GameManager.globalRadiusMultiplier;
+
+        GameManager.globalRadiusMultiplier = oldRadiusMultiplier * 0.5f;
 
         yield return new WaitForSeconds(10f);
 
-        GameManager.globalRadiusMultiplier /= 0.5f;
+        GameManager.globalRadiusMultiplier = oldRadiusMultiplier;
     }
 }

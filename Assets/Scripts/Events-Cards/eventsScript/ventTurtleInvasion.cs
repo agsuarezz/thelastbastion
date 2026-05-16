@@ -6,12 +6,15 @@ public class EventTurtleInvasion : DynamicEvent
 {
     public override IEnumerator Execute()
     {
-        GameManager.globalSpeedMultiplier *= 0.3f;
-        GameManager.globalEnemyHealthMultiplier *= 3f;
+        float oldSpeedMultiplier = GameManager.globalSpeedMultiplier;
+        float oldHealthMultiplier = GameManager.globalEnemyHealthMultiplier;
 
-        yield return new WaitForSeconds(10f); // Este puede durar 10s porque es neutral
+        GameManager.globalSpeedMultiplier = oldSpeedMultiplier * 0.3f;
+        GameManager.globalEnemyHealthMultiplier = oldHealthMultiplier * 3f;
 
-        GameManager.globalSpeedMultiplier /= 0.3f;
-        GameManager.globalEnemyHealthMultiplier /= 3f;
+        yield return new WaitForSeconds(10f);
+
+        GameManager.globalSpeedMultiplier = oldSpeedMultiplier;
+        GameManager.globalEnemyHealthMultiplier = oldHealthMultiplier;
     }
 }
