@@ -17,6 +17,6 @@ MonoBehaviour:
     que pagar 1 moneda.
   type: 2
   audioClip: {fileID: 8300000, guid: 5130ae639ee902645a5d00265f9b9167, type: 3}
-  baseWeight: 5
+  baseWeight: 15
   fixedGoldToRemove: 1
   theftMultiplier: 0

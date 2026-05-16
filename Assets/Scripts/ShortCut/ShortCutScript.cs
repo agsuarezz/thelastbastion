@@ -21,4 +21,6 @@ public class ShortCutScript : ScriptableObject
 
     [Tooltip("Tecla para vender la torre que esté seleccionada actualmente")]
     public KeyCode keyToSellTower = KeyCode.V;
+    [Tooltip("Tecla para pausar o reanudar la partida actual.")]
+    public KeyCode keyToPauseGame = KeyCode.Escape;
 }

@@ -19,7 +19,12 @@ public class GameManager : MonoBehaviour
     public Sprite iconoMusicaOn;
     public Sprite iconoMusicaOff;
     public static bool musicaActiva = true;
-
+    [Header("Interfaz de Pausa")]
+    [Tooltip("Arrastra aquí el GameObject del Panel de Pausa desde el Inspector.")]
+    public GameObject pauseMenuPanel;
+    [Tooltip("Arrastra aquí el Botón de Pausa de la interfaz (el pequeño).")]
+    public Button pauseButtonUI;
+    [Header("Torre")]
     // SpriteRenderer de referencia para asignar el gráfico correcto a las nuevas torres construidas.
     [Tooltip("SpriteRenderer base del cual se copiará el sprite para las torres.")]
     public SpriteRenderer towerImage;
@@ -307,8 +312,17 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Update()
     {
-        // Si estamos en pausa o cartas, no hacemos NADA
+        // COMPROBAR TECLAS DE ESTADO PRIMERO (Pausa/Reanudar funciona siempre excepto en Eventos)
+        if (GameManager.currentState != GameState.EventOpen)
+        {
+            if (Input.GetKeyDown(shortCut.keyToPauseGame))
+            {
+                TogglePause();
+            }
+        }
+        // Si estamos en pausa o cartas, paramos aquí para que el resto del juego no se actualice
         if (GameManager.currentState != GameState.Playing) return;
+        // --- LOGICA DE JUEGO (Solo se ejecuta si State == Playing) ---
         // Si ya estamos gestionando el cambio de ronda, esperamos
         if (isChangingRound) return;
         if (waitingBetweenRounds && Input.GetKeyDown(shortCut.keyToPassRound))
@@ -340,21 +354,36 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(time);
     }
     /// <summary>
-    /// Gestiona la lógica de pausa del juego mostrando u ocultando el panel del menú.
-    /// Alterna la escala de tiempo y reproduce un efecto de sonido dependiendo del estado actual.
+    /// Alterna el estado de pausa del juego. Congela el tiempo, reproduce el sonido
+    /// correspondiente, activa/desactiva el panel y bloquea el botón original.
     /// </summary>
-    /// <param name="menuPanel">El GameObject que contiene la interfaz gráfica del menú de pausa.</param>
-    public void pauseaandRestartButton(GameObject menuPanel)
+    public void TogglePause()
     {
         if (GameManager.currentState == GameState.EventOpen) return;
+
+        // 1. Cambiamos el estado lógico
         GameManager.currentState = GameManager.currentState == GameState.Paused ? GameState.Playing : GameState.Paused;
+
+        // 2. Congelamos o reanudamos el tiempo del juego
         changeTimeScale();
-        bool status = menuPanel.activeSelf;
-        menuPanel.SetActive(!status);
+
+        // 3. Encendemos u ocultamos el panel directamente
+        if (pauseMenuPanel != null)
+        {
+            pauseMenuPanel.SetActive(GameManager.currentState == GameState.Paused);
+        }
+
+        // 4. Bloqueamos o desbloqueamos el botón pequeñito de pausa original
+        if (pauseButtonUI != null)
+        {
+            // Si estamos jugando (Playing), el botón se puede usar (true). Si estamos en pausa, se bloquea (false).
+            pauseButtonUI.interactable = (GameManager.currentState == GameState.Playing);
+        }
+
+        // 5. Reproducimos el efecto de sonido según cómo haya quedado el TimeScale
         AudioClip audioClip = Time.timeScale != 1.0f ? GameManager.soundPause : GameManager.soundRestart;
         sound(audioClip);
     }
-
     public void cambiarEstadoMusica()
     {
         musicaActiva = !musicaActiva;
