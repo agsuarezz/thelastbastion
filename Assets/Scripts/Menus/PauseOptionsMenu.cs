@@ -2,17 +2,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
-public class PrincipalOptionsMenu : MonoBehaviour
+public class PauseOptionsMenu : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private GameObject optionsPanel;
     [SerializeField] private GameObject volumePopup;
     [SerializeField] private Slider volumeSlider;
 
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer mainAudioMixer;
 
-    private bool isOpen = false;
     private bool isVolumePopupOpen = false;
 
     private const string MasterVolumeParameter = "MasterVolume";
@@ -20,12 +18,8 @@ public class PrincipalOptionsMenu : MonoBehaviour
 
     private void Start()
     {
-        optionsPanel.SetActive(false);
-
         if (volumePopup != null)
-        {
             volumePopup.SetActive(false);
-        }
 
         float savedVolume = PlayerPrefs.GetFloat(MasterVolumePrefsKey, 0.75f);
 
@@ -40,36 +34,12 @@ public class PrincipalOptionsMenu : MonoBehaviour
         SetVolume(savedVolume);
     }
 
-    public void ToggleOptionsMenu()
-    {
-        isOpen = !isOpen;
-
-        optionsPanel.SetActive(isOpen);
-
-        if (!isOpen)
-        {
-            CloseVolumePopup();
-        }
-
-        Time.timeScale = isOpen ? 0f : 1f;
-    }
-
-    public void Resume()
-    {
-        isOpen = false;
-        optionsPanel.SetActive(false);
-        CloseVolumePopup();
-        Time.timeScale = 1f;
-    }
-
     public void ToggleVolumePopup()
     {
         isVolumePopupOpen = !isVolumePopupOpen;
 
         if (volumePopup != null)
-        {
             volumePopup.SetActive(isVolumePopupOpen);
-        }
     }
 
     public void SetVolume(float volume)
@@ -78,36 +48,9 @@ public class PrincipalOptionsMenu : MonoBehaviour
         float dbValue = Mathf.Log10(safeVolume) * 20f;
 
         if (mainAudioMixer != null)
-        {
             mainAudioMixer.SetFloat(MasterVolumeParameter, dbValue);
-        }
 
         PlayerPrefs.SetFloat(MasterVolumePrefsKey, safeVolume);
         PlayerPrefs.Save();
-    }
-
-    public void QuitGame()
-    {
-        Time.timeScale = 1f;
-        Application.Quit();
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-    }
-
-    private void CloseVolumePopup()
-    {
-        isVolumePopupOpen = false;
-
-        if (volumePopup != null)
-        {
-            volumePopup.SetActive(false);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        Time.timeScale = 1f;
     }
 }

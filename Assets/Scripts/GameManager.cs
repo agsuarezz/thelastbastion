@@ -161,6 +161,7 @@ public class GameManager : MonoBehaviour
         audioSource = this.GetComponent<AudioSource>();
         Time.timeScale = 1f;
         Time.timeScale = 1f;
+        /*
         if (AudioListener.volume == 0f)
         {
             musicaActiva = false;
@@ -171,6 +172,7 @@ public class GameManager : MonoBehaviour
             musicaActiva = true;
             if (imagenBotonMusica != null) imagenBotonMusica.sprite = iconoMusicaOn;
         }
+        */
         if (GameObject.Find("PlayButton"))
         {
             playButton = GameObject.Find("PlayButton").GetComponent<Button>();
@@ -384,6 +386,7 @@ public class GameManager : MonoBehaviour
         AudioClip audioClip = Time.timeScale != 1.0f ? GameManager.soundPause : GameManager.soundRestart;
         sound(audioClip);
     }
+    /*
     public void cambiarEstadoMusica()
     {
         musicaActiva = !musicaActiva;
@@ -399,7 +402,7 @@ public class GameManager : MonoBehaviour
             AudioListener.volume = 0f; // Silencia el sonido global
         }
     }
-
+    */
     private void ShowPlayButton()
     {
         if (playButton == null) return;
