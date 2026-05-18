@@ -14,8 +14,9 @@ public class Projectile : MonoBehaviour
     [Tooltip("Cantidad de vida que restará al impactar.")]
     [HideInInspector] public float damage = 20;
 
-    // Efecto opcional que se ejecuta al impactar (null = sin efecto especial)
-    private IOnHitEffect _onHitEffect;
+    // Lista de efectos al impacto (fuego, veneno, etc.). Vacía = sin efectos especiales.
+    private readonly System.Collections.Generic.List<IOnHitEffect> _onHitEffects =
+        new System.Collections.Generic.List<IOnHitEffect>();
 
     private Transform target;
 
@@ -32,11 +33,12 @@ public class Projectile : MonoBehaviour
     }
 
     /// <summary>
-    /// Asigna un efecto al impacto. Pasar <c>null</c> elimina cualquier efecto previo.
+    /// Añade un efecto al impacto. Se pueden registrar varios (fuego + veneno, etc.).
     /// </summary>
-    public void SetOnHitEffect(IOnHitEffect effect)
+    public void AddOnHitEffect(IOnHitEffect effect)
     {
-        _onHitEffect = effect;
+        if (effect != null)
+            _onHitEffects.Add(effect);
     }
 
     // ── Unity ────────────────────────────────────────────────────────────────
@@ -94,8 +96,9 @@ public class Projectile : MonoBehaviour
 
             enemyScript.TakeDamage(damage);
 
-            // Aplicamos el efecto especial si existe (quemadura, veneno, etc.)
-            _onHitEffect?.Apply(enemyScript);
+            // Aplicamos todos los efectos registrados (quemadura, veneno, etc.)
+            foreach (IOnHitEffect effect in _onHitEffects)
+                effect.Apply(enemyScript);
         }
 
         Destroy(gameObject);

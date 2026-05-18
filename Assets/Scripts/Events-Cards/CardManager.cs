@@ -32,7 +32,10 @@ public class CardManager : MonoBehaviour
         DamageUp,
         AttackSpeedUp,
         RadiusUp,
-        FireBurn       // ← nueva mejora de fuego
+        FireBurn,      // mejora de fuego
+        SlowEnemies,   // ralentización de enemigos
+        PoisonStrike,  // veneno apilable
+        Greed          // más oro por kill
     }
 
     // ── Datos internos de carta ──────────────────────────────────────────────
@@ -91,7 +94,25 @@ public class CardManager : MonoBehaviour
             {
                 type        = UpgradeType.FireBurn,
                 title       = "Brasas Eternas",
-                description = "Tus proyectiles tienen un 30% de probabilidad de incendiar al enemigo, aplicando daño de fuego a lo largo del tiempo."
+                description = "Tus proyectiles tienen un 15% de probabilidad de incendiar al enemigo, aplicando daño de fuego a lo largo del tiempo."
+            },
+            new CardData
+            {
+                type        = UpgradeType.SlowEnemies,
+                title       = "Pantano Espeso",
+                description = "Todos los enemigos se mueven un 20% más LENTO de forma permanente."
+            },
+            new CardData
+            {
+                type        = UpgradeType.PoisonStrike,
+                title       = "Flechas Envenenadas",
+                description = "Tus proyectiles tienen un 25% de probabilidad de envenenar al enemigo. El veneno se APILA con cada impacto, aumentando su daño."
+            },
+            new CardData
+            {
+                type        = UpgradeType.Greed,
+                title       = "Codicia",
+                description = "Ganas un 15% MÁS de oro por cada enemigo eliminado."
             }
         };
     }
@@ -153,6 +174,18 @@ public class CardManager : MonoBehaviour
             case UpgradeType.FireBurn:
                 ApplyFireBurnUpgrade();
                 break;
+
+            case UpgradeType.SlowEnemies:
+                ApplySlowEnemiesUpgrade();
+                break;
+
+            case UpgradeType.PoisonStrike:
+                ApplyPoisonStrikeUpgrade();
+                break;
+
+            case UpgradeType.Greed:
+                ApplyGreedUpgrade();
+                break;
         }
 
         GameManager.currentState = GameState.Playing;
@@ -171,5 +204,43 @@ public class CardManager : MonoBehaviour
 
         GameManager.globalBurnProbability =
             Mathf.Min(GameManager.globalBurnProbability + incrementPerCard, maxProbability);
+    }
+
+    /// <summary>
+    /// Reduce la velocidad global de los enemigos un 20% acumulativo por carta,
+    /// hasta un mínimo del 30% de la velocidad base (nunca los detiene por completo).
+    /// </summary>
+    private void ApplySlowEnemiesUpgrade()
+    {
+        const float slowPerCard  = 0.20f;
+        const float minSpeedMult = 0.30f;
+
+        GameManager.globalSpeedMultiplier =
+            Mathf.Max(GameManager.globalSpeedMultiplier - slowPerCard, minSpeedMult);
+    }
+
+    /// <summary>
+    /// Incrementa la probabilidad global de envenenar al impactar un 25% por carta,
+    /// hasta un máximo del 80%. El veneno es apilable, así que la probabilidad
+    /// alta tiene más impacto que en el fuego.
+    /// </summary>
+    private void ApplyPoisonStrikeUpgrade()
+    {
+        const float incrementPerCard = 0.25f;
+        const float maxProbability   = 0.80f;
+
+        GameManager.globalPoisonProbability =
+            Mathf.Min(GameManager.globalPoisonProbability + incrementPerCard, maxProbability);
+    }
+
+    /// <summary>
+    /// Incrementa el multiplicador de oro en un 15% acumulativo por carta,
+    /// sin límite superior (cada carta sigue siendo útil).
+    /// </summary>
+    private void ApplyGreedUpgrade()
+    {
+        const float bonusPerCard = 0.15f;
+
+        GameManager.globalMoneyBonusMultiplier += bonusPerCard;
     }
 }
