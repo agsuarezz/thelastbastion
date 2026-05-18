@@ -85,8 +85,8 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Referencia al gestor de textos flotantes de recursos.
     /// </summary>
-    [Tooltip("Gestor de Floating Texts (FloatingTextSpawner en el Canvas).")]
-    public FloatingTextSpawner floatingTextSpawner;
+    [Tooltip("Gestor de notificaciones de dinero.")]
+    public MoneyNotificationManager moneyNotificationManager;
     /// <summary>
     /// Multiplicador global que afecta a todo el oro ganado durante la partida. 
     /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales (ej. Frenesí Capitalista).
@@ -483,9 +483,9 @@ public class GameManager : MonoBehaviour
     /// Muestra un Floating Text de recurso encima del contador de dinero.
     /// </summary>
     public static void ShowFloatingMoney(int amount, bool isGain)
-    {
-        if (FloatingTextSpawner.Instance != null)
-            FloatingTextSpawner.Instance.Show(amount, isGain);
+{
+    if (MoneyNotificationManager.Instance != null)
+        MoneyNotificationManager.Instance.Show(amount, isGain);
     }
     public IEnumerator endOfRoundRoutine()
     {
