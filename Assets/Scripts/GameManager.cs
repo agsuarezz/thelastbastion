@@ -92,7 +92,8 @@ public class GameManager : MonoBehaviour
     /// Multiplicador global que afecta a todo el oro ganado durante la partida. 
     /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales (ej. Frenesí Capitalista).
     /// </summary>
-    public static int globalMoneyMultiplier = 1;
+    public static int   globalMoneyMultiplier      = 1;
+    public static float globalMoneyBonusMultiplier = 1f; // bonus acumulable por la carta Codicia
     /// <summary>
     /// Multiplicador global que afecta al precio de la torre. 
     /// Su valor por defecto es 1. Se altera temporalmente durante eventos especiales.
@@ -722,7 +723,8 @@ public class GameManager : MonoBehaviour
         countMoney = 200; // El oro inicial que quieres darle al jugador
 
         // Multiplicadores
-        globalMoneyMultiplier = 1;
+        globalMoneyMultiplier      = 1;
+        globalMoneyBonusMultiplier = 1f;
         globalCostMultiplier = 1f;
         globalDamageTakenMultiplier = 1f;
         globalAttackSpeedMultiplier = 1f;

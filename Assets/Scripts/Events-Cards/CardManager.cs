@@ -34,7 +34,8 @@ public class CardManager : MonoBehaviour
         RadiusUp,
         FireBurn,      // mejora de fuego
         SlowEnemies,   // ralentización de enemigos
-        PoisonStrike   // veneno apilable
+        PoisonStrike,  // veneno apilable
+        Greed          // más oro por kill
     }
 
     // ── Datos internos de carta ──────────────────────────────────────────────
@@ -93,7 +94,7 @@ public class CardManager : MonoBehaviour
             {
                 type        = UpgradeType.FireBurn,
                 title       = "Brasas Eternas",
-                description = "Tus proyectiles tienen un 30% de probabilidad de incendiar al enemigo, aplicando daño de fuego a lo largo del tiempo."
+                description = "Tus proyectiles tienen un 15% de probabilidad de incendiar al enemigo, aplicando daño de fuego a lo largo del tiempo."
             },
             new CardData
             {
@@ -106,6 +107,12 @@ public class CardManager : MonoBehaviour
                 type        = UpgradeType.PoisonStrike,
                 title       = "Flechas Envenenadas",
                 description = "Tus proyectiles tienen un 25% de probabilidad de envenenar al enemigo. El veneno se APILA con cada impacto, aumentando su daño."
+            },
+            new CardData
+            {
+                type        = UpgradeType.Greed,
+                title       = "Codicia",
+                description = "Ganas un 15% MÁS de oro por cada enemigo eliminado."
             }
         };
     }
@@ -175,6 +182,10 @@ public class CardManager : MonoBehaviour
             case UpgradeType.PoisonStrike:
                 ApplyPoisonStrikeUpgrade();
                 break;
+
+            case UpgradeType.Greed:
+                ApplyGreedUpgrade();
+                break;
         }
 
         GameManager.currentState = GameState.Playing;
@@ -215,10 +226,21 @@ public class CardManager : MonoBehaviour
     /// </summary>
     private void ApplyPoisonStrikeUpgrade()
     {
-        const float incrementPerCard = 0.80f;
+        const float incrementPerCard = 0.25f;
         const float maxProbability   = 0.80f;
 
         GameManager.globalPoisonProbability =
             Mathf.Min(GameManager.globalPoisonProbability + incrementPerCard, maxProbability);
+    }
+
+    /// <summary>
+    /// Incrementa el multiplicador de oro en un 15% acumulativo por carta,
+    /// sin límite superior (cada carta sigue siendo útil).
+    /// </summary>
+    private void ApplyGreedUpgrade()
+    {
+        const float bonusPerCard = 0.15f;
+
+        GameManager.globalMoneyBonusMultiplier += bonusPerCard;
     }
 }

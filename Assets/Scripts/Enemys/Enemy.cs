@@ -202,7 +202,7 @@ public class Enemy : MonoBehaviour
 
         if (enemyData != null)
         {
-            int reward = enemyData.money * GameManager.globalMoneyMultiplier;
+            int reward = Mathf.RoundToInt(enemyData.money * GameManager.globalMoneyMultiplier * GameManager.globalMoneyBonusMultiplier);
             GameManager.countMoney += reward;
             GameManager.totalGoldEarned += reward;
             GameManager.ShowFloatingMoney(reward, isGain: true);
