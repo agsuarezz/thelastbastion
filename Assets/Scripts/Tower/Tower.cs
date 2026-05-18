@@ -422,6 +422,7 @@ public class Tower : MonoBehaviour
             projectile.Seek(currentTarget);
             projectile.SetDamage(GetRealDamage(currentDamage));
             TryInjectBurnEffect(projectile);
+            TryInjectPoisonEffect(projectile);
         }
     }
 
@@ -442,17 +443,40 @@ public class Tower : MonoBehaviour
         bool burnTriggered = Random.value < GameManager.globalBurnProbability;
         if (!burnTriggered) return;
 
-        const int burnDamagePerTick = 3;   // daño por tick de fuego
-        const float burnTickInterval = 0.5f; // segundos entre ticks
-        const int burnTotalTicks = 12;   // duración total: 3 segundos
+        const int   burnDamagePerTick = 3;
+        const float burnTickInterval  = 0.5f;
+        const int   burnTotalTicks    = 12;   // duración total: 3 segundos
 
-        IOnHitEffect burnEffect = new BurnOnHitEffect(
+        projectile.AddOnHitEffect(new BurnOnHitEffect(
             burnDamagePerTick,
             burnTickInterval,
             burnTotalTicks
-        );
+        ));
+    }
 
-        projectile.SetOnHitEffect(burnEffect);
+    /// <summary>
+    /// Si la probabilidad global de veneno es mayor que 0, lanza el dado
+    /// y, en caso de éxito, construye un PoisonOnHitEffect y lo añade
+    /// al proyectil. El veneno es apilable: cada impacto incrementa el daño.
+    /// </summary>
+    private void TryInjectPoisonEffect(Projectile projectile)
+    {
+        if (GameManager.globalPoisonProbability <= 0f) return;
+
+        bool poisonTriggered = Random.value < GameManager.globalPoisonProbability;
+        if (!poisonTriggered) return;
+
+        const int   poisonBaseDamagePerTick = 10;   // daño base por tick (menor que fuego)
+        const float poisonTickInterval      = 0.8f; // tick más lento que el fuego
+        const int   poisonTotalTicks        = 10;   // duración total: 8 segundos
+        const int   poisonMaxStacks         = 6;   // daño máximo: 6 × baseDamage por tick
+
+        projectile.AddOnHitEffect(new PoisonOnHitEffect(
+            poisonBaseDamagePerTick,
+            poisonTickInterval,
+            poisonTotalTicks,
+            poisonMaxStacks
+        ));
     }
     /// <summary>
     /// Configura la torre recién comprada o mejorada.

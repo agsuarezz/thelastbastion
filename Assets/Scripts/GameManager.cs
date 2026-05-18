@@ -113,7 +113,8 @@ public class GameManager : MonoBehaviour
     public static float globalRadiusMultiplier = 1f;
     public static float globalEnemyHealthMultiplier = 1f;
     public static float globalEnemyDamageMultiplier = 1f;
-    public static float globalBurnProbability = 0f;
+    public static float globalBurnProbability   = 0f;
+    public static float globalPoisonProbability = 0f;
 
     [Header("Sistema de Cartas")]
     public CardManager cardManager;
@@ -729,6 +730,8 @@ public class GameManager : MonoBehaviour
         globalRadiusMultiplier = 1f;
         globalEnemyHealthMultiplier = 1f;
         globalEnemyDamageMultiplier = 1f;
+        globalBurnProbability       = 0f;
+        globalPoisonProbability     = 0f;
 
         GridGenerator.selectedGridIndex = 0;
         // Estado del juego
