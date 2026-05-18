@@ -32,7 +32,8 @@ public class CardManager : MonoBehaviour
         DamageUp,
         AttackSpeedUp,
         RadiusUp,
-        FireBurn       // ← nueva mejora de fuego
+        FireBurn,      // mejora de fuego
+        SlowEnemies    // ralentización de enemigos
     }
 
     // ── Datos internos de carta ──────────────────────────────────────────────
@@ -91,7 +92,13 @@ public class CardManager : MonoBehaviour
             {
                 type        = UpgradeType.FireBurn,
                 title       = "Brasas Eternas",
-                description = "Tus proyectiles tienen un 30% de probabilidad de incendiar al enemigo, aplicando daño de fuego a lo largo del tiempo."
+                description = "Tus proyectiles tienen un 15% de probabilidad de incendiar al enemigo, aplicando daño de fuego a lo largo del tiempo."
+            },
+            new CardData
+            {
+                type        = UpgradeType.SlowEnemies,
+                title       = "Pantano Espeso",
+                description = "Todos los enemigos se mueven un 20% más LENTO de forma permanente."
             }
         };
     }
@@ -153,6 +160,10 @@ public class CardManager : MonoBehaviour
             case UpgradeType.FireBurn:
                 ApplyFireBurnUpgrade();
                 break;
+
+            case UpgradeType.SlowEnemies:
+                ApplySlowEnemiesUpgrade();
+                break;
         }
 
         GameManager.currentState = GameState.Playing;
@@ -171,5 +182,18 @@ public class CardManager : MonoBehaviour
 
         GameManager.globalBurnProbability =
             Mathf.Min(GameManager.globalBurnProbability + incrementPerCard, maxProbability);
+    }
+
+    /// <summary>
+    /// Reduce la velocidad global de los enemigos un 20% acumulativo por carta,
+    /// hasta un mínimo del 30% de la velocidad base (nunca los detiene por completo).
+    /// </summary>
+    private void ApplySlowEnemiesUpgrade()
+    {
+        const float slowPerCard  = 0.10f;
+        const float minSpeedMult = 0.30f;
+
+        GameManager.globalSpeedMultiplier =
+            Mathf.Max(GameManager.globalSpeedMultiplier - slowPerCard, minSpeedMult);
     }
 }
