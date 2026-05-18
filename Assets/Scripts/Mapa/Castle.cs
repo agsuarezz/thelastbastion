@@ -97,7 +97,7 @@ public class castleScript : MonoBehaviour
 
         // 5. Cargamos la escena GameOver ENCIMA de la escena actual (sin destruirla)
         //    Así el mapa sigue visible de fondo
-        SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
+        SceneManager.LoadScene("GameOverPrueba", LoadSceneMode.Additive);
     }
 
     public void SaveData()

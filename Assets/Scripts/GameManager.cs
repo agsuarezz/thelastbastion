@@ -78,6 +78,7 @@ public class GameManager : MonoBehaviour
     /// Al ser estática, permite que cualquier script (como los enemigos al ser destruidos) pueda modificarla fácilmente.
     /// </summary>
     public static int countMoney = 0;
+    public static int totalGoldEarned = 0;
     /// <summary>
     /// Referencia al componente de texto de la interfaz gráfica (UI) encargado de mostrar el oro disponible en pantalla.
     /// </summary>
@@ -449,7 +450,7 @@ public class GameManager : MonoBehaviour
         SaveSystem.DeleteSave();
         Debug.Log(GameManager.timeinGame);
         Time.timeScale = 1f;
-        SceneManager.LoadScene("GameOver");
+        SceneManager.LoadScene("GameOverPrueba");
     }
     /// <summary>
     /// Cambia el time.TimeScale

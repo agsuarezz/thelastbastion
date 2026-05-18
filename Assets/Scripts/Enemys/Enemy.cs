@@ -204,6 +204,7 @@ public class Enemy : MonoBehaviour
         {
             int reward = enemyData.money * GameManager.globalMoneyMultiplier;
             GameManager.countMoney += reward;
+            GameManager.totalGoldEarned += reward;
             GameManager.ShowFloatingMoney(reward, isGain: true);
             GameManager.sound(GameManager.soundMoney);
         }
