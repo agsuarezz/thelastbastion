@@ -34,8 +34,9 @@ public class CardManager : MonoBehaviour
         RadiusUp,
         FireBurn,      // mejora de fuego
         SlowEnemies,   // ralentización de enemigos
-        PoisonStrike,  // veneno apilable
-        Greed          // más oro por kill
+        PoisonStrike,    // veneno apilable
+        Greed,           // más oro por kill
+        ChainLightning   // cadena eléctrica entre enemigos
     }
 
     // ── Datos internos de carta ──────────────────────────────────────────────
@@ -113,6 +114,12 @@ public class CardManager : MonoBehaviour
                 type        = UpgradeType.Greed,
                 title       = "Codicia",
                 description = "Ganas un 15% MÁS de oro por cada enemigo eliminado."
+            },
+            new CardData
+            {
+                type        = UpgradeType.ChainLightning,
+                title       = "Tormenta Eléctrica",
+                description = "Tus proyectiles tienen un 30% de probabilidad de generar una cadena eléctrica que salta hasta 3 enemigos cercanos."
             }
         };
     }
@@ -186,6 +193,10 @@ public class CardManager : MonoBehaviour
             case UpgradeType.Greed:
                 ApplyGreedUpgrade();
                 break;
+
+            case UpgradeType.ChainLightning:
+                ApplyChainLightningUpgrade();
+                break;
         }
 
         GameManager.currentState = GameState.Playing;
@@ -242,5 +253,18 @@ public class CardManager : MonoBehaviour
         const float bonusPerCard = 0.15f;
 
         GameManager.globalMoneyBonusMultiplier += bonusPerCard;
+    }
+
+    /// <summary>
+    /// Incrementa la probabilidad de cadena eléctrica un 30% por carta,
+    /// hasta un máximo del 80%.
+    /// </summary>
+    private void ApplyChainLightningUpgrade()
+    {
+        const float incrementPerCard = 0.80f;
+        const float maxProbability   = 0.80f;
+
+        GameManager.globalChainLightningChance =
+            Mathf.Min(GameManager.globalChainLightningChance + incrementPerCard, maxProbability);
     }
 }

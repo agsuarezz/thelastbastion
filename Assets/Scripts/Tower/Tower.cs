@@ -423,6 +423,7 @@ public class Tower : MonoBehaviour
             projectile.SetDamage(GetRealDamage(currentDamage));
             TryInjectBurnEffect(projectile);
             TryInjectPoisonEffect(projectile);
+            TryInjectChainLightningEffect(projectile);
         }
     }
 
@@ -476,6 +477,31 @@ public class Tower : MonoBehaviour
             poisonTickInterval,
             poisonTotalTicks,
             poisonMaxStacks
+        ));
+    }
+
+    /// <summary>
+    /// Si la probabilidad global de cadena eléctrica es mayor que 0, lanza el dado
+    /// y construye un ChainLightningOnHitEffect. El rayo salta a los enemigos más
+    /// cercanos en un radio, reduciendo el daño en cada salto.
+    /// </summary>
+    private void TryInjectChainLightningEffect(Projectile projectile)
+    {
+        if (GameManager.globalChainLightningChance <= 0f) return;
+
+        bool triggered = Random.value < GameManager.globalChainLightningChance;
+        if (!triggered) return;
+
+        const float chainDamage    = 15f;  // daño del primer salto
+        const float chainRadius    = 3f;   // radio de búsqueda por salto
+        const int   chainMaxJumps  = 3;    // máximo de enemigos encadenados
+        const float chainFalloff   = 0.6f; // cada salto hace el 60% del anterior
+
+        projectile.AddOnHitEffect(new ChainLightningOnHitEffect(
+            chainDamage,
+            chainRadius,
+            chainMaxJumps,
+            chainFalloff
         ));
     }
     /// <summary>
