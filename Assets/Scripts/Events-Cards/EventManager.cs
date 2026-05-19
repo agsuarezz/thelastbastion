@@ -79,7 +79,7 @@ public class EventManager : MonoBehaviour
         {
             // El Boss no juega a esta ruleta, sale cuando le toca
             if (ev is EventBossRound) continue;
-            //if (ev == lastPlayedEvent) continue;
+            if (ev == lastPlayedEvent) continue;
             // Preguntamos a nuestro otro método cuántos "boletos" merece este evento hoy
             float weightForThisRound = CalculateCrueltyWeight(ev, currentWave);
 
