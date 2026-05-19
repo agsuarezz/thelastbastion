@@ -12,45 +12,15 @@ using UnityEngine;
 public class PoisonEffect : MonoBehaviour
 {
     // ── Parámetros inyectados ────────────────────────────────────────────────
-    private int   _baseDamagePerTick;
+    private int _baseDamagePerTick;
     private float _tickInterval;
-    private int   _totalTicks;
-    private int   _maxStacks;
+    private int _totalTicks;
+    private int _maxStacks;
 
     // ── Estado interno ───────────────────────────────────────────────────────
-    private int       _currentStacks;
+    private int _currentStacks;
     private Coroutine _poisonCoroutine;
-
-    // ── Debug visual ─────────────────────────────────────────────────────────
-#if UNITY_EDITOR
-    private GameObject _debugSquare;
-
-    private void ShowDebugSquare()
-    {
-        if (_debugSquare != null) return;
-
-        _debugSquare = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        _debugSquare.name = "[DEBUG] PoisonIndicator";
-
-        Destroy(_debugSquare.GetComponent<Collider>());
-        Destroy(_debugSquare.GetComponent<MeshCollider>());
-
-        _debugSquare.transform.SetParent(transform);
-        _debugSquare.transform.localPosition = Vector3.zero;
-        _debugSquare.transform.localScale    = new Vector3(2f, 2f, 1f);
-
-        var renderer = _debugSquare.GetComponent<Renderer>();
-        var material = new Material(Shader.Find("Sprites/Default"));
-        material.color = new Color(0.2f, 0.8f, 0.1f, 0.55f); // verde semitransparente
-        renderer.material = material;
-    }
-
-    private void HideDebugSquare()
-    {
-        if (_debugSquare != null)
-            Destroy(_debugSquare);
-    }
-#endif
+    private GameObject _virusInstance;
 
     // ── Configuración ────────────────────────────────────────────────────────
 
@@ -60,9 +30,9 @@ public class PoisonEffect : MonoBehaviour
     public void Configure(int baseDamagePerTick, float tickInterval, int totalTicks, int maxStacks)
     {
         _baseDamagePerTick = baseDamagePerTick;
-        _tickInterval      = tickInterval;
-        _totalTicks        = totalTicks;
-        _maxStacks         = maxStacks;
+        _tickInterval = tickInterval;
+        _totalTicks = totalTicks;
+        _maxStacks = maxStacks;
     }
 
     // ── API pública ──────────────────────────────────────────────────────────
@@ -80,9 +50,20 @@ public class PoisonEffect : MonoBehaviour
         if (_poisonCoroutine != null)
             StopCoroutine(_poisonCoroutine);
 
-#if UNITY_EDITOR
-        ShowDebugSquare();
-#endif
+        if (_virusInstance == null)
+        {
+            GameObject virusPrefab = Resources.Load<GameObject>("VirusEffect");
+            if (virusPrefab != null)
+            {
+                _virusInstance = Instantiate(virusPrefab, transform);
+                _virusInstance.transform.localPosition = new Vector3(0, 0, -1f);
+            }
+            else
+            {
+                Debug.LogError("NO ENCUENTRA EL PREFAB VirusEffect en Resources/");
+            }
+        }
+
         _poisonCoroutine = StartCoroutine(PoisonRoutine(enemy));
     }
 
@@ -96,9 +77,7 @@ public class PoisonEffect : MonoBehaviour
 
             if (enemy == null || enemy.IsDead)
             {
-#if UNITY_EDITOR
-                HideDebugSquare();
-#endif
+                DestroyVirus();
                 yield break;
             }
 
@@ -107,10 +86,17 @@ public class PoisonEffect : MonoBehaviour
             enemy.TakeDamage(tickDamage);
         }
 
-#if UNITY_EDITOR
-        HideDebugSquare();
-#endif
         _currentStacks = 0;
+        DestroyVirus();
         Destroy(this);
+    }
+
+    private void DestroyVirus()
+    {
+        if (_virusInstance != null)
+        {
+            Destroy(_virusInstance);
+            _virusInstance = null;
+        }
     }
 }
