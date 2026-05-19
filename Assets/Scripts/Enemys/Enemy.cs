@@ -199,14 +199,24 @@ public class Enemy : MonoBehaviour
         isAttackingCastle = false;
 
         GameManager.enemiesDestroyed++;
+        // 1. Calculamos la recompensa (puede ser positiva o negativa)
+        int reward = Mathf.RoundToInt(enemyData.money * GameManager.globalMoneyMultiplier * GameManager.globalMoneyBonusMultiplier);
 
-        if (enemyData != null)
+        // 2. Aplicamos a la cartera
+        GameManager.countMoney += reward;
+        // 3. SEPARAMOS GANANCIAS DE PÉRDIDAS PARA EL FEEDBACK Y ESTADÍSTICAS
+        if (reward >= 0)
         {
-            int reward = Mathf.RoundToInt(enemyData.money * GameManager.globalMoneyMultiplier * GameManager.globalMoneyBonusMultiplier);
-            GameManager.countMoney += reward;
+            // GANANCIA NORMAL
             GameManager.totalGoldEarned += reward;
             GameManager.ShowFloatingMoney(reward, isGain: true);
             GameManager.sound(GameManager.soundMoney);
+        }
+        else
+        {
+            // IMPUESTO ECOLÓGICO (El evento está restando dinero)
+            GameManager.ShowFloatingMoney(Mathf.Abs(reward), isGain: false);
+            GameManager.sound(GameManager.soundPay); // Usa el sonido de pagar, que duele más.
         }
 
         currentSpeed = 0f;
