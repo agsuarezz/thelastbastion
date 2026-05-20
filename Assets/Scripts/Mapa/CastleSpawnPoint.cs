@@ -12,7 +12,7 @@ public class CastleSpawnPoint : MonoBehaviour
     /// Propiedad que devuelve la posición real en el mundo, centrada en la casilla.
     /// (Suma +0.5f a X e Y de forma automática).
     /// </summary>
-    public Vector3 CalculatedCenter => new Vector3(castleSpawnPosition.x, castleSpawnPosition.y + 0.5f, 0);
+    public Vector3 CalculatedCenter => new Vector3(castleSpawnPosition.x, castleSpawnPosition.y + -0.6f, 0);
     public Vector3 PortalCalculatedCenter => new Vector3(portalSpawnPosition.x, portalSpawnPosition.y + 0.5f, 0);
     private void OnDrawGizmos()
     {

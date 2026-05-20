@@ -9,6 +9,7 @@ TagManager:
   - tower
   - Path
   - Bullet
+  - BlockedTile
   layers:
   - Default
   - TransparentFX
