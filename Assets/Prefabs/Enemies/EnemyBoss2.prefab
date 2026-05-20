@@ -309,6 +309,8 @@ MonoBehaviour:
   tilesToBlock: 5
   roundsDuration: 3
   blockRadius: 3
+  fireSpawnSound: {fileID: 8300000, guid: 1ebcc1bd1fbb9e844b23d24ec6ea88c2, type: 3}
+  soundVolume: 1
 --- !u!1 &4049809416180203725
 GameObject:
   m_ObjectHideFlags: 0
