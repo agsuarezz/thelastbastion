@@ -745,7 +745,7 @@ public class GameManager : MonoBehaviour
         globalPoisonProbability     = 0f;
         globalChainLightningChance  = 0f;
 
-        GridGenerator.selectedGridIndex = 0;
+        GridGenerator.selectedGridIndex = -1;
         // Estado del juego
         currentState = GameState.Playing;
         loadedFromSave = false;
