@@ -10,6 +10,10 @@ public class EnemyTowerBreakerOnDeath : MonoBehaviour
     public GameObject towerDestroyEffectPrefab;
     public float destroyDelay = 0.6f;
 
+    [Header("Sonido")]
+    public AudioClip deathSound;
+    [Range(0f, 1f)] public float deathVolume = 1f;
+
     private Enemy enemy;
     private bool hasTriggered = false;
 
@@ -40,6 +44,25 @@ public class EnemyTowerBreakerOnDeath : MonoBehaviour
         if (hasTriggered) return;
         hasTriggered = true;
 
+        // ───────────────── SONIDO ─────────────────
+        if (deathSound != null)
+        {
+            GameObject audioObject = new GameObject("TowerBreakerDeathSound");
+
+            AudioSource tempAudio = audioObject.AddComponent<AudioSource>();
+
+            tempAudio.clip = deathSound;
+            tempAudio.volume = deathVolume;
+            tempAudio.spatialBlend = 0f; // sonido 2D
+            tempAudio.loop = false;
+            tempAudio.playOnAwake = false;
+
+            tempAudio.Play();
+
+            Destroy(audioObject, deathSound.length);
+        }
+
+        // ───────────────── ROMPER TORRES ─────────────────
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, breakRadius);
 
         int towersBroken = 0;

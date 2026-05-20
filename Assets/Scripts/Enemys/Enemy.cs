@@ -214,7 +214,7 @@ public class Enemy : MonoBehaviour
             // GANANCIA NORMAL
             GameManager.totalGoldEarned += reward;
             GameManager.ShowFloatingMoney(reward, isGain: true);
-            GameManager.sound(GameManager.soundMoney);
+           
         }
         else
         {

@@ -32,6 +32,7 @@ public class Tower : MonoBehaviour
     [HideInInspector] public float upgradeCooldownStep;
     [HideInInspector] public int totalGoldInvested = 0;
     [HideInInspector] public bool isBuilt = false;
+    private bool destroyedByEnemy = false;
     [HideInInspector] public float currentIncreaseDamage;
     private List<Tower> buffedTowers = new List<Tower>();
 
@@ -112,7 +113,7 @@ public class Tower : MonoBehaviour
             return; // Salimos del frame para evitar conflictos
 
         }
-        if (deletetower && deletetower.isDeleteTower)
+        if (deletetower && deletetower.isDeleteTower && !destroyedByEnemy)
         {
             int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
             GameManager.countMoney += goldRecovered;
@@ -835,29 +836,36 @@ public class Tower : MonoBehaviour
         return baseDamage * GameManager.globalDamageTakenMultiplier;
     }
 
-    public void DestroyByEnemy(GameObject destroyEffectPrefab, float destroyDelay)
-    {
+   public void DestroyByEnemy(GameObject destroyEffectPrefab, float destroyDelay)
+{
     if (!isBuilt) return;
+    destroyedByEnemy = true;
 
     isBuilt = false;
 
+    // Restar contador de torres
     GameManager.countTower -= 1;
 
+    // Si es torre de apoyo, quitar buffs
     if (config is SupportTowerData)
     {
         RemoveAllBuffs();
     }
 
+    // Cerrar menú si esta torre estaba seleccionada
     if (towerActiveInMenu == this)
     {
         setGameObjectUpDeleStatus(false);
     }
 
+    // Efecto visual encima de la torre
     if (destroyEffectPrefab != null)
     {
-        Instantiate(destroyEffectPrefab, transform.position, Quaternion.identity);
+        GameObject fx = Instantiate(destroyEffectPrefab, transform.position, Quaternion.identity);
+        Destroy(fx, destroyDelay);
     }
 
+    // Destruir SIN devolver dinero
     Destroy(gameObject, destroyDelay);
-    }
+}
 }
