@@ -29,6 +29,13 @@ public class Enemy : MonoBehaviour
     private castleScript targetCastle;
 
     private Transform graphics;
+
+    private int firstAvailableRound = 0;
+
+public void SetFirstAvailableRound(int minRound)
+{
+    firstAvailableRound = minRound;
+}
   
 
     private void Awake()
@@ -153,7 +160,11 @@ if (Vector2.Distance(transform.position, targetWaypoint) <= 0.05f)
 
         if (targetCastle == null) return;
 
-        int finalDamage = Mathf.RoundToInt(enemyData.damage * GameManager.globalEnemyDamageMultiplier);
+        int roundsSinceUnlocked = Mathf.Max(0, GameManager.countRound - firstAvailableRound);
+
+float damageMultiplier = Mathf.Pow(1.05f, roundsSinceUnlocked);
+
+int finalDamage = Mathf.RoundToInt(enemyData.damage * damageMultiplier);
         targetCastle.TakeDamage(finalDamage);
 
 
@@ -322,8 +333,12 @@ if (blockAbility != null)
 
         if (enemyData != null)
         {
-            currentLife = enemyData.health * GameManager.globalEnemyHealthMultiplier;
-            currentSpeed = enemyData.speed;
+            int roundsSinceUnlocked = Mathf.Max(0, GameManager.countRound - firstAvailableRound);
+
+float healthMultiplier = Mathf.Pow(1.10f, roundsSinceUnlocked);
+
+currentLife = enemyData.health * healthMultiplier;
+currentSpeed = enemyData.speed;
         }
         else
         {

@@ -172,7 +172,8 @@ public class Spawner : MonoBehaviour
             if (enemy != null)
             {
                 enemy.enemyData = enemyConfig.enemyData;
-                enemy.SetPath(enemyRoute.waypoints);
+enemy.SetFirstAvailableRound(enemyConfig.minRound);
+enemy.SetPath(enemyRoute.waypoints);
             }
 
             obj.SetActive(true);
