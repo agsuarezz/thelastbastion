@@ -266,7 +266,7 @@ public class CardManager : MonoBehaviour
         switch (type)
         {
             case UpgradeType.HealCastle:
-                castle.life += 25;
+                castle.life = Mathf.Min(castle.life + 25, 100);
                 break;
             case UpgradeType.SlowEnemies:
                 ApplySlowEnemiesUpgrade();
