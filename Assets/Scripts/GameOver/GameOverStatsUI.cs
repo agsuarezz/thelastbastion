@@ -9,6 +9,7 @@ public class GameOverStatsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI goldValueText;
     [SerializeField] private TextMeshProUGUI towersValueText;
     [SerializeField] private TextMeshProUGUI timeValueText;
+    [SerializeField] private TextMeshProUGUI xpValueText;
 
     private void Start()
     {
@@ -17,6 +18,7 @@ public class GameOverStatsUI : MonoBehaviour
         goldValueText.text = GameManager.totalGoldEarned.ToString();
         towersValueText.text = GameManager.countTower.ToString();
         timeValueText.text = FormatTime(GameManager.timeinGame);
+        xpValueText.text = GameManager.xpEarnedThisGame.ToString() + " XP";
     }
 
     private string FormatTime(float time)
