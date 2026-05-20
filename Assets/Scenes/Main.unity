@@ -13451,6 +13451,12 @@ MonoBehaviour:
   - {fileID: 998636212}
   castle: {fileID: 196915343}
   gameManager: {fileID: 64441735}
+  allTowerTypes:
+  - {fileID: 11400000, guid: 63dc6320520ece94180ee1d295b782e4, type: 2}
+  - {fileID: 11400000, guid: d99218c89fddbb14c934656478fedfb8, type: 2}
+  - {fileID: 11400000, guid: 92235023035516348b0e2eaef105d3cc, type: 2}
+  - {fileID: 11400000, guid: 51db0feb5655a16419af0f41d4dddeb7, type: 2}
+  - {fileID: 11400000, guid: 9e858b73df393f14982f7e4784b97b30, type: 2}
 --- !u!4 &626184130
 Transform:
   m_ObjectHideFlags: 0
