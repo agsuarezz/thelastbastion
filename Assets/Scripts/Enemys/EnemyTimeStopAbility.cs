@@ -122,7 +122,7 @@ public float stoppedMusicPitch = 0.35f;
 
         IsTimeStopped = true;
 
-       yield return new WaitForSecondsRealtime(timeStopDuration);
+       yield return new WaitForSeconds(timeStopDuration);
 
         IsTimeStopped = false;
 
