@@ -13,9 +13,11 @@ public class Tower : MonoBehaviour
     public TowerData config;
     public List<GameObject> towerImagen;
     public LineRenderer lineRenderer;
+    
     [Header("Botones Interfaz")]
     public GameObject deleteTowerGameObject;
     public GameObject updateTowerGameObject;
+    
     // Variables de Estado
     private float laserActiveTimer;    // Contador para los 5s
     private float laserRestTimer;      // Contador para los 2s
@@ -32,6 +34,12 @@ public class Tower : MonoBehaviour
     [HideInInspector] public float upgradeCooldownStep;
     [HideInInspector] public int totalGoldInvested = 0;
     [HideInInspector] public bool isBuilt = false;
+    
+    // Bonificaciones locales por carta (suman a las globales)
+    [HideInInspector] public float localBurnBonus          = 0f;
+    [HideInInspector] public float localPoisonBonus        = 0f;
+    [HideInInspector] public float localChainBonus         = 0f;
+    
     private bool destroyedByEnemy = false;
     [HideInInspector] public float currentIncreaseDamage;
     private List<Tower> buffedTowers = new List<Tower>();
@@ -45,13 +53,11 @@ public class Tower : MonoBehaviour
     public static GameObject gameObjectUpdateDeleteTower;
     public static Tower towerActiveInMenu;
     int circleSegments = 50;
+    
     private void Awake() => towerActiveInMenu = null;
 
     public ShortCutScript shortCuts;
-    /// <summary>
-    /// Inicializa las referencias de los componentes, busca el menú global en la escena 
-    /// y autoconstruye la torre base basándose en la elección del jugador en el menú de construcción.
-    /// </summary>
+
     private void Start()
     {
         spriteRenderer = this.GetComponent<SpriteRenderer>();
@@ -66,6 +72,7 @@ public class Tower : MonoBehaviour
             float treeIncreaseDamage = GameManager.metaProgression.upgradesTree[config.nameOfTower][0];
             float treeIncreaseRadius = GameManager.metaProgression.upgradesTree[config.nameOfTower][1];
             float treeIncreaseVelocity = GameManager.metaProgression.upgradesTree[config.nameOfTower][2];
+            
             attackRadius = config.baseAttackRadius * treeIncreaseRadius;
             upgradeDamageStep = config.damageUpgradeAmount * treeIncreaseDamage;
             upgradeCooldownStep = config.cooldownUpgradeAmount / treeIncreaseVelocity;
@@ -88,43 +95,56 @@ public class Tower : MonoBehaviour
                 currentIncreaseDamage = supportData.baseIncreaseDamage * treeIncreaseDamage;
                 fireCooldown = supportData.baseFireRate / treeIncreaseVelocity;
             }
+
+            // --- APLICACIÓN DE MEJORAS GLOBALES ACUMULADAS POR CARTAS ---
+            string name = config.nameOfTower;
+            CardManager.InitializeTowerDict(name);
+
+            // Daño
+            currentDamage *= CardManager.towerDamageMultipliers[name];
+            if (config is SupportTowerData)
+            {
+                currentIncreaseDamage *= CardManager.towerDamageMultipliers[name];
+            }
+            upgradeDamageStep *= CardManager.towerDamageMultipliers[name]; // Para que al subirla de nivel respete el multiplicador
+            
+            // Radio
+            attackRadius *= CardManager.towerRadiusMultipliers[name];
+            
+            // Velocidad de ataque
+            ApplyLocalSpeedBonus(CardManager.towerSpeedMultipliers[name]);
+            upgradeCooldownStep *= CardManager.towerSpeedMultipliers[name];
+            
+            // Efectos especiales de impacto
+            localBurnBonus += CardManager.towerBurnBonus[name];
+            localPoisonBonus += CardManager.towerPoisonBonus[name];
+            localChainBonus += CardManager.towerChainBonus[name];
         }
+        
         SetTower(null, null, constructionMenu.flagTypeTower);
     }
-    /// <summary>
-    /// Se ejecuta frame a frame y controla el ciclo de vida de la torre:
-    /// 1. Comprueba si el jugador ha solicitado una mejora (cambiando sprites y niveles).
-    /// 2. Comprueba si el jugador ha vendido la torre (restaurando la casilla y devolviendo oro).
-    /// 3. Si la torre está construida y activa, busca enemigos y gestiona el temporizador para disparar.
-    /// </summary>
+
     private void Update()
     {
         if (updatetower && updatetower.needUpdateTower && updatetower.typeOfTower != -1)
         {
             int nextLevel = updatetower.levelOfTower + 1;
-            // Cogemos el sprite del nivel al que acabamos de subir (1 o 2)
             SpriteRenderer nexSprite = towerImagen[nextLevel].GetComponent<SpriteRenderer>();
             BoxCollider2D nexCol = towerImagen[nextLevel].GetComponent<BoxCollider2D>();
-
             SetTower(nexSprite, nexCol, updatetower.typeOfTower);
-
-            updatetower.needUpdateTower = false; // Reset de la bandera
-
-            return; // Salimos del frame para evitar conflictos
-
+            updatetower.needUpdateTower = false; 
+            return; 
         }
+
         if (deletetower && deletetower.isDeleteTower && !destroyedByEnemy)
         {
             int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
             GameManager.countMoney += goldRecovered;
             if (!GameManager.isLoadingGame)
-{
- if (!GameManager.isLoadingGame)
-{
-    GameManager.ShowFloatingMoney(goldRecovered, isGain: true);
-    GameManager.sound(GameManager.soundMoney);
-}
-}
+            {
+                GameManager.ShowFloatingMoney(goldRecovered, isGain: true);
+                GameManager.sound(GameManager.soundMoney);
+            }
             isBuilt = false;
             GameManager.countTower -= 1;
             if (config is SupportTowerData)
@@ -138,16 +158,18 @@ public class Tower : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         if (towerActiveInMenu == this)
         {
             refreshButtonUpdate();
             if (Input.GetKeyDown(shortCuts.keyToSellTower))
             {
-                // Simulamos que el jugador ha hecho clic en el botón de vender de ESTA torre
                 deletetower.onClickPlayer();
             }
         }
+        
         if (!isBuilt) return;
+        
         UpdateTarget();
         DrawRangeCircleInGame();
 
@@ -160,6 +182,7 @@ public class Tower : MonoBehaviour
         else if (config is SupportTowerData)
             HandleIncreaseDamage();
     }
+
     private void HandleLaserAttack()
     {
         LineRenderer lightningLase = null;
@@ -177,11 +200,9 @@ public class Tower : MonoBehaviour
                 lightningLase.SetPosition(0, transform.position);
                 lightningLase.SetPosition(1, currentTarget.position);
 
-                // Gasta batería
                 laserActiveTimer -= Time.deltaTime;
-
-                // Daño
                 damageAccrued += currentDamage * Time.deltaTime;
+                
                 if (damageAccrued >= 1f)
                 {
                     int dmg = Mathf.FloorToInt(damageAccrued);
@@ -200,7 +221,6 @@ public class Tower : MonoBehaviour
         }
         else
         {
-            // Descansando
             lightningLase.enabled = false;
             laserRestTimer -= Time.deltaTime;
             if (laserRestTimer <= 0)
@@ -210,12 +230,12 @@ public class Tower : MonoBehaviour
             }
         }
     }
+
     private void HandleIncreaseDamage()
     {
         fireTimer -= Time.deltaTime;
         if (fireTimer <= 0f)
         {
-
             fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
             float radius = attackRadius * GameManager.globalRadiusMultiplier;
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
@@ -227,7 +247,6 @@ public class Tower : MonoBehaviour
                     Tower nearbyTower = hit.GetComponent<Tower>();
                     if (nearbyTower != null && nearbyTower != this && nearbyTower.isBuilt && !buffedTowers.Contains(nearbyTower))
                     {
-                        // Le damos el bufo y la apuntamos en la libreta
                         nearbyTower.currentDamage += currentIncreaseDamage;
                         buffedTowers.Add(nearbyTower);
                     }
@@ -235,6 +254,7 @@ public class Tower : MonoBehaviour
             }
         }
     }
+
     private void HandleProjectileAttack()
     {
         if (currentTarget == null) return;
@@ -245,10 +265,7 @@ public class Tower : MonoBehaviour
             fireTimer = fireCooldown * GameManager.globalAttackSpeedMultiplier;
         }
     }
-    /// <summary>
-    /// Se ejecuta al hacer clic sobre la torre. Muestra el menú global de la interfaz 
-    /// y "formatea" los botones para que apunten a las funciones de ESTA torre específica.
-    /// </summary>
+
     public void OnMouseDown()
     {
         if (GameManager.currentState != GameState.Playing) return;
@@ -259,40 +276,33 @@ public class Tower : MonoBehaviour
         assignInformationImage();
         assignInformationText();
 
-        // 1. Preparamos las variables
         Button btnDelete = null;
         Button btnCancel = null;
 
-        // 2. Buscamos TODOS los botones que haya dentro del menú (el 'true' incluye los apagados)
         Button[] todosLosBotones = gameObjectUpdateDeleteTower.GetComponentsInChildren<Button>(true);
 
-        // 3. Los asignamos por su nombre exacto
         foreach (Button btn in todosLosBotones)
         {
             if (btn.gameObject.name == "ButtonDeleteTower") btnDelete = btn;
             if (btn.gameObject.name == "ButtonCancelTower") btnCancel = btn;
         }
 
-        // --- Comprobación de seguridad por si te has equivocado en algún nombre en Unity ---
         if (btnDelete == null || btnCancel == null)
         {
             Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonDeleteTower y ButtonCancelTower en la jerarquía.");
             return;
         }
+        
         int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
-        // --- Asignamos cuanto dinero recuperaria si vende ---
         btnDelete.GetComponentInChildren<TextMeshProUGUI>().text = "VENDER (Recuperas: " + goldRecovered + ")";
-        // 5. ¡LA MAGIA! Limpiamos la memoria de los botones para que olviden otras torres
+        
         btnDelete.onClick.RemoveAllListeners();
         btnCancel.onClick.RemoveAllListeners();
 
-        // 6. Añadimos las funciones de ESTA torre en concreto
         btnDelete.onClick.AddListener(() => deletetower.onClickPlayer());
         btnCancel.onClick.AddListener(() => setGameObjectUpDeleStatus(false));
     }
-    /// <summary>
-    /// Enciende o apaga todos los elementos hijos del menú global de la torre en la interfaz (UI).
-    /// </summary>
+
     public static void setGameObjectUpDeleStatus(bool status)
     {
         foreach (Transform hijo in gameObjectUpdateDeleteTower.transform)
@@ -302,13 +312,11 @@ public class Tower : MonoBehaviour
         if (!status)
             towerActiveInMenu = null;
     }
-    /// <summary>
-    /// Busca enemigos dentro del radio y elige al que más adelantado va en el camino.
-    /// </summary>
+
     private void UpdateTarget()
     {
         float realRadius = attackRadius * GameManager.globalRadiusMultiplier;
-        // 1. COMPROBAR EL OBJETIVO FIJADO
+        
         if (currentTarget != null)
         {
             Enemy currentEnemyScript = currentTarget.GetComponent<Enemy>();
@@ -319,21 +327,19 @@ public class Tower : MonoBehaviour
             else
             {
                 float distanceToCurrent = Vector2.Distance(transform.position, currentEnemyScript.transform.position);
-                // Margen de tolerancia para cuando el jugador esta en el limite
                 float dropRadius = realRadius + 0.5f;
-                // Si está apagado, muerto, o se ha salido del círculo rojo...
+                
                 if (!currentTarget.gameObject.activeInHierarchy || currentEnemyScript.IsDead || distanceToCurrent > dropRadius)
                 {
-                    currentTarget = null; // ...lo soltamos.
+                    currentTarget = null; 
                 }
                 else
                 {
                     return;
                 }
             }
-
         }
-        // 2. BUSCAR UN NUEVO OBJETIVO
+        
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
         float bestProgress = -Mathf.Infinity;
@@ -366,58 +372,44 @@ public class Tower : MonoBehaviour
 
         currentTarget = bestEnemy != null ? bestEnemy.transform : null;
     }
+
     public void refreshButtonUpdate()
     {
         Button btnUpdate = null;
-        // Buscamos TODOS los botones que haya dentro del menú (el 'true' incluye los apagados)
         Button[] todosLosBotones = gameObjectUpdateDeleteTower.GetComponentsInChildren<Button>(true);
         foreach (Button btn in todosLosBotones)
         {
             if (btn.gameObject.name == "ButtonUpdateTower") btnUpdate = btn;
         }
-        if (btnUpdate == null)
-        {
-            Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonUpdateTower en la jerarquía.");
-            return;
-        }
-        // 1. Si la torre ya está al NIVEL MÁXIMO, aquí sí ocultamos el botón por completo.
+        if (btnUpdate == null) return;
+        
         if (updatetower.levelOfTower >= 2)
         {
             btnUpdate.gameObject.SetActive(false);
-            return; // Salimos de la función, no hay nada más que hacer
+            return; 
         }
-        // 2. Si NO es nivel máximo, el botón SIEMPRE debe estar visible en pantalla.
+        
         btnUpdate.gameObject.SetActive(true);
         int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
         float costTower = config.upgradeCosts[indexToLook];
 
         TextMeshProUGUI textBoton = btnUpdate.GetComponentInChildren<TextMeshProUGUI>();
 
-        // 3. Comprobamos la cartera del jugador
         if (GameManager.countMoney >= costTower * GameManager.globalCostMultiplier)
         {
-            // TIENE DINERO: Botón clicable, coste en verde
             btnUpdate.interactable = true;
             textBoton.text = "MEJORAR\n(Coste: <color=#2ECC71>" + (costTower * GameManager.globalCostMultiplier) + "</color>)";
-
             btnUpdate.onClick.RemoveAllListeners();
             btnUpdate.onClick.AddListener(() => updatetower.onClickPlayer());
         }
         else
         {
-            // NO TIENE DINERO: Botón bloqueado (gris), coste en rojo
             btnUpdate.interactable = false;
             textBoton.text = "MEJORAR\n(Coste: <color=#E74C3C>" + (costTower * GameManager.globalCostMultiplier) + "</color>)";
-
-            // Quitamos los listeners por seguridad
             btnUpdate.onClick.RemoveAllListeners();
         }
     }
-    /// <summary>
-    /// Instancia un proyectil en la posición actual de la torre y le asigna
-    /// el objetivo fijado. Si la mejora de fuego está activa, añade quemadura
-    /// al proyectil con la probabilidad global configurada.
-    /// </summary>
+
     private void Shoot()
     {
         Vector3 startPos = transform.position;
@@ -434,123 +426,82 @@ public class Tower : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Si la probabilidad global de quemadura es mayor que 0, lanza el dado
-    /// y, en caso de éxito, construye un BurnOnHitEffect y se lo asigna
-    /// al proyectil.
-    ///
-    /// Los parámetros de la quemadura (daño, intervalo, ticks) están aquí
-    /// centralizados como constantes privadas. Si en el futuro se quiere
-    /// exponerlos al inspector, basta moverlos a campos serializables sin
-    /// tocar el resto del código.
-    /// </summary>
     private void TryInjectBurnEffect(Projectile projectile)
     {
-        if (GameManager.globalBurnProbability <= 0f) return;
+        if (GameManager.globalBurnProbability <= 0f && localBurnBonus <= 0f) return;
 
-        bool burnTriggered = Random.value < GameManager.globalBurnProbability;
+        float effectiveBurnChance = Mathf.Min(GameManager.globalBurnProbability + localBurnBonus, 0.95f);
+        bool burnTriggered = Random.value < effectiveBurnChance;
         if (!burnTriggered) return;
 
         const int   burnDamagePerTick = 3;
         const float burnTickInterval  = 0.5f;
-        const int   burnTotalTicks    = 12;   // duración total: 3 segundos
+        const int   burnTotalTicks    = 12;  
 
-        projectile.AddOnHitEffect(new BurnOnHitEffect(
-            burnDamagePerTick,
-            burnTickInterval,
-            burnTotalTicks
-        ));
+        projectile.AddOnHitEffect(new BurnOnHitEffect(burnDamagePerTick, burnTickInterval, burnTotalTicks));
     }
 
-    /// <summary>
-    /// Si la probabilidad global de veneno es mayor que 0, lanza el dado
-    /// y, en caso de éxito, construye un PoisonOnHitEffect y lo añade
-    /// al proyectil. El veneno es apilable: cada impacto incrementa el daño.
-    /// </summary>
     private void TryInjectPoisonEffect(Projectile projectile)
     {
-        if (GameManager.globalPoisonProbability <= 0f) return;
+        if ((GameManager.globalPoisonProbability + localPoisonBonus) <= 0f) return;
 
-        bool poisonTriggered = Random.value < GameManager.globalPoisonProbability;
+        float effectivePoisonChance = Mathf.Min(GameManager.globalPoisonProbability + localPoisonBonus, 0.95f);
+        bool poisonTriggered = Random.value < effectivePoisonChance;
         if (!poisonTriggered) return;
 
-        const int   poisonBaseDamagePerTick = 10;   // daño base por tick (menor que fuego)
-        const float poisonTickInterval      = 0.8f; // tick más lento que el fuego
-        const int   poisonTotalTicks        = 10;   // duración total: 8 segundos
-        const int   poisonMaxStacks         = 6;   // daño máximo: 6 × baseDamage por tick
+        const int   poisonBaseDamagePerTick = 10;   
+        const float poisonTickInterval      = 0.8f; 
+        const int   poisonTotalTicks        = 10;   
+        const int   poisonMaxStacks         = 6;   
 
-        projectile.AddOnHitEffect(new PoisonOnHitEffect(
-            poisonBaseDamagePerTick,
-            poisonTickInterval,
-            poisonTotalTicks,
-            poisonMaxStacks
-        ));
+        projectile.AddOnHitEffect(new PoisonOnHitEffect(poisonBaseDamagePerTick, poisonTickInterval, poisonTotalTicks, poisonMaxStacks));
     }
 
-    /// <summary>
-    /// Si la probabilidad global de cadena eléctrica es mayor que 0, lanza el dado
-    /// y construye un ChainLightningOnHitEffect. El rayo salta a los enemigos más
-    /// cercanos en un radio, reduciendo el daño en cada salto.
-    /// </summary>
     private void TryInjectChainLightningEffect(Projectile projectile)
     {
-        if (GameManager.globalChainLightningChance <= 0f) return;
+        if ((GameManager.globalChainLightningChance + localChainBonus) <= 0f) return;
 
-        bool triggered = Random.value < GameManager.globalChainLightningChance;
+        float effectiveChainChance = Mathf.Min(GameManager.globalChainLightningChance + localChainBonus, 0.95f);
+        bool triggered = Random.value < effectiveChainChance;
         if (!triggered) return;
 
-        const float chainDamage    = 15f;  // daño del primer salto
-        const float chainRadius    = 3f;   // radio de búsqueda por salto
-        const int   chainMaxJumps  = 3;    // máximo de enemigos encadenados
-        const float chainFalloff   = 0.6f; // cada salto hace el 60% del anterior
+        const float chainDamage    = 15f;  
+        const float chainRadius    = 3f;   
+        const int   chainMaxJumps  = 3;    
+        const float chainFalloff   = 0.6f; 
 
-        projectile.AddOnHitEffect(new ChainLightningOnHitEffect(
-            chainDamage,
-            chainRadius,
-            chainMaxJumps,
-            chainFalloff
-        ));
+        projectile.AddOnHitEffect(new ChainLightningOnHitEffect(chainDamage, chainRadius, chainMaxJumps, chainFalloff));
     }
-    /// <summary>
-    /// Configura la torre recién comprada o mejorada.
-    /// </summary>
+
     public void SetTower(SpriteRenderer sprite = null, BoxCollider2D boxCollider = null, int type = 0)
     {
         SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
 
-        // 1. Calculamos el nivel al que vamos y el coste
         int nextLevel = !isBuilt ? 0 : updatetower.levelOfTower + 1;
         int costTower = Mathf.RoundToInt(config.upgradeCosts[nextLevel] * GameManager.globalCostMultiplier);
 
         if (GameManager.countMoney >= costTower)
         {
-            // 2. Cobramos y preparamos las variables
             setCountMoneyTotalGoldInvested(costTower);
             updateExtensionsTower();
             setTypeTower(type);
 
-            // 3. Separamos Construir vs Mejorar para el orden de estadísticas
             if (!isBuilt)
             {
-                // ES NUEVA (Nivel 0)
                 isBuilt = true;
                 updatetower.levelOfTower = 0;
-                updateFireCooldownAndDamage(); // Ponemos la recarga base
+                updateFireCooldownAndDamage(); 
                 increaseCountTower();
             }
             else
             {
-                // ES UNA MEJORA
-                updatetower.levelOfTower++; // SUBIMOS EL NIVEL PRIMERO
-                updateFireCooldownAndDamage(); // Como el nivel ya subió, ahora sí sumará el daño extra
+                updatetower.levelOfTower++; 
+                updateFireCooldownAndDamage(); 
             }
 
-            // 4. Aplicamos los visuales
-            if (sprite == null)
-                sprite = towerImagen[0].GetComponent<SpriteRenderer>();
+            if (sprite == null) sprite = towerImagen[0].GetComponent<SpriteRenderer>();
             if (boxCollider == null) boxCollider = towerImagen[0].GetComponent<BoxCollider2D>();
             setCollisionsAndSprite(spriteRenderer, sprite, boxCollider);
-
         }
         else
         {
@@ -559,19 +510,12 @@ public class Tower : MonoBehaviour
         }
     }
 
-
-    /// <summary>
-    /// Dibuja el radio de ataque en color rojo en la vista de escena (Scene) 
-    /// cuando la torre está seleccionada para ayudar visualmente en el diseño del nivel.
-    /// </summary>
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
-    /// <summary>
-    /// Asigna el tipo de torre al script hijo encargado de gestionar las futuras mejoras.
-    /// </summary>
+
     public void setTypeTower(int type)
     {
         updatetower.typeOfTower = type;
@@ -579,41 +523,30 @@ public class Tower : MonoBehaviour
 
     public void setCountMoneyTotalGoldInvested(int finalCost)
     {
-        // 2. Se lo restamos al dinero del jugador
         GameManager.countMoney -= finalCost;
 
-        // Feedback visual de gasto
         if (!GameManager.isLoadingGame)
-    {
-        GameManager.ShowFloatingMoney(finalCost, isGain: false);
-        GameManager.sound(GameManager.soundPay);
-    }
+        {
+            GameManager.ShowFloatingMoney(finalCost, isGain: false);
+            GameManager.sound(GameManager.soundPay);
+        }
 
-        // 3. ¡Lo guardamos en la hucha de la torre para su futura venta!
         totalGoldInvested += finalCost;
     }
-    /// <summary>
-    /// Activa los GameObjects internos de la torre que contienen los scripts de actualización y borrado.
-    /// </summary>
+
     public void updateExtensionsTower()
     {
         deleteTowerGameObject.SetActive(true);
         updateTowerGameObject.SetActive(true);
     }
-    /// <summary>
-    /// Actualiza la apariencia física de la torre, aplicándole un nuevo sprite y ajustando 
-    /// su caja de colisión (BoxCollider2D) al tamaño exacto de esa nueva imagen.
-    /// </summary>
+
     public void setCollisionsAndSprite(SpriteRenderer spriteRenderer, SpriteRenderer spriteRenderNew, BoxCollider2D boxCollider)
     {
         spriteRenderer.sprite = spriteRenderNew.sprite;
         spriteRenderer.color = spriteRenderNew.color;
         this.GetComponent<BoxCollider2D>().size = new Vector2(boxCollider.size.x, boxCollider.size.y);
-
     }
-    /// <summary>
-    /// Suma/resta estadísticas en Nivel 1 y 2.
-    /// </summary>
+
     public void updateFireCooldownAndDamage()
     {
         if (updatetower.levelOfTower == 0) return;
@@ -630,7 +563,6 @@ public class Tower : MonoBehaviour
 
         if (config is LaserTowerData)
         {
-            // Mejora reduce el tiempo de espera de 2s
             currentRestDuration -= upgradeCooldownStep;
             currentRestDuration = Mathf.Max(currentRestDuration, 0.2f);
         }
@@ -640,10 +572,18 @@ public class Tower : MonoBehaviour
             fireCooldown = Mathf.Max(fireCooldown, 0.1f);
         }
     }
-    /// <summary>
-    /// Suma 1 al contador global de torres del GameManager, asegurándose de hacerlo 
-    /// solo si es una torre recién construida (Nivel 0) y no una mejora.
-    /// </summary>
+
+    public void ApplyLocalSpeedBonus(float multiplier)
+    {
+        fireCooldown *= multiplier;
+        fireCooldown = Mathf.Max(fireCooldown, 0.1f);
+        if (config is LaserTowerData)
+        {
+            currentRestDuration *= multiplier;
+            currentRestDuration = Mathf.Max(currentRestDuration, 0.2f);
+        }
+    }
+
     public void increaseCountTower()
     {
         if (updatetower.levelOfTower == 0)
@@ -651,11 +591,7 @@ public class Tower : MonoBehaviour
             GameManager.countTower += 1;
         }
     }
-    /// <summary>
-    /// Actualiza la imagen (sprite) mostrada en el panel de información, visualizando 
-    /// cómo se verá la torre si el jugador decide mejorarla al siguiente nivel.
-    /// Si ya está al máximo, muestra la imagen del nivel actual.
-    /// </summary>
+
     public void assignInformationImage()
     {
         Image[] imageList = gameObjectUpdateDeleteTower.GetComponentsInChildren<Image>();
@@ -673,11 +609,7 @@ public class Tower : MonoBehaviour
             }
         }
     }
-    /// <summary>
-    /// Actualiza los textos del panel de información (Nombre, Daño y Recarga).
-    /// Calcula las estadísticas futuras de la torre y las muestra con etiquetas 
-    /// de color verde para destacar que es una mejora positiva.
-    /// </summary>
+
     public void assignInformationText()
     {
         TextMeshProUGUI[] textList = gameObjectUpdateDeleteTower.GetComponentsInChildren<TextMeshProUGUI>();
@@ -697,52 +629,38 @@ public class Tower : MonoBehaviour
             }
         }
     }
-    /// <summary>
-    /// Dibuja un círculo usando un LineRenderer para que EL JUGADOR lo vea en la pestaña Game.
-    /// Es ultra-óptimo: solo se dibuja si está seleccionada, y solo se borra 1 vez cuando se deselecciona.
-    /// </summary>
+
     public void DrawRangeCircleInGame()
     {
         if (lineRenderer == null) return;
 
-        // Si esta torre NO es la que está seleccionada en el menú...
         if (towerActiveInMenu != this)
         {
-            // Comprobamos si el LineRenderer tiene puntos. Si ya tiene 0, ignoramos todo y salimos.
-            // Preguntar "cuánto vale un int" es gratis para el procesador, pero modificar un componente de Unity no lo es.
             if (lineRenderer.positionCount > 0)
             {
-                lineRenderer.positionCount = 0; // Lo borramos solo una vez
+                lineRenderer.positionCount = 0; 
             }
             return;
         }
 
-        // --- SI LLEGA HASTA AQUÍ, ES PORQUE SÍ ESTÁ SELECCIONADA ---
-
-        // El radio real con multiplicadores
         float realRadius = attackRadius * GameManager.globalRadiusMultiplier;
-
-        // Le decimos al LineRenderer cuántos puntos va a tener la línea
         lineRenderer.positionCount = circleSegments;
-        lineRenderer.useWorldSpace = false; // Para que siga a la torre si se mueve
-        lineRenderer.loop = true; // Cierra el círculo perfectamente
+        lineRenderer.useWorldSpace = false; 
+        lineRenderer.loop = true; 
 
-        // Matemáticas para dibujar un círculo punto por punto
         float angle = 0f;
         for (int i = 0; i < circleSegments; i++)
         {
             float x = Mathf.Sin(Mathf.Deg2Rad * angle) * realRadius;
             float y = Mathf.Cos(Mathf.Deg2Rad * angle) * realRadius;
 
-            // PONEMOS LA Z EN -1 PARA QUE NO SE ESCONDA DETRÁS DEL CÉSPED
             lineRenderer.SetPosition(i, new Vector3(x, y, -1f));
-
             angle += (360f / circleSegments);
         }
     }
+
     public void damageFunction(TextMeshProUGUI text)
     {
-        // Si es torre de soporte, leemos el daño extra y cambiamos el texto
         if (config is SupportTowerData)
         {
             if (updatetower.levelOfTower < 2)
@@ -755,7 +673,6 @@ public class Tower : MonoBehaviour
                 text.text = "Daño Extra: [" + currentIncreaseDamage.ToString("F1") + "] (MÁXIMO)";
             }
         }
-        // Si es cualquier otra torre, usamos la lógica normal
         else
         {
             float realCurrentDamage = GetRealDamage(currentDamage);
@@ -770,6 +687,7 @@ public class Tower : MonoBehaviour
             }
         }
     }
+
     public void cadenceFunction(TextMeshProUGUI text)
     {
         if (config is LaserTowerData || config is ProjectileTowerData)
@@ -777,37 +695,27 @@ public class Tower : MonoBehaviour
             float currentBaseCooldown = config is LaserTowerData ? currentRestDuration : fireCooldown;
             if (updatetower.levelOfTower < 2)
             {
-                // 1. Recarga REAL actual (Base * Cartas)
                 float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
-
-                // 2. Simulamos cuál será la Base si la mejoramos
                 float baseNextCooldown = currentBaseCooldown - upgradeCooldownStep;
-                baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); // Seguridad para la base
-
-                // 3. Recarga REAL futura (Nueva Base * Cartas)
+                baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); 
                 float realNextCooldown = baseNextCooldown * GameManager.globalAttackSpeedMultiplier;
-                realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); // Seguridad final
+                realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); 
 
                 text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextCooldown.ToString("F2") + "s] </color>";
             }
             else
             {
-                // Si ya es nivel máximo, calculamos su recarga real actual para mostrarla
                 float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
                 text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] (MÁXIMO)";
             }
         }
         else
         {
-            // --- LÓGICA PARA LA TORRE DE SOPORTE ---
             if (updatetower.levelOfTower < 2)
             {
-                // Usamos fireCooldown (que en esta torre guarda el tiempo de escaneo)
                 float realCurrentScan = fireCooldown * GameManager.globalAttackSpeedMultiplier;
-
                 float baseNextScan = fireCooldown - upgradeCooldownStep;
                 baseNextScan = Mathf.Max(baseNextScan, 0.1f);
-
                 float realNextScan = baseNextScan * GameManager.globalAttackSpeedMultiplier;
                 realNextScan = Mathf.Max(realNextScan, 0.1f);
 
@@ -820,11 +728,7 @@ public class Tower : MonoBehaviour
             }
         }
     }
-    /// <summary>
-    /// Elimina el daño extra otorgado a todas las torres aliadas que estaban siendo potenciadas.
-    /// Recorre la lista de torres bufadas, resta la bonificación actual y vacía el registro.
-    /// Es vital llamarlo antes de mejorar esta torre (para actualizar el bufo) o al destruirla/venderla.
-    /// </summary>
+
     public void RemoveAllBuffs()
     {
         foreach (Tower tower in buffedTowers)
@@ -837,44 +741,34 @@ public class Tower : MonoBehaviour
         buffedTowers.Clear();
     }
 
-    /// <summary>
-    /// Calcula el daño real aplicando los multiplicadores globales.
-    /// </summary>
     public float GetRealDamage(float baseDamage)
     {
         return baseDamage * GameManager.globalDamageTakenMultiplier;
     }
 
-   public void DestroyByEnemy(GameObject destroyEffectPrefab, float destroyDelay)
-{
-    if (!isBuilt) return;
-    destroyedByEnemy = true;
-
-    isBuilt = false;
-
-    // Restar contador de torres
-    GameManager.countTower -= 1;
-
-    // Si es torre de apoyo, quitar buffs
-    if (config is SupportTowerData)
+    public void DestroyByEnemy(GameObject destroyEffectPrefab, float destroyDelay)
     {
-        RemoveAllBuffs();
-    }
+        if (!isBuilt) return;
+        destroyedByEnemy = true;
+        isBuilt = false;
+        GameManager.countTower -= 1;
 
-    // Cerrar menú si esta torre estaba seleccionada
-    if (towerActiveInMenu == this)
-    {
-        setGameObjectUpDeleStatus(false);
-    }
+        if (config is SupportTowerData)
+        {
+            RemoveAllBuffs();
+        }
 
-    // Efecto visual encima de la torre
-    if (destroyEffectPrefab != null)
-    {
-        GameObject fx = Instantiate(destroyEffectPrefab, transform.position, Quaternion.identity);
-        Destroy(fx, destroyDelay);
-    }
+        if (towerActiveInMenu == this)
+        {
+            setGameObjectUpDeleStatus(false);
+        }
 
-    // Destruir SIN devolver dinero
-    Destroy(gameObject, destroyDelay);
-}
+        if (destroyEffectPrefab != null)
+        {
+            GameObject fx = Instantiate(destroyEffectPrefab, transform.position, Quaternion.identity);
+            Destroy(fx, destroyDelay);
+        }
+
+        Destroy(gameObject, destroyDelay);
+    }
 }
