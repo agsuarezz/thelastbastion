@@ -8078,14 +8078,14 @@ MonoBehaviour:
     isBoss: 0
   - pooler: {fileID: 1453345576}
     enemyData: {fileID: 11400000, guid: 88bc91452a5708746a1901695a6e2508, type: 2}
-    cost: 5
-    minRound: 0
-    isBoss: 0
+    cost: 20
+    minRound: 15
+    isBoss: 1
   - pooler: {fileID: 1478424545}
     enemyData: {fileID: 11400000, guid: 168d356257eb8a1468314711a888071a, type: 2}
     cost: 10
     minRound: 8
-    isBoss: 0
+    isBoss: 1
   spawnInterval: 1
 --- !u!4 &452400197
 Transform:
