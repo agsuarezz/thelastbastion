@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class Enemy : MonoBehaviour
 {
+    public event Action<Enemy> OnEnemyDied;
     [Header("Datos")]
     public EnemyData enemyData;
 
@@ -27,6 +29,7 @@ public class Enemy : MonoBehaviour
     private castleScript targetCastle;
 
     private Transform graphics;
+  
 
     private void Awake()
     {
@@ -197,6 +200,7 @@ public class Enemy : MonoBehaviour
 
         isDead = true;
         isAttackingCastle = false;
+        OnEnemyDied?.Invoke(this);
 
         GameManager.enemiesDestroyed++;
         // 1. Calculamos la recompensa (puede ser positiva o negativa)

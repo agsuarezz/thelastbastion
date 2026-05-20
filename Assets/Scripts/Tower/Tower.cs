@@ -834,4 +834,30 @@ public class Tower : MonoBehaviour
     {
         return baseDamage * GameManager.globalDamageTakenMultiplier;
     }
+
+    public void DestroyByEnemy(GameObject destroyEffectPrefab, float destroyDelay)
+    {
+    if (!isBuilt) return;
+
+    isBuilt = false;
+
+    GameManager.countTower -= 1;
+
+    if (config is SupportTowerData)
+    {
+        RemoveAllBuffs();
+    }
+
+    if (towerActiveInMenu == this)
+    {
+        setGameObjectUpDeleStatus(false);
+    }
+
+    if (destroyEffectPrefab != null)
+    {
+        Instantiate(destroyEffectPrefab, transform.position, Quaternion.identity);
+    }
+
+    Destroy(gameObject, destroyDelay);
+    }
 }
