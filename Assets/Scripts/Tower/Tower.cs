@@ -117,8 +117,14 @@ public class Tower : MonoBehaviour
         {
             int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
             GameManager.countMoney += goldRecovered;
-            GameManager.ShowFloatingMoney(goldRecovered, isGain: true);
-            GameManager.sound(GameManager.soundMoney);
+            if (!GameManager.isLoadingGame)
+{
+ if (!GameManager.isLoadingGame)
+{
+    GameManager.ShowFloatingMoney(goldRecovered, isGain: true);
+    GameManager.sound(GameManager.soundMoney);
+}
+}
             isBuilt = false;
             GameManager.countTower -= 1;
             if (config is SupportTowerData)
@@ -577,8 +583,11 @@ public class Tower : MonoBehaviour
         GameManager.countMoney -= finalCost;
 
         // Feedback visual de gasto
+        if (!GameManager.isLoadingGame)
+    {
         GameManager.ShowFloatingMoney(finalCost, isGain: false);
         GameManager.sound(GameManager.soundPay);
+    }
 
         // 3. ¡Lo guardamos en la hucha de la torre para su futura venta!
         totalGoldInvested += finalCost;

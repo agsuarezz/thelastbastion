@@ -130,6 +130,7 @@ public class GameManager : MonoBehaviour
     Button playButton;
     public Sprite playSprite;
     public static bool loadedFromSave = false;
+    public static bool isLoadingGame = false;
     private bool waitingBetweenRounds = false;
     // Botón para la velocidad actual del juego
     Button velocityButton;
@@ -268,9 +269,11 @@ public class GameManager : MonoBehaviour
             if (_pendingTowers != null)
                 RestoreTowers(_pendingTowers);
         }
+        
 
         if (messageRound != null)
             messageRound.text = "Ronda " + countRound;
+       
     }
     /// <summary>
     /// Se ejecuta antes que el Start. Ideal para limpiar variables estáticas 
@@ -278,6 +281,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         // 1. CONTINUAMOS CON TU CÓDIGO NORMAL DE LA PARTIDA
+        isLoadingGame = true;
         GameSaveData saved = SaveSystem.Load();
         metaProgression = SaveSystem.LoadMeta();
         if (saved.countRound > 0)
@@ -309,6 +313,7 @@ public class GameManager : MonoBehaviour
         else
         {
             ResetAllStaticVariables();
+            isLoadingGame = false;
         }
     }
     /// <summary>
@@ -709,6 +714,8 @@ public class GameManager : MonoBehaviour
 
         // 6. Al terminar de cargar todas las torres con éxito, devolvemos el dinero real
         GameManager.countMoney = realMoney;
+        GameManager.isLoadingGame = false;
+        
     }
     /// <summary>
     /// Limpia de memoria todos los datos estáticos de la partida anterior.
