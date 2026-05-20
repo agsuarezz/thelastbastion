@@ -1,24 +1,20 @@
 using UnityEngine;
-
-public class CloseAdTrigger : MonoBehaviour
+using UnityEngine.EventSystems;
+public class CloseAdTrigger : MonoBehaviour, IPointerClickHandler
 {
     [Header("Configuración")]
     public GameObject adObject;
 
-
-    // Se activa cuando el jugador hace clic izquierdo en el BoxCollider de este objeto
-    private void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
         CloseAd();
     }
 
     private void CloseAd()
     {
-        
         if (adObject != null)
         {
             Destroy(adObject);
-            Debug.Log("XD");
         }
         else
         {

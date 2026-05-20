@@ -103,6 +103,9 @@ public class castleScript : MonoBehaviour
     public void SaveData()
     {
         int xpThisGame = calculateXP();
+
+        GameManager.xpEarnedThisGame = xpThisGame;
+
         MetaSaveData metaPersistent = SaveSystem.LoadMeta();
         metaPersistent.totalExperience += xpThisGame;
         SaveSystem.SaveMeta(metaPersistent);

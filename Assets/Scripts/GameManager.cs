@@ -79,6 +79,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public static int countMoney = 0;
     public static int totalGoldEarned = 0;
+    public static int xpEarnedThisGame = 0;
     /// <summary>
     /// Referencia al componente de texto de la interfaz gráfica (UI) encargado de mostrar el oro disponible en pantalla.
     /// </summary>
@@ -744,7 +745,7 @@ public class GameManager : MonoBehaviour
         globalPoisonProbability     = 0f;
         globalChainLightningChance  = 0f;
 
-        GridGenerator.selectedGridIndex = 0;
+        GridGenerator.selectedGridIndex = -1;
         // Estado del juego
         currentState = GameState.Playing;
         loadedFromSave = false;
