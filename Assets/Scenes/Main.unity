@@ -26764,7 +26764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 196915345}
-  offset: {x: 0, y: -100, z: 0}
+  offset: {x: 0, y: -220, z: 0}
 --- !u!222 &1902133162
 CanvasRenderer:
   m_ObjectHideFlags: 0
