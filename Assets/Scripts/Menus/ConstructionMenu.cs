@@ -49,25 +49,25 @@ public class ConstructionMenu : MonoBehaviour
         if (GameManager.currentState != GameState.Playing) return;
 
         // --- LÓGICA: Abrir/Cerrar menú con tecla 'Q' ---
-       if (Input.GetKeyDown(KeyCode.Q))
-{
-    bool isMenuActive = menuTowerSelect.activeSelf;
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            bool isMenuActive = menuTowerSelect.activeSelf;
 
-    // Cierra el menú de mejora si hay una torre seleccionada
-    if (Tower.towerActiveInMenu != null)
-    {
-        Tower.setGameObjectUpDeleStatus(false);
-    }
+            // Cierra el menú de mejora si hay una torre seleccionada
+            if (Tower.towerActiveInMenu != null)
+            {
+                Tower.setGameObjectUpDeleStatus(false);
+            }
 
-    menuTowerSelect.SetActive(!isMenuActive);
+            menuTowerSelect.SetActive(!isMenuActive);
 
-    if (isMenuActive && isPlacing)
-    {
-        isPlacing = false;
-        tilemap.gameObject.SetActive(false);
-    }
-}
- 
+            if (isMenuActive && isPlacing)
+            {
+                isPlacing = false;
+                tilemap.gameObject.SetActive(false);
+            }
+        }
+
         if (menuTowerSelect.activeSelf)
         {
             if (Input.GetKeyDown(shortCut.keyTowerMedian))
@@ -111,12 +111,15 @@ public class ConstructionMenu : MonoBehaviour
             // 3. CLIC IZQUIERDO: Intentar plantar
             if (Input.GetMouseButtonDown(0))
             {
+                // Si el click cayó sobre la UI (botones, menús), no plantamos nada
+                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                    return;
                 Collider2D[] hits = Physics2D.OverlapBoxAll(exactPosition, new Vector2(0.1f, 0.1f), 0f);
                 bool hasObstacle = false;
 
                 foreach (Collider2D hit in hits)
                 {
-                    if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy")||
+                    if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy") ||
                         hit.CompareTag("BlockedTile"))
                     {
                         hasObstacle = true;
@@ -150,7 +153,7 @@ public class ConstructionMenu : MonoBehaviour
     {
         if (GameManager.currentState != GameState.Playing) return;
         menuTowerSelect.SetActive(true);
-        if(Tower.towerActiveInMenu != null)
+        if (Tower.towerActiveInMenu != null)
         {
             Tower.setGameObjectUpDeleStatus(false);
         }
@@ -169,7 +172,7 @@ public class ConstructionMenu : MonoBehaviour
             dontHaveMoney();
             return;
         }
-        else if(!statusTower)
+        else if (!statusTower)
         {
             DenyLockedAccess();
             return;
@@ -186,7 +189,7 @@ public class ConstructionMenu : MonoBehaviour
     {
         float costTowerToInt = costTower(flagTypeTower);
         GameObject prefab = setPrefabType();
-        if(prefab != null)
+        if (prefab != null)
             Instantiate(prefab, vector2, Quaternion.identity);
 
         tilemap.gameObject.SetActive(false);

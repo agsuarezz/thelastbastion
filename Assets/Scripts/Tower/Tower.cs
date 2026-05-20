@@ -13,11 +13,11 @@ public class Tower : MonoBehaviour
     public TowerData config;
     public List<GameObject> towerImagen;
     public LineRenderer lineRenderer;
-    
+
     [Header("Botones Interfaz")]
     public GameObject deleteTowerGameObject;
     public GameObject updateTowerGameObject;
-    
+
     // Variables de Estado
     private float laserActiveTimer;    // Contador para los 5s
     private float laserRestTimer;      // Contador para los 2s
@@ -34,12 +34,12 @@ public class Tower : MonoBehaviour
     [HideInInspector] public float upgradeCooldownStep;
     [HideInInspector] public int totalGoldInvested = 0;
     [HideInInspector] public bool isBuilt = false;
-    
+
     // Bonificaciones locales por carta (suman a las globales)
-    [HideInInspector] public float localBurnBonus          = 0f;
-    [HideInInspector] public float localPoisonBonus        = 0f;
-    [HideInInspector] public float localChainBonus         = 0f;
-    
+    [HideInInspector] public float localBurnBonus = 0f;
+    [HideInInspector] public float localPoisonBonus = 0f;
+    [HideInInspector] public float localChainBonus = 0f;
+
     private bool destroyedByEnemy = false;
     [HideInInspector] public float currentIncreaseDamage;
     private List<Tower> buffedTowers = new List<Tower>();
@@ -53,7 +53,7 @@ public class Tower : MonoBehaviour
     public static GameObject gameObjectUpdateDeleteTower;
     public static Tower towerActiveInMenu;
     int circleSegments = 50;
-    
+
     private void Awake() => towerActiveInMenu = null;
 
     public ShortCutScript shortCuts;
@@ -72,7 +72,7 @@ public class Tower : MonoBehaviour
             float treeIncreaseDamage = GameManager.metaProgression.upgradesTree[config.nameOfTower][0];
             float treeIncreaseRadius = GameManager.metaProgression.upgradesTree[config.nameOfTower][1];
             float treeIncreaseVelocity = GameManager.metaProgression.upgradesTree[config.nameOfTower][2];
-            
+
             attackRadius = config.baseAttackRadius * treeIncreaseRadius;
             upgradeDamageStep = config.damageUpgradeAmount * treeIncreaseDamage;
             upgradeCooldownStep = config.cooldownUpgradeAmount / treeIncreaseVelocity;
@@ -107,20 +107,20 @@ public class Tower : MonoBehaviour
                 currentIncreaseDamage *= CardManager.towerDamageMultipliers[name];
             }
             upgradeDamageStep *= CardManager.towerDamageMultipliers[name]; // Para que al subirla de nivel respete el multiplicador
-            
+
             // Radio
             attackRadius *= CardManager.towerRadiusMultipliers[name];
-            
+
             // Velocidad de ataque
             ApplyLocalSpeedBonus(CardManager.towerSpeedMultipliers[name]);
             upgradeCooldownStep *= CardManager.towerSpeedMultipliers[name];
-            
+
             // Efectos especiales de impacto
             localBurnBonus += CardManager.towerBurnBonus[name];
             localPoisonBonus += CardManager.towerPoisonBonus[name];
             localChainBonus += CardManager.towerChainBonus[name];
         }
-        
+
         SetTower(null, null, constructionMenu.flagTypeTower);
     }
 
@@ -132,8 +132,8 @@ public class Tower : MonoBehaviour
             SpriteRenderer nexSprite = towerImagen[nextLevel].GetComponent<SpriteRenderer>();
             BoxCollider2D nexCol = towerImagen[nextLevel].GetComponent<BoxCollider2D>();
             SetTower(nexSprite, nexCol, updatetower.typeOfTower);
-            updatetower.needUpdateTower = false; 
-            return; 
+            updatetower.needUpdateTower = false;
+            return;
         }
 
         if (deletetower && deletetower.isDeleteTower && !destroyedByEnemy)
@@ -167,9 +167,9 @@ public class Tower : MonoBehaviour
                 deletetower.onClickPlayer();
             }
         }
-        
+
         if (!isBuilt) return;
-        
+
         UpdateTarget();
         DrawRangeCircleInGame();
 
@@ -202,7 +202,7 @@ public class Tower : MonoBehaviour
 
                 laserActiveTimer -= Time.deltaTime;
                 damageAccrued += currentDamage * Time.deltaTime;
-                
+
                 if (damageAccrued >= 1f)
                 {
                     int dmg = Mathf.FloorToInt(damageAccrued);
@@ -269,6 +269,8 @@ public class Tower : MonoBehaviour
     public void OnMouseDown()
     {
         if (GameManager.currentState != GameState.Playing) return;
+        if (UnityEngine.EventSystems.EventSystem.current != null &&
+            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
 
         towerActiveInMenu = this;
         setGameObjectUpDeleStatus(true);
@@ -292,10 +294,10 @@ public class Tower : MonoBehaviour
             Debug.LogError("¡Cuidado Jefe! No encuentro algún botón. Revisa que se llamen EXACTAMENTE ButtonDeleteTower y ButtonCancelTower en la jerarquía.");
             return;
         }
-        
+
         int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
         btnDelete.GetComponentInChildren<TextMeshProUGUI>().text = "VENDER (Recuperas: " + goldRecovered + ")";
-        
+
         btnDelete.onClick.RemoveAllListeners();
         btnCancel.onClick.RemoveAllListeners();
 
@@ -316,7 +318,7 @@ public class Tower : MonoBehaviour
     private void UpdateTarget()
     {
         float realRadius = attackRadius * GameManager.globalRadiusMultiplier;
-        
+
         if (currentTarget != null)
         {
             Enemy currentEnemyScript = currentTarget.GetComponent<Enemy>();
@@ -328,10 +330,10 @@ public class Tower : MonoBehaviour
             {
                 float distanceToCurrent = Vector2.Distance(transform.position, currentEnemyScript.transform.position);
                 float dropRadius = realRadius + 0.5f;
-                
+
                 if (!currentTarget.gameObject.activeInHierarchy || currentEnemyScript.IsDead || distanceToCurrent > dropRadius)
                 {
-                    currentTarget = null; 
+                    currentTarget = null;
                 }
                 else
                 {
@@ -339,7 +341,7 @@ public class Tower : MonoBehaviour
                 }
             }
         }
-        
+
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
         float bestProgress = -Mathf.Infinity;
@@ -382,13 +384,13 @@ public class Tower : MonoBehaviour
             if (btn.gameObject.name == "ButtonUpdateTower") btnUpdate = btn;
         }
         if (btnUpdate == null) return;
-        
+
         if (updatetower.levelOfTower >= 2)
         {
             btnUpdate.gameObject.SetActive(false);
-            return; 
+            return;
         }
-        
+
         btnUpdate.gameObject.SetActive(true);
         int indexToLook = !isBuilt ? 0 : updatetower.levelOfTower + 1;
         float costTower = config.upgradeCosts[indexToLook];
@@ -434,9 +436,9 @@ public class Tower : MonoBehaviour
         bool burnTriggered = Random.value < effectiveBurnChance;
         if (!burnTriggered) return;
 
-        const int   burnDamagePerTick = 3;
-        const float burnTickInterval  = 0.5f;
-        const int   burnTotalTicks    = 12;  
+        const int burnDamagePerTick = 3;
+        const float burnTickInterval = 0.5f;
+        const int burnTotalTicks = 12;
 
         projectile.AddOnHitEffect(new BurnOnHitEffect(burnDamagePerTick, burnTickInterval, burnTotalTicks));
     }
@@ -449,10 +451,10 @@ public class Tower : MonoBehaviour
         bool poisonTriggered = Random.value < effectivePoisonChance;
         if (!poisonTriggered) return;
 
-        const int   poisonBaseDamagePerTick = 10;   
-        const float poisonTickInterval      = 0.8f; 
-        const int   poisonTotalTicks        = 10;   
-        const int   poisonMaxStacks         = 6;   
+        const int poisonBaseDamagePerTick = 10;
+        const float poisonTickInterval = 0.8f;
+        const int poisonTotalTicks = 10;
+        const int poisonMaxStacks = 6;
 
         projectile.AddOnHitEffect(new PoisonOnHitEffect(poisonBaseDamagePerTick, poisonTickInterval, poisonTotalTicks, poisonMaxStacks));
     }
@@ -465,10 +467,10 @@ public class Tower : MonoBehaviour
         bool triggered = Random.value < effectiveChainChance;
         if (!triggered) return;
 
-        const float chainDamage    = 15f;  
-        const float chainRadius    = 3f;   
-        const int   chainMaxJumps  = 3;    
-        const float chainFalloff   = 0.6f; 
+        const float chainDamage = 15f;
+        const float chainRadius = 3f;
+        const int chainMaxJumps = 3;
+        const float chainFalloff = 0.6f;
 
         projectile.AddOnHitEffect(new ChainLightningOnHitEffect(chainDamage, chainRadius, chainMaxJumps, chainFalloff));
     }
@@ -490,13 +492,13 @@ public class Tower : MonoBehaviour
             {
                 isBuilt = true;
                 updatetower.levelOfTower = 0;
-                updateFireCooldownAndDamage(); 
+                updateFireCooldownAndDamage();
                 increaseCountTower();
             }
             else
             {
-                updatetower.levelOfTower++; 
-                updateFireCooldownAndDamage(); 
+                updatetower.levelOfTower++;
+                updateFireCooldownAndDamage();
             }
 
             if (sprite == null) sprite = towerImagen[0].GetComponent<SpriteRenderer>();
@@ -638,15 +640,15 @@ public class Tower : MonoBehaviour
         {
             if (lineRenderer.positionCount > 0)
             {
-                lineRenderer.positionCount = 0; 
+                lineRenderer.positionCount = 0;
             }
             return;
         }
 
         float realRadius = attackRadius * GameManager.globalRadiusMultiplier;
         lineRenderer.positionCount = circleSegments;
-        lineRenderer.useWorldSpace = false; 
-        lineRenderer.loop = true; 
+        lineRenderer.useWorldSpace = false;
+        lineRenderer.loop = true;
 
         float angle = 0f;
         for (int i = 0; i < circleSegments; i++)
@@ -697,9 +699,9 @@ public class Tower : MonoBehaviour
             {
                 float realCurrentCooldown = currentBaseCooldown * GameManager.globalAttackSpeedMultiplier;
                 float baseNextCooldown = currentBaseCooldown - upgradeCooldownStep;
-                baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f); 
+                baseNextCooldown = Mathf.Max(baseNextCooldown, 0.1f);
                 float realNextCooldown = baseNextCooldown * GameManager.globalAttackSpeedMultiplier;
-                realNextCooldown = Mathf.Max(realNextCooldown, 0.1f); 
+                realNextCooldown = Mathf.Max(realNextCooldown, 0.1f);
 
                 text.text = "Recarga: [" + realCurrentCooldown.ToString("F2") + "s] -> <color=#2ECC71>[" + realNextCooldown.ToString("F2") + "s] </color>";
             }
