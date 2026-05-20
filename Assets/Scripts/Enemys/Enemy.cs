@@ -93,19 +93,25 @@ public class Enemy : MonoBehaviour
             return;
         }
 
+        
         Vector3 targetWaypoint = pathWaypoints[currentWaypointIndex];
-        Vector3 direction = targetWaypoint - transform.position;
-        FlipSprite(direction.x);
 
-        transform.Translate(
-            direction.normalized * currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime,
-            Space.World
-        );
+Vector3 direction = targetWaypoint - transform.position;
+FlipSprite(direction.x);
 
-        if (Vector2.Distance(transform.position, targetWaypoint) <= 0.1f)
-        {
-            currentWaypointIndex++;
-        }
+float step = currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime;
+
+transform.position = Vector3.MoveTowards(
+    transform.position,
+    targetWaypoint,
+    step
+);
+
+if (Vector2.Distance(transform.position, targetWaypoint) <= 0.05f)
+{
+    transform.position = targetWaypoint;
+    currentWaypointIndex++;
+}
     }
 
     private bool IsCastleInAttackRange()
