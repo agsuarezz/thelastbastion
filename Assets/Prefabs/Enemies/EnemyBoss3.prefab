@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   breakRadius: 2.5
-  maxTowersToBreak: 5
+  maxTowersToBreak: 3
   towerDestroyEffectPrefab: {fileID: 4073487071115745583, guid: 1c45428d99c63bf4fa416b2e750fd123, type: 3}
   destroyDelay: 0.6
   deathSound: {fileID: 8300000, guid: fed0c3d62e9a26e4c8a418e856ac4e24, type: 3}
