@@ -116,7 +116,8 @@ public class ConstructionMenu : MonoBehaviour
 
                 foreach (Collider2D hit in hits)
                 {
-                    if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy"))
+                    if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy")||
+                        hit.CompareTag("BlockedTile"))
                     {
                         hasObstacle = true;
                         Debug.Log("Cannot build there. Obstacle: " + hit.gameObject.name);

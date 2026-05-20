@@ -64,7 +64,7 @@ public class GridCursor : MonoBehaviour
         // Comprobamos si alguno de ellos es ilegal
         foreach (Collider2D hit in hits)
         {
-            if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy"))
+            if (hit.CompareTag("tower") || hit.CompareTag("Path") || hit.CompareTag("Enemy") || hit.CompareTag("BlockedTile"))
             {
                 hasObstacle = true;
                 break; // Bloqueado, salimos del bucle
