@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 457cd4c824cd6f646bc4e93bcd255f35, type: 3}
+  m_Name: Range Support
+  m_EditorClassIdentifier: 
+  skillID: Range Support
+  skillName: Rango Support
+  icon: {fileID: 6480885781447470354, guid: 756612e1af96360488aafd38e0210426, type: 3}
+  maxNBuy: 10
+  baseCost: 1
+  costMultiplier: 1
+  benefitPerLevel: 0.2
+  typeUpgrade: 2
+  typeTower: 4
+  prerequisite: {fileID: 11400000, guid: 784e29263a46471439684462c019c06f, type: 2}

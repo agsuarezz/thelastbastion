@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 457cd4c824cd6f646bc4e93bcd255f35, type: 3}
+  m_Name: UnlockHeavy
+  m_EditorClassIdentifier: 
+  skillID: Unlock_Heavy
+  skillName: Torre Pesada
+  icon: {fileID: -915552356043203361, guid: 15badc5eca811eb4db4ef79706a48db1, type: 3}
+  maxNBuy: 0
+  baseCost: 1
+  costMultiplier: 0
+  benefitPerLevel: 0.2
+  typeUpgrade: 1
+  typeTower: 4
+  prerequisite: {fileID: 11400000, guid: 799f111c8bb5ab94885dd4d5ec0604aa, type: 2}

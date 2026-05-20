@@ -9,8 +9,13 @@ public class SkillTreeManager : MonoBehaviour
     [Header("UI del Árbol")]
     public TextMeshProUGUI totalXpText; // Texto donde dice "XP: 84"
 
+    public AudioClip soundFailBuy;
+    public AudioClip soundBuy;
+    public AudioSource audioSource;
+
     // Una lista con todos los botones de tu escena para poder avisarles de que se actualicen
-    public List<SkillNode> allNodesInTree;
+    public Transform nodes;
+    private List<SkillNode> allNodesInTree = new List<SkillNode>();
 
     private MetaSaveData currentMeta; // Los datos del jugador cargados en memoria
 
@@ -23,7 +28,13 @@ public class SkillTreeManager : MonoBehaviour
         currentMeta = SaveSystem.LoadMeta();
         currentMeta.totalExperience += 100;
 
-        // 2. Iniciamos todos los nodos en el guardado si no lo están
+        // 2. Obtenemos todos los nodos
+        if (nodes != null)
+        {
+            allNodesInTree.AddRange(nodes.GetComponentsInChildren<SkillNode>());
+        }
+
+        // 3. Iniciamos todos los nodos en el guardado si no lo están
         bool confirmed = false;
         foreach (SkillNode node in allNodesInTree)
         {
@@ -36,7 +47,7 @@ public class SkillTreeManager : MonoBehaviour
         if (confirmed) SaveSystem.SaveMeta(currentMeta);
         SaveSystem.DebugLogMetaSave();
 
-        // 3. Actualizamos todo visualmente
+        // 4. Actualizamos todo visualmente
         UpdateUI();
     }
 
@@ -51,6 +62,7 @@ public class SkillTreeManager : MonoBehaviour
         if (currentLevel >= skillToBuy.maxNBuy)
         {
             StartCoroutine(messageError("Límite alcanzado. Si mejoramos esto un nivel más, el motor de Unity explota y te borra el Windows."));
+            audioSource.PlayOneShot(soundFailBuy);
             return;
         }
 
@@ -58,6 +70,7 @@ public class SkillTreeManager : MonoBehaviour
         if (currentMeta.totalExperience < cost)
         {
             StartCoroutine(messageError("Sin experiencia no hay mejoras. Si las quieres gratis, haber comprado la edición Deluxe."));
+            audioSource.PlayOneShot(soundFailBuy);
             return;
         }
 
@@ -71,6 +84,7 @@ public class SkillTreeManager : MonoBehaviour
 
         // Se aplica el efecto
         ApplyUpgrade(skillToBuy);
+        audioSource.PlayOneShot(soundBuy);
 
         // Guardamos físicamente en el archivo JSON
         SaveSystem.SaveMeta(currentMeta);

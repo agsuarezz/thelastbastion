@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 457cd4c824cd6f646bc4e93bcd255f35, type: 3}
-  m_Name: NewSkill 2
+  m_Name: Speed Heavy
   m_EditorClassIdentifier: 
-  skillID: Damage_Median
-  skillName: "Aumento de da\xF1o"
-  icon: {fileID: -210908623516531236, guid: 31567290b3e48d54ebcd9c32721cd4df, type: 3}
+  skillID: Speed_Heavy
+  skillName: Velocidad Pesada
+  icon: {fileID: 5525468675366693970, guid: 5c66d8fe22a616444b72311f4d6c67e1, type: 3}
   maxNBuy: 10
   baseCost: 1
   costMultiplier: 1
   benefitPerLevel: 0.2
-  typeUpgrade: 1
-  typeTower: 0
-  prerequisite: {fileID: 11400000, guid: c77112e71dfb3834694af63819ee7fcf, type: 2}
+  typeUpgrade: 3
+  typeTower: 2
+  prerequisite: {fileID: 11400000, guid: 8b5145baa6ef6fa47baff40aca16621e, type: 2}
