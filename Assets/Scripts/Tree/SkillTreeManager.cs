@@ -23,10 +23,8 @@ public class SkillTreeManager : MonoBehaviour
 
     private void Start()
     {
-        SaveSystem.DeleteMeta();
         // 1. Al abrir la escena del árbol, cargamos la partida
         currentMeta = SaveSystem.LoadMeta();
-        currentMeta.totalExperience += 100;
 
         // 2. Obtenemos todos los nodos
         if (nodes != null)
@@ -35,22 +33,12 @@ public class SkillTreeManager : MonoBehaviour
         }
 
         // 3. Iniciamos todos los nodos en el guardado si no lo están
-        bool confirmed = false;
-        foreach (SkillNode node in allNodesInTree)
-        {
-            if (GetNode(node.myData.skillID) == null)
-            {
-                InitNode(node);
-                confirmed = true;
-            }
-        }
-        if (confirmed) SaveSystem.SaveMeta(currentMeta);
+        InitTree();
         SaveSystem.DebugLogMetaSave();
 
         // 4. Actualizamos todo visualmente
         UpdateUI();
     }
-
 
     /// <summary>
     /// Método que llama un SkillNode cuando el jugador hace click en él.
@@ -123,6 +111,20 @@ public class SkillTreeManager : MonoBehaviour
                 node.RefreshVisuals(true, currentLevel, currentCost);
             }
         }
+    }
+
+    private void InitTree()
+    {
+        bool confirmed = false;
+        foreach (SkillNode node in allNodesInTree)
+        {
+            if (GetNode(node.myData.skillID) == null)
+            {
+                InitNode(node);
+                confirmed = true;
+            }
+        }
+        if (confirmed) SaveSystem.SaveMeta(currentMeta);
     }
 
     private void InitNode(SkillNode node)
@@ -202,4 +204,28 @@ public class SkillTreeManager : MonoBehaviour
         messageErrorText.text = "";
     }
 
+    public void ResetTree()
+    {
+        foreach (SkillNode skill in allNodesInTree)
+        {
+            SkillProgress dataSkill = GetNode(skill.myData.skillID);
+            currentMeta.totalExperience += (dataSkill.level * skill.myData.baseCost) + (skill.myData.costMultiplier * (dataSkill.level * (dataSkill.level - 1)) / 2);
+            currentMeta.skillList.Remove(dataSkill);
+            InitNode(skill);
+        }
+
+        currentMeta.isInfernalTowerUnlocked = false;
+        currentMeta.isSupportTowerUnlocked = false;
+        currentMeta.upgradesTree = new Dictionary<string, List<float>>
+        {
+            {"Torre Media", new List<float> { 1f, 1f, 1f } },
+            {"Torre Ligera", new List<float> { 1f, 1f, 1f } },
+            {"Torre Pesada", new List<float> { 1f, 1f, 1f } },
+            {"Torre Infernal", new List<float> { 1f, 1f, 1f } },
+            {"Torre Soporte", new List<float> { 1f, 1f, 1f } }
+        };
+
+        InitTree();
+        UpdateUI();
+    }
 }
