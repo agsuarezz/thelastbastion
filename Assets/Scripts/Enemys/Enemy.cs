@@ -207,6 +207,12 @@ if (Vector2.Distance(transform.position, targetWaypoint) <= 0.05f)
         isDead = true;
         isAttackingCastle = false;
         OnEnemyDied?.Invoke(this);
+        EnemyBlockTilesOnDeath blockAbility = GetComponent<EnemyBlockTilesOnDeath>();
+
+if (blockAbility != null)
+{
+    blockAbility.BlockTilesOnDeath();
+}
 
         GameManager.enemiesDestroyed++;
         // 1. Calculamos la recompensa (puede ser positiva o negativa)
