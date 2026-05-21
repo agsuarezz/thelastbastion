@@ -76,6 +76,31 @@ public class GameSaveData
     public float globalEnemyDamageMultiplier;
     public int gridIndex = -1;
 
+    // ── Bonificaciones de cartas (globales) ───────────────────────────────
+    public float globalMoneyBonusMultiplier;
+    public float globalBurnProbability;
+    public float globalPoisonProbability;
+    public float globalChainLightningChance;
+    public float globalSlowChance;
+
+    // ── Bonificaciones de cartas por tipo de torre ────────────────────────
+    // Serializamos como listas paralelas de clave/valor porque
+    // JsonUtility no soporta Dictionary directamente.
+    public List<string> towerDamageKeys      = new List<string>();
+    public List<float>  towerDamageValues    = new List<float>();
+    public List<string> towerSpeedKeys       = new List<string>();
+    public List<float>  towerSpeedValues     = new List<float>();
+    public List<string> towerRadiusKeys      = new List<string>();
+    public List<float>  towerRadiusValues    = new List<float>();
+    public List<string> towerBurnKeys        = new List<string>();
+    public List<float>  towerBurnValues      = new List<float>();
+    public List<string> towerPoisonKeys      = new List<string>();
+    public List<float>  towerPoisonValues    = new List<float>();
+    public List<string> towerChainKeys       = new List<string>();
+    public List<float>  towerChainValues     = new List<float>();
+    public List<string> towerSlowKeys        = new List<string>();
+    public List<float>  towerSlowValues      = new List<float>();
+
     // ── Torres ────────────────────────────────────────────────────────────
     public List<TowerSaveData> towers = new List<TowerSaveData>();
 
@@ -116,6 +141,26 @@ public static class SaveSystem
     public static void DeleteSave() { if (File.Exists(SavePath)) File.Delete(SavePath); }
     public static void DeleteMeta() { if (File.Exists(MetaSavePath)) File.Delete(MetaSavePath); }
     public static bool SaveExists()  => File.Exists(SavePath);
+
+    // ── Helpers de serialización de diccionarios ──────────────────────────
+
+    /// <summary>Vuelca un Dictionary&lt;string,float&gt; en dos listas paralelas dentro de GameSaveData.</summary>
+    public static void PackDict(Dictionary<string, float> dict, List<string> keys, List<float> values)
+    {
+        keys.Clear();
+        values.Clear();
+        foreach (var kv in dict) { keys.Add(kv.Key); values.Add(kv.Value); }
+    }
+
+    /// <summary>Reconstruye un Dictionary&lt;string,float&gt; desde las listas paralelas guardadas.</summary>
+    public static Dictionary<string, float> UnpackDict(List<string> keys, List<float> values)
+    {
+        var dict = new Dictionary<string, float>();
+        if (keys == null || values == null) return dict;
+        int count = Mathf.Min(keys.Count, values.Count);
+        for (int i = 0; i < count; i++) dict[keys[i]] = values[i];
+        return dict;
+    }
 
     public static void SaveMeta(MetaSaveData data)
     {

@@ -88,13 +88,18 @@ public class CardManager : MonoBehaviour
         if (cardsPanel != null) cardsPanel.SetActive(false);
         InitializeUpgrades();
 
-        towerDamageMultipliers.Clear();
-        towerSpeedMultipliers.Clear();
-        towerRadiusMultipliers.Clear();
-        towerBurnBonus.Clear();
-        towerPoisonBonus.Clear();
-        towerChainBonus.Clear();
-        towerSlowBonus.Clear();
+        // Solo limpiamos los diccionarios si es una partida nueva.
+        // Si venimos de una partida guardada, GameManager ya los ha rellenado en Awake.
+        if (!GameManager.loadedFromSave)
+        {
+            towerDamageMultipliers.Clear();
+            towerSpeedMultipliers.Clear();
+            towerRadiusMultipliers.Clear();
+            towerBurnBonus.Clear();
+            towerPoisonBonus.Clear();
+            towerChainBonus.Clear();
+            towerSlowBonus.Clear();
+        }
     }
 
     private void InitializeUpgrades()

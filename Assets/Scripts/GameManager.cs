@@ -303,6 +303,22 @@ public class GameManager : MonoBehaviour
             globalEnemyHealthMultiplier = saved.globalEnemyHealthMultiplier;
             globalEnemyDamageMultiplier = saved.globalEnemyDamageMultiplier;
 
+            // ── Bonificaciones globales de cartas ─────────────────────────
+            globalMoneyBonusMultiplier  = saved.globalMoneyBonusMultiplier > 0f ? saved.globalMoneyBonusMultiplier : 1f;
+            globalBurnProbability       = saved.globalBurnProbability;
+            globalPoisonProbability     = saved.globalPoisonProbability;
+            globalChainLightningChance  = saved.globalChainLightningChance;
+            globalSlowChance            = saved.globalSlowChance;
+
+            // ── Bonificaciones de cartas por tipo de torre ─────────────────
+            CardManager.towerDamageMultipliers = SaveSystem.UnpackDict(saved.towerDamageKeys,  saved.towerDamageValues);
+            CardManager.towerSpeedMultipliers  = SaveSystem.UnpackDict(saved.towerSpeedKeys,   saved.towerSpeedValues);
+            CardManager.towerRadiusMultipliers = SaveSystem.UnpackDict(saved.towerRadiusKeys,  saved.towerRadiusValues);
+            CardManager.towerBurnBonus         = SaveSystem.UnpackDict(saved.towerBurnKeys,    saved.towerBurnValues);
+            CardManager.towerPoisonBonus       = SaveSystem.UnpackDict(saved.towerPoisonKeys,  saved.towerPoisonValues);
+            CardManager.towerChainBonus        = SaveSystem.UnpackDict(saved.towerChainKeys,   saved.towerChainValues);
+            CardManager.towerSlowBonus         = SaveSystem.UnpackDict(saved.towerSlowKeys,    saved.towerSlowValues);
+
             _pendingCastleLife = saved.castleLife;
             _pendingCastleLifeMax = saved.castleLifeMax;
             _pendingTowers = saved.towers;
@@ -629,7 +645,23 @@ public class GameManager : MonoBehaviour
             globalEnemyHealthMultiplier = globalEnemyHealthMultiplier,
             globalEnemyDamageMultiplier = globalEnemyDamageMultiplier,
             gridIndex = GridGenerator.selectedGridIndex,
+
+            // ── Bonificaciones globales de cartas ─────────────────────────
+            globalMoneyBonusMultiplier  = globalMoneyBonusMultiplier,
+            globalBurnProbability       = globalBurnProbability,
+            globalPoisonProbability     = globalPoisonProbability,
+            globalChainLightningChance  = globalChainLightningChance,
+            globalSlowChance            = globalSlowChance,
         };
+
+        // ── Bonificaciones de cartas por tipo de torre ────────────────────
+        SaveSystem.PackDict(CardManager.towerDamageMultipliers, data.towerDamageKeys,   data.towerDamageValues);
+        SaveSystem.PackDict(CardManager.towerSpeedMultipliers,  data.towerSpeedKeys,    data.towerSpeedValues);
+        SaveSystem.PackDict(CardManager.towerRadiusMultipliers, data.towerRadiusKeys,   data.towerRadiusValues);
+        SaveSystem.PackDict(CardManager.towerBurnBonus,         data.towerBurnKeys,     data.towerBurnValues);
+        SaveSystem.PackDict(CardManager.towerPoisonBonus,       data.towerPoisonKeys,   data.towerPoisonValues);
+        SaveSystem.PackDict(CardManager.towerChainBonus,        data.towerChainKeys,    data.towerChainValues);
+        SaveSystem.PackDict(CardManager.towerSlowBonus,         data.towerSlowKeys,     data.towerSlowValues);
 
         Tower[] torres = FindObjectsByType<Tower>(FindObjectsSortMode.None);
         foreach (Tower t in torres)
