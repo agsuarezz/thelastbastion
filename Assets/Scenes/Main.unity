@@ -8060,7 +8060,7 @@ MonoBehaviour:
     isBoss: 0
   - pooler: {fileID: 1993064750}
     enemyData: {fileID: 11400000, guid: b939b8eccd6494c429098ceea6d11a51, type: 2}
-    cost: 5
+    cost: 4
     minRound: 3
     isBoss: 0
   - pooler: {fileID: 1605224572}
@@ -8070,22 +8070,22 @@ MonoBehaviour:
     isBoss: 0
   - pooler: {fileID: 1613140447}
     enemyData: {fileID: 11400000, guid: 5e140b83b01bc23449b83cc5a6021ba6, type: 2}
-    cost: 40
+    cost: 35
     minRound: 20
     isBoss: 1
   - pooler: {fileID: 1834018328}
     enemyData: {fileID: 11400000, guid: 35c5613a2e9c5b646b107f74453ff242, type: 2}
-    cost: 5
+    cost: 3
     minRound: 3
     isBoss: 0
   - pooler: {fileID: 1453345576}
     enemyData: {fileID: 11400000, guid: 88bc91452a5708746a1901695a6e2508, type: 2}
-    cost: 20
+    cost: 22
     minRound: 15
     isBoss: 1
   - pooler: {fileID: 1478424545}
     enemyData: {fileID: 11400000, guid: 168d356257eb8a1468314711a888071a, type: 2}
-    cost: 10
+    cost: 13
     minRound: 8
     isBoss: 1
   spawnInterval: 1
@@ -13560,6 +13560,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d99218c89fddbb14c934656478fedfb8, type: 2}
   - {fileID: 11400000, guid: 92235023035516348b0e2eaef105d3cc, type: 2}
   - {fileID: 11400000, guid: 51db0feb5655a16419af0f41d4dddeb7, type: 2}
+  slowSpeedMultiplier: 0.5
+  slowDuration: 3
 --- !u!4 &626184130
 Transform:
   m_ObjectHideFlags: 0

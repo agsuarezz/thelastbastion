@@ -17,8 +17,8 @@ MonoBehaviour:
   damageUpgradeAmount: 10
   cooldownUpgradeAmount: 0.5
   upgradeCosts:
-  - 1
-  - 1
-  - 1
-  baseIncreaseDamage: 5
-  baseFireRate: 2
+  - 120
+  - 110
+  - 180
+  baseIncreaseDamage: 4
+  baseFireRate: 2.5

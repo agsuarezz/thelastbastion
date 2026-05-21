@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy_Cabezona
   m_EditorClassIdentifier: 
   health: 100
-  damage: 15
+  damage: 10
   speed: 5
-  money: 0
+  money: 12
   attackRange: 0.7

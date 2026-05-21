@@ -87,7 +87,7 @@ public class Spawner : MonoBehaviour
 
     private int GetWaveBudget(int round)
     {
-        return 5 + round * 3;
+        return 8 + round * 4;
     }
 
    private List<EnemyTypeConfig> GenerateWave(int round, int budget)

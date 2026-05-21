@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: ConfigHeavy
   m_EditorClassIdentifier: 
   nameOfTower: Torre Pesada
-  baseAttackRadius: 4.5
-  damageUpgradeAmount: 50
-  cooldownUpgradeAmount: 0.25
+  baseAttackRadius: 4.3
+  damageUpgradeAmount: 35
+  cooldownUpgradeAmount: 0.18
   upgradeCosts:
-  - 0
-  - 0
-  - 0
+  - 150
+  - 140
+  - 230
   projectilePrefab: {fileID: 4912671896811190522, guid: aaded907281ab0d4b8efb79b0b57cb57, type: 3}
-  baseDamage: 60
+  baseDamage: 70
   baseFireRate: 2
