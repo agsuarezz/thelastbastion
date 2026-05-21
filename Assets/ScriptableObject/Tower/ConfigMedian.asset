@@ -17,9 +17,9 @@ MonoBehaviour:
   damageUpgradeAmount: 12
   cooldownUpgradeAmount: 0.1
   upgradeCosts:
-  - 100
-  - 90
-  - 150
+  - 85
+  - 75
+  - 125
   projectilePrefab: {fileID: 4912671896811190522, guid: 98184dd0ff9141945a0c620020150437, type: 3}
   baseDamage: 25
   baseFireRate: 1

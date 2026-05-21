@@ -17,9 +17,9 @@ MonoBehaviour:
   damageUpgradeAmount: 15
   cooldownUpgradeAmount: 0.25
   upgradeCosts:
-  - 180
-  - 160
-  - 260
+  - 150
+  - 135
+  - 220
   damagePerSecond: 30
   onTime: 4
   offTime: 2
