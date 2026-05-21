@@ -24,6 +24,10 @@ public class castleScript : MonoBehaviour
     [Tooltip("BoxCollider2D Castillo.")]
     public BoxCollider2D castleCollider;
 
+    [Header("Transición Game Over")]
+    public CanvasGroup fadeCanvasGroup;
+    public float fadeDuration = 1f;
+
     private bool isGameOver = false;
     public GameObject LogicaGameOver;
 
@@ -43,6 +47,13 @@ public class castleScript : MonoBehaviour
 
         if (LogicaGameOver != null)
             LogicaGameOver.SetActive(false);
+
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.alpha = 0f;
+            fadeCanvasGroup.interactable = false;
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
     }
 
     private void FixedUpdate()
@@ -60,8 +71,10 @@ public class castleScript : MonoBehaviour
 
         life -= damage;
         GameManager.sound(GameManager.soundTakeLife);
+
         if (life < 0)
             life = 0;
+
         CheckLife();
     }
 
@@ -77,27 +90,43 @@ public class castleScript : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Congela el mapa tal como está y carga la escena GameOver encima (Additive),
-    /// de modo que el fondo sigue siendo el mapa en el momento de la derrota.
-    /// </summary>
     private void TriggerGameOver()
     {
-        // 1. Borramos la partida guardada
         SaveSystem.DeleteSave();
+        StartCoroutine(GameOverTransition());
+    }
 
-        // 2. Congelamos el tiempo: enemigos, torres y animaciones quedan parados
-        Time.timeScale = 0f;
-
-        // 3. Actualizamos el estado global
+    private IEnumerator GameOverTransition()
+    {
         GameManager.currentState = GameState.Paused;
 
-        // 4. Sonido de derrota
         GameManager.sound(GameManager.soundLostGame);
 
-        // 5. Cargamos la escena GameOver ENCIMA de la escena actual (sin destruirla)
-        //    Así el mapa sigue visible de fondo
-        SceneManager.LoadScene("GameOverPrueba", LoadSceneMode.Additive);
+        Time.timeScale = 0.3f;
+
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.blocksRaycasts = true;
+
+            float elapsedTime = 0f;
+
+            while (elapsedTime < fadeDuration)
+            {
+                elapsedTime += Time.unscaledDeltaTime;
+                fadeCanvasGroup.alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
+                yield return null;
+            }
+
+            fadeCanvasGroup.alpha = 1f;
+        }
+        else
+        {
+            yield return new WaitForSecondsRealtime(fadeDuration);
+        }
+
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene("GameOverPrueba");
     }
 
     public void SaveData()
@@ -123,7 +152,9 @@ public class castleScript : MonoBehaviour
     public IEnumerator SearchandMovetotheMap()
     {
         yield return new WaitForEndOfFrame();
+
         CastleSpawnPoint castleSpawnPoint = FindAnyObjectByType<CastleSpawnPoint>();
+
         if (castleSpawnPoint != null)
         {
             transform.position = castleSpawnPoint.CalculatedCenter;
