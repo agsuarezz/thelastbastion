@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour
     public static float globalBurnProbability        = 0f;
     public static float globalPoisonProbability      = 0f;
     public static float globalChainLightningChance   = 0f; // probabilidad de cadena eléctrica al impactar
+    public static float globalSlowChance             = 0f; // probabilidad de ralentizar al impactar
 
     [Header("Sistema de Cartas")]
     public CardManager cardManager;
@@ -744,6 +745,7 @@ public class GameManager : MonoBehaviour
         globalBurnProbability       = 0f;
         globalPoisonProbability     = 0f;
         globalChainLightningChance  = 0f;
+        globalSlowChance            = 0f;
 
         GridGenerator.selectedGridIndex = -1;
         // Estado del juego

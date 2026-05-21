@@ -17,5 +17,5 @@ MonoBehaviour:
     no se paga solo."
   type: 1
   audioClip: {fileID: 8300000, guid: 5130ae639ee902645a5d00265f9b9167, type: 3}
-  baseWeight: 30
+  baseWeight: 1
   adAmount: 4

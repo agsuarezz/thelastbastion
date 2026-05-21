@@ -106,7 +106,12 @@ public void SetFirstAvailableRound(int minRound)
 Vector3 direction = targetWaypoint - transform.position;
 FlipSprite(direction.x);
 
-float step = currentSpeed * GameManager.globalSpeedMultiplier * Time.deltaTime;
+// Incluye el multiplicador de ralentización temporal por disparo (SlowEffect)
+float localSlowMult = 1f;
+SlowEffect slowFx = GetComponent<SlowEffect>();
+if (slowFx != null) localSlowMult = slowFx.SpeedMultiplier;
+
+float step = currentSpeed * GameManager.globalSpeedMultiplier * localSlowMult * Time.deltaTime;
 
 transform.position = Vector3.MoveTowards(
     transform.position,

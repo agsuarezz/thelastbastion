@@ -33,7 +33,7 @@ public class CardManager : MonoBehaviour
         AttackSpeedUp,
         RadiusUp,
         FireBurn,
-        SlowEnemies,
+        SlowOnHit,       // Ralentización temporal por disparo (reemplaza SlowEnemies global)
         PoisonStrike,
         Greed,
         ChainLightning
@@ -56,6 +56,16 @@ public class CardManager : MonoBehaviour
     public static Dictionary<string, float> towerBurnBonus         = new Dictionary<string, float>();
     public static Dictionary<string, float> towerPoisonBonus       = new Dictionary<string, float>();
     public static Dictionary<string, float> towerChainBonus        = new Dictionary<string, float>();
+    public static Dictionary<string, float> towerSlowBonus         = new Dictionary<string, float>();
+
+    [Header("Ralentización por Disparo")]
+    [Tooltip("Velocidad del enemigo mientras dura el slow (0.5 = mitad de velocidad).")]
+    [Range(0.1f, 0.9f)]
+    public float slowSpeedMultiplier = 0.5f;
+
+    [Tooltip("Segundos que dura la ralentización antes de que el enemigo recupere la velocidad.")]
+    [Range(0.5f, 10f)]
+    public float slowDuration = 3f;
 
     public static void InitializeTowerDict(string name)
     {
@@ -67,6 +77,7 @@ public class CardManager : MonoBehaviour
             towerBurnBonus[name]         = 0f;
             towerPoisonBonus[name]       = 0f;
             towerChainBonus[name]        = 0f;
+            towerSlowBonus[name]         = 0f;
         }
     }
 
@@ -83,6 +94,7 @@ public class CardManager : MonoBehaviour
         towerBurnBonus.Clear();
         towerPoisonBonus.Clear();
         towerChainBonus.Clear();
+        towerSlowBonus.Clear();
     }
 
     private void InitializeUpgrades()
@@ -94,7 +106,7 @@ public class CardManager : MonoBehaviour
             new CardData { type = UpgradeType.AttackSpeedUp, title = "Recarga Ligera", description = "Una torre aleatoria dispara un 15% más RÁPIDO." },
             new CardData { type = UpgradeType.RadiusUp, title = "Vista de Águila", description = "Una torre aleatoria aumenta su RADIO de visión un 20%." },
             new CardData { type = UpgradeType.FireBurn, title = "Brasas Eternas", description = "Una torre aleatoria tiene un 15% más de probabilidad de INCENDIAR al enemigo." },
-            new CardData { type = UpgradeType.SlowEnemies, title = "Pantano Espeso", description = "Todos los enemigos se mueven un 20% más LENTO de forma permanente." },
+            new CardData { type = UpgradeType.SlowOnHit, title = "Flecha Glacial", description = "Una torre aleatoria tiene un 25% de probabilidad de RALENTIZAR al enemigo durante unos segundos al impactarle." },
             new CardData { type = UpgradeType.PoisonStrike, title = "Flechas Envenenadas", description = "Una torre aleatoria tiene un 25% más de probabilidad de ENVENENAR al enemigo." },
             new CardData { type = UpgradeType.Greed, title = "Codicia", description = "Ganas un 15% MÁS de oro por cada enemigo eliminado." },
             new CardData { type = UpgradeType.ChainLightning, title = "Tormenta Eléctrica", description = "Una torre aleatoria tiene un 30% más de probabilidad de generar una CADENA ELÉCTRICA." }
@@ -110,9 +122,9 @@ public class CardManager : MonoBehaviour
     {
         switch (type)
         {
-            case UpgradeType.SlowEnemies:
-                // 0.3f es la velocidad mínima, si ya está ahí o menos, la descartamos.
-                return GameManager.globalSpeedMultiplier > 0.30f;
+            case UpgradeType.SlowOnHit:
+                if (GameManager.globalSlowChance < 0.80f) return true;
+                return HasAnyTowerNotMaxed(towerSlowBonus, 0.80f);
                 
             case UpgradeType.FireBurn:
                 if (GameManager.globalBurnProbability < 0.80f) return true;
@@ -191,7 +203,8 @@ public class CardManager : MonoBehaviour
 
                 if (typeToApply == UpgradeType.DamageUp || typeToApply == UpgradeType.AttackSpeedUp ||
                     typeToApply == UpgradeType.RadiusUp || typeToApply == UpgradeType.FireBurn ||
-                    typeToApply == UpgradeType.PoisonStrike || typeToApply == UpgradeType.ChainLightning)
+                    typeToApply == UpgradeType.PoisonStrike || typeToApply == UpgradeType.ChainLightning ||
+                    typeToApply == UpgradeType.SlowOnHit)
                 {
                     // Pasamos el tipo de mejora para que NO elija una torre que ya lo tenga al máximo
                     preSelectedTowerData = GetRandomEligibleTowerData(typeToApply);
@@ -249,6 +262,7 @@ public class CardManager : MonoBehaviour
                 if (type == UpgradeType.FireBurn && towerBurnBonus[name] >= 0.79f) canUpgrade = false;
                 if (type == UpgradeType.PoisonStrike && towerPoisonBonus[name] >= 0.79f) canUpgrade = false;
                 if (type == UpgradeType.ChainLightning && towerChainBonus[name] >= 0.79f) canUpgrade = false;
+                if (type == UpgradeType.SlowOnHit && towerSlowBonus[name] >= 0.79f) canUpgrade = false;
 
                 if (canUpgrade) eligible.Add(td);
             }
@@ -268,8 +282,8 @@ public class CardManager : MonoBehaviour
             case UpgradeType.HealCastle:
                 castle.life = Mathf.Min(castle.life + 25, 100);
                 break;
-            case UpgradeType.SlowEnemies:
-                ApplySlowEnemiesUpgrade();
+            case UpgradeType.SlowOnHit:
+                ApplyTowerSlowOnHit(targetTowerData);
                 break;
             case UpgradeType.Greed:
                 ApplyGreedUpgrade();
@@ -437,11 +451,28 @@ public class CardManager : MonoBehaviour
 
     // ── Mejoras globales ───────────────────────────────────────
 
-    private void ApplySlowEnemiesUpgrade()
+    private void ApplyTowerSlowOnHit(TowerData td)
     {
-        const float slowPerCard = 0.20f;
-        const float minSpeedMult = 0.30f;
-        GameManager.globalSpeedMultiplier = Mathf.Max(GameManager.globalSpeedMultiplier - slowPerCard, minSpeedMult);
+        if (td != null)
+        {
+            string name = td.nameOfTower;
+            InitializeTowerDict(name);
+            towerSlowBonus[name] = Mathf.Min(towerSlowBonus[name] + 0.25f, 0.80f);
+
+            Tower[] allTowers = FindObjectsByType<Tower>(FindObjectsSortMode.None);
+            foreach (Tower t in allTowers)
+            {
+                if (t.isBuilt && t.config != null && t.config.nameOfTower == name)
+                {
+                    t.localSlowBonus = towerSlowBonus[name];
+                    NotifyTowerUpgrade(t, $"¡Slow +25%! (chance: {Mathf.RoundToInt(t.localSlowBonus * 100)}%)");
+                }
+            }
+        }
+        else
+        {
+            GameManager.globalSlowChance = Mathf.Min(GameManager.globalSlowChance + 0.25f, 0.80f);
+        }
     }
 
     private void ApplyGreedUpgrade()
@@ -483,10 +514,9 @@ public class CardManager : MonoBehaviour
                 statText = $"\n<size=80%><color={colorHex}>(Actual: {Mathf.RoundToInt(currentChain * 100)}% / Máx: 80%)</color></size>";
                 break;
 
-            case UpgradeType.SlowEnemies:
-                float currentSlow = (1f - GameManager.globalSpeedMultiplier) * 100f;
-                if (currentSlow < 0) currentSlow = 0; 
-                statText = $"\n<size=80%><color={colorHex}>(Actual: {Mathf.RoundToInt(currentSlow)}% / Máx: 70%)</color></size>";
+            case UpgradeType.SlowOnHit:
+                float currentSlow = td != null ? towerSlowBonus[towerName] : GameManager.globalSlowChance;
+                statText = $"\n<size=80%><color={colorHex}>(Actual: {Mathf.RoundToInt(currentSlow * 100)}% / Máx: 80%)</color></size>";
                 break;
 
             case UpgradeType.DamageUp:

@@ -39,6 +39,7 @@ public class Tower : MonoBehaviour
     [HideInInspector] public float localBurnBonus = 0f;
     [HideInInspector] public float localPoisonBonus = 0f;
     [HideInInspector] public float localChainBonus = 0f;
+    [HideInInspector] public float localSlowBonus = 0f;
 
     private bool destroyedByEnemy = false;
     [HideInInspector] public float currentIncreaseDamage;
@@ -119,6 +120,7 @@ public class Tower : MonoBehaviour
             localBurnBonus += CardManager.towerBurnBonus[name];
             localPoisonBonus += CardManager.towerPoisonBonus[name];
             localChainBonus += CardManager.towerChainBonus[name];
+            localSlowBonus += CardManager.towerSlowBonus[name];
         }
 
         SetTower(null, null, constructionMenu.flagTypeTower);
@@ -425,6 +427,7 @@ public class Tower : MonoBehaviour
             TryInjectBurnEffect(projectile);
             TryInjectPoisonEffect(projectile);
             TryInjectChainLightningEffect(projectile);
+            TryInjectSlowEffect(projectile);
         }
     }
 
@@ -473,6 +476,19 @@ public class Tower : MonoBehaviour
         const float chainFalloff = 0.6f;
 
         projectile.AddOnHitEffect(new ChainLightningOnHitEffect(chainDamage, chainRadius, chainMaxJumps, chainFalloff));
+    }
+
+    private void TryInjectSlowEffect(Projectile projectile)
+    {
+        float effectiveSlowChance = Mathf.Min(GameManager.globalSlowChance + localSlowBonus, 0.95f);
+        if (effectiveSlowChance <= 0f) return;
+
+        // Los valores de ralentización se configuran desde CardManager (Inspector)
+        CardManager cm = FindFirstObjectByType<CardManager>();
+        float speedMult = cm != null ? cm.slowSpeedMultiplier : 0.5f;
+        float duration  = cm != null ? cm.slowDuration        : 3f;
+
+        projectile.AddOnHitEffect(new SlowOnHitEffect(effectiveSlowChance, speedMult, duration));
     }
 
     public void SetTower(SpriteRenderer sprite = null, BoxCollider2D boxCollider = null, int type = 0)
