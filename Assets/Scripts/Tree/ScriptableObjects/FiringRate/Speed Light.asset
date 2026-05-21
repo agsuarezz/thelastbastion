@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Velocidad Ligera
   icon: {fileID: 83132832641429496, guid: b29b55db7e52f984f941ad6f6581b1c1, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 3

@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Rango Support
   icon: {fileID: 6480885781447470354, guid: 756612e1af96360488aafd38e0210426, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 80
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 2

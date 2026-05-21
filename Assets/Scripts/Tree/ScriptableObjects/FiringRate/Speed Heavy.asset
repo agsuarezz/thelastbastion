@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Velocidad Pesada
   icon: {fileID: 5525468675366693970, guid: 5c66d8fe22a616444b72311f4d6c67e1, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 3

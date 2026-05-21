@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: "Da\xF1o Mediana"
   icon: {fileID: 3305005427881362339, guid: 91e1654a2234f104ea7f8688efb41956, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 1

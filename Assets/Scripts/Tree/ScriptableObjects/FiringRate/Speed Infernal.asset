@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Velocidad Infernal
   icon: {fileID: -6247136268127575137, guid: 716a732241032674f9b12c30e13e9a30, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 3

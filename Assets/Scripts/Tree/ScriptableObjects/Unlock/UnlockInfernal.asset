@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Torre Infernal
   icon: {fileID: -2582112237578645608, guid: 76392751b949fc749bfb7fe503d181a6, type: 3}
   maxNBuy: 1
-  baseCost: 1
+  baseCost: 400
   costMultiplier: 0
   benefitPerLevel: 0.2
   typeUpgrade: 0

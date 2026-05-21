@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Velocidad Mediana
   icon: {fileID: -5227127318394659064, guid: 32ab1c2bc08dd6c49b9f96536b9df901, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 3

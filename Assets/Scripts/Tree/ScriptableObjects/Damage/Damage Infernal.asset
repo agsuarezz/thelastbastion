@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: "Da\xF1o Infernal"
   icon: {fileID: 6900084828667307997, guid: 14e38ae379038bd47a7d3dc28b1512d6, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 1

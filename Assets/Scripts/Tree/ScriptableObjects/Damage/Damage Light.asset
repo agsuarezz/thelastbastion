@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: "Da\xF1o Ligera"
   icon: {fileID: -7118684673653530133, guid: 72f4b07d51c8ef644a97abc532a36d1f, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 1

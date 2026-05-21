@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Rango Ligera
   icon: {fileID: -6718612315065045497, guid: 8e6aa82faa78884408442742ea2dfdcf, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 80
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 2

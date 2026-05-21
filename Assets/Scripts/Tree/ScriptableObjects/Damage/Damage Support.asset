@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: "Da\xF1o Support"
   icon: {fileID: -6283807960738592446, guid: 78ccf5d480626b247b620216cfa3aa26, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 1

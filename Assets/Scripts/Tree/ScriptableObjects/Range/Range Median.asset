@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Rango Mediana
   icon: {fileID: 4721789831514031726, guid: fb6d9538c25c9bc42b99a4f3553269a6, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 80
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 2

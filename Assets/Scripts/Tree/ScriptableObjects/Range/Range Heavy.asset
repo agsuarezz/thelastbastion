@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Rango Pesada
   icon: {fileID: -4931286675046095229, guid: 75795019ded8efb45971fd3823c395c0, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 80
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 2

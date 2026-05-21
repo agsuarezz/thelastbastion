@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Rango Infernal
   icon: {fileID: 2797573250055438510, guid: 16f90715431631546b2cabd2f3a4516d, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 80
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 2

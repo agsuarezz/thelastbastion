@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: "Da\xF1o Pesada"
   icon: {fileID: -6352843189227470219, guid: cd583a741f460a440b8ace7e1f9a5498, type: 3}
   maxNBuy: 10
-  baseCost: 1
+  baseCost: 60
   costMultiplier: 1
   benefitPerLevel: 0.2
   typeUpgrade: 1

@@ -16,7 +16,7 @@ MonoBehaviour:
   skillName: Torre Support
   icon: {fileID: -1712990537094666656, guid: 5ba8969f85a56c245a247d9596f82308, type: 3}
   maxNBuy: 1
-  baseCost: 1
+  baseCost: 250
   costMultiplier: 0
   benefitPerLevel: 0.2
   typeUpgrade: 0
