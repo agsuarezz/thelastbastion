@@ -483,7 +483,6 @@ public class Tower : MonoBehaviour
         float effectiveSlowChance = Mathf.Min(GameManager.globalSlowChance + localSlowBonus, 0.95f);
         if (effectiveSlowChance <= 0f) return;
 
-        // Los valores de ralentización se configuran desde CardManager (Inspector)
         CardManager cm = FindFirstObjectByType<CardManager>();
         float speedMult = cm != null ? cm.slowSpeedMultiplier : 0.5f;
         float duration  = cm != null ? cm.slowDuration        : 3f;
@@ -607,6 +606,7 @@ public class Tower : MonoBehaviour
         if (updatetower.levelOfTower == 0)
         {
             GameManager.countTower += 1;
+            GameOverStatsData.towersPlaced += 1;
         }
     }
 

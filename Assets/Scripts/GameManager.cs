@@ -783,5 +783,8 @@ public class GameManager : MonoBehaviour
         // Estado del juego
         currentState = GameState.Playing;
         loadedFromSave = false;
+
+        // Reinicia las estadísticas del menú de Game Over
+        GameOverStatsData.ResetStats();
     }
 }

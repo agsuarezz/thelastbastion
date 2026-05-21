@@ -16,7 +16,7 @@ public class GameOverStatsUI : MonoBehaviour
         roundsValueText.text = GameManager.countRound.ToString();
         enemiesValueText.text = GameManager.enemiesDestroyed.ToString();
         goldValueText.text = GameManager.totalGoldEarned.ToString();
-        towersValueText.text = GameManager.countTower.ToString();
+        towersValueText.text = GameOverStatsData.towersPlaced.ToString();
         timeValueText.text = FormatTime(GameManager.timeinGame);
         xpValueText.text = GameManager.xpEarnedThisGame.ToString() + " XP";
     }
