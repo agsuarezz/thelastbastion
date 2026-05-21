@@ -142,6 +142,7 @@ public class Tower : MonoBehaviour
         {
             int goldRecovered = Mathf.RoundToInt(totalGoldInvested * 0.75f);
             GameManager.countMoney += goldRecovered;
+            GameManager.totalGoldEarned += goldRecovered;
             if (!GameManager.isLoadingGame)
             {
                 GameManager.ShowFloatingMoney(goldRecovered, isGain: true);
