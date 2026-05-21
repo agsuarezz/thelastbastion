@@ -667,9 +667,9 @@ MonoBehaviour:
   cardManager: {fileID: 626184129}
   roundsForCards: 1
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
-  velocitySprite0: {fileID: 7285970225754692813, guid: dad99ea25f8f2dd44baea79394e09dc1, type: 3}
-  velocitySprite1: {fileID: -3439486116421378984, guid: dad99ea25f8f2dd44baea79394e09dc1, type: 3}
-  velocitySprite2: {fileID: 1113166408476123525, guid: dad99ea25f8f2dd44baea79394e09dc1, type: 3}
+  velocitySprite0: {fileID: -8527737414668195676, guid: 67289590dca79ab43ba96dba83c705b0, type: 3}
+  velocitySprite1: {fileID: -3590766689163798319, guid: a1b9fb8fc5d307a489f029e4fe3d5588, type: 3}
+  velocitySprite2: {fileID: -4492877441345784790, guid: b4a4cc93e763b094fab0925576ab9750, type: 3}
   prefabTowerMedian: {fileID: 8991276415801162673, guid: 9215f2686913cdc45aa6fab00fcff581, type: 3}
   prefabTowerLight: {fileID: 8256846749589652674, guid: c21708f2f337b6d488afffaf27dd4133, type: 3}
   prefabTowerHeavy: {fileID: 8544740251689827319, guid: 65311828bfcba7d4999338877f98bf6e, type: 3}
@@ -1751,7 +1751,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0.4}
     oldSize: {x: 1.78, y: 3.2}
     newSize: {x: 1.5, y: 2.0625}
     adaptiveTilingThreshold: 0.5
@@ -7733,8 +7733,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 100/100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 640aa89554bffa649b846885b67b3b2e, type: 2}
+  m_sharedMaterial: {fileID: 5573170764668051905, guid: 640aa89554bffa649b846885b67b3b2e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7847,8 +7847,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 555.1, y: 305.4}
-  m_SizeDelta: {x: 75, y: 75}
+  m_AnchoredPosition: {x: 554.9263, y: 305.4}
+  m_SizeDelta: {x: 65, y: 65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &438094632
 MonoBehaviour:
@@ -7926,7 +7926,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7285970225754692813, guid: dad99ea25f8f2dd44baea79394e09dc1, type: 3}
+  m_Sprite: {fileID: -8527737414668195676, guid: 67289590dca79ab43ba96dba83c705b0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -20830,8 +20830,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Ronda 0
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 640aa89554bffa649b846885b67b3b2e, type: 2}
+  m_sharedMaterial: {fileID: 5573170764668051905, guid: 640aa89554bffa649b846885b67b3b2e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -25593,8 +25593,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 640aa89554bffa649b846885b67b3b2e, type: 2}
+  m_sharedMaterial: {fileID: 5573170764668051905, guid: 640aa89554bffa649b846885b67b3b2e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

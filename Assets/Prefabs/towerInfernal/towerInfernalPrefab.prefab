@@ -557,6 +557,9 @@ MonoBehaviour:
   upgradeCooldownStep: 0
   totalGoldInvested: 0
   isBuilt: 0
+  localBurnBonus: 0
+  localPoisonBonus: 0
+  localChainBonus: 0
   currentIncreaseDamage: 0
   shortCuts: {fileID: 11400000, guid: 9e3b77de91c9ca447ac7392d0f9f75ef, type: 2}
 --- !u!61 &2644344469074054056
