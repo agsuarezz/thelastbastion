@@ -665,7 +665,7 @@ MonoBehaviour:
   countMoneyText: {fileID: 1781555234}
   moneyNotificationManager: {fileID: 0}
   cardManager: {fileID: 626184129}
-  roundsForCards: 1
+  roundsForCards: 3
   playSprite: {fileID: -6676773289121452967, guid: f49ef446cd36be9498aeb0b75e38893e, type: 3}
   velocitySprite0: {fileID: -8527737414668195676, guid: 67289590dca79ab43ba96dba83c705b0, type: 3}
   velocitySprite1: {fileID: -3590766689163798319, guid: a1b9fb8fc5d307a489f029e4fe3d5588, type: 3}
