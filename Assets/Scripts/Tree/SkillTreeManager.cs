@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class SkillTreeManager : MonoBehaviour
 {
-    [Header("UI del ¡rbol")]
+    [Header("UI del ÔøΩrbol")]
     public TextMeshProUGUI totalXpText; // Texto donde dice "XP: 84"
 
     public AudioClip soundFailBuy;
@@ -23,7 +23,7 @@ public class SkillTreeManager : MonoBehaviour
 
     private void Start()
     {
-        // 1. Al abrir la escena del ·rbol, cargamos la partida
+        // 1. Al abrir la escena del ÔøΩrbol, cargamos la partida
         currentMeta = SaveSystem.LoadMeta();
 
         // 2. Obtenemos todos los nodos
@@ -32,7 +32,7 @@ public class SkillTreeManager : MonoBehaviour
             allNodesInTree.AddRange(nodes.GetComponentsInChildren<SkillNode>());
         }
 
-        // 3. Iniciamos todos los nodos en el guardado si no lo est·n
+        // 3. Iniciamos todos los nodos en el guardado si no lo estÔøΩn
         InitTree();
         SaveSystem.DebugLogMetaSave();
 
@@ -41,7 +41,7 @@ public class SkillTreeManager : MonoBehaviour
     }
 
     /// <summary>
-    /// MÈtodo que llama un SkillNode cuando el jugador hace click en Èl.
+    /// MÔøΩtodo que llama un SkillNode cuando el jugador hace click en ÔøΩl.
     /// </summary>
     public void TryBuySkill(SkillData skillToBuy)
     {
@@ -49,7 +49,7 @@ public class SkillTreeManager : MonoBehaviour
         int currentLevel = GetSkillLevel(skillToBuy.skillID);
         if (currentLevel >= skillToBuy.maxNBuy)
         {
-            StartCoroutine(messageError("LÌmite alcanzado. Si mejoramos esto un nivel m·s, el motor de Unity explota y te borra el Windows."));
+            StartCoroutine(messageError("LÔøΩmite alcanzado. Si mejoramos esto un nivel mÔøΩs, el motor de Unity explota y te borra el Windows."));
             audioSource.PlayOneShot(soundFailBuy);
             return;
         }
@@ -57,12 +57,12 @@ public class SkillTreeManager : MonoBehaviour
         int cost = skillToBuy.baseCost + (currentLevel * skillToBuy.costMultiplier);
         if (currentMeta.totalExperience < cost)
         {
-            StartCoroutine(messageError("Sin experiencia no hay mejoras. Si las quieres gratis, haber comprado la ediciÛn Deluxe."));
+            StartCoroutine(messageError("Sin experiencia no hay mejoras. Si las quieres gratis, haber comprado la ediciÔøΩn Deluxe."));
             audioSource.PlayOneShot(soundFailBuy);
             return;
         }
 
-        // --- °COMPRA ACEPTADA! ---
+        // --- ÔøΩCOMPRA ACEPTADA! ---
 
         // Descontamos la XP
         currentMeta.totalExperience -= cost;
@@ -74,7 +74,7 @@ public class SkillTreeManager : MonoBehaviour
         ApplyUpgrade(skillToBuy);
         audioSource.PlayOneShot(soundBuy);
 
-        // Guardamos fÌsicamente en el archivo JSON
+        // Guardamos fÔøΩsicamente en el archivo JSON
         SaveSystem.SaveMeta(currentMeta);
         SaveSystem.DebugLogMetaSave();
 
@@ -92,10 +92,10 @@ public class SkillTreeManager : MonoBehaviour
     {
         totalXpText.text = "XP Disponible: " + currentMeta.totalExperience;
 
-        // Recorremos todos los botones y les decimos: "Oye, revisa si est·s bloqueado o comprado"
+        // Recorremos todos los botones y les decimos: "Oye, revisa si estÔøΩs bloqueado o comprado"
         foreach (SkillNode node in allNodesInTree)
         {
-            // Pillamos el nivel actual de este nodo para pas·rselo a la UI
+            // Pillamos el nivel actual de este nodo para pasÔøΩrselo a la UI
             int currentLevel = GetSkillLevel(node.myData.skillID);
 
             // Calculamos el coste actual para mostrarlo bien en el texto
@@ -179,14 +179,14 @@ public class SkillTreeManager : MonoBehaviour
         int index = node.typeUpgrade - 1;
         string towerName = "Torre " + node.typeTower.ToString();
 
-        // Comprobamos que el diccionario tiene la torre y que el Ìndice es seguro (0, 1 o 2)
+        // Comprobamos que el diccionario tiene la torre y que el ÔøΩndice es seguro (0, 1 o 2)
         if (currentMeta.upgradesTree.ContainsKey(towerName) && index >= 0 && index < currentMeta.upgradesTree[towerName].Count)
         {
             currentMeta.upgradesTree[towerName][index] += node.benefitPerLevel;
         }
         else
         {
-            Debug.LogError($"[¡rbol] ConfiguraciÛn inv·lida en la carta {node.skillID}. Õndice {index} fuera de rango.");
+            Debug.LogError($"[ÔøΩrbol] ConfiguraciÔøΩn invÔøΩlida en la carta {node.skillID}. ÔøΩndice {index} fuera de rango.");
         }
     }
     public void startGame()
@@ -209,11 +209,20 @@ public class SkillTreeManager : MonoBehaviour
         foreach (SkillNode skill in allNodesInTree)
         {
             SkillProgress dataSkill = GetNode(skill.myData.skillID);
-            currentMeta.totalExperience += (dataSkill.level * skill.myData.baseCost) + (skill.myData.costMultiplier * (dataSkill.level * (dataSkill.level - 1)) / 2);
-            currentMeta.skillList.Remove(dataSkill);
+            
+            // Comprobaci√≥n de seguridad por si acaso el nodo no exist√≠a en el guardado
+            if (dataSkill != null)
+            {
+                // Devolvemos la experiencia matem√°tica
+                currentMeta.totalExperience += (dataSkill.level * skill.myData.baseCost) + (skill.myData.costMultiplier * (dataSkill.level * (dataSkill.level - 1)) / 2);
+                currentMeta.skillList.Remove(dataSkill);
+            }
+            
+            // Reiniciamos el nodo a nivel 0
             InitNode(skill);
         }
 
+        // Reseteamos bloqueos y mejoras
         currentMeta.isInfernalTowerUnlocked = false;
         currentMeta.isSupportTowerUnlocked = false;
         currentMeta.upgradesTree = new Dictionary<string, List<float>>
@@ -225,7 +234,12 @@ public class SkillTreeManager : MonoBehaviour
             {"Torre Soporte", new List<float> { 1f, 1f, 1f } }
         };
 
-        InitTree();
+        // --- LA CLAVE DEL ARREGLO EST√Å AQU√ç ---
+        // Guardamos forzosamente los datos reseteados en el archivo f√≠sico
+        SaveSystem.SaveMeta(currentMeta);
+        SaveSystem.DebugLogMetaSave(); // Opcional, para que lo veas en consola
+        
+        // Actualizamos visualmente
         UpdateUI();
     }
 }
